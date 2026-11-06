@@ -157,7 +157,10 @@ names defined in earlier files (inside functions, any file's names can be used).
 - **Chinese word:** `[word, pinyin, meaning, example, example pinyin, example English]`
 - **Japanese word:** `[word, kana, romaji, meaning, example, example romaji, example English]`
   (for kana-only words, kana = word).
-- **Theme:** `["Title", [10 words]]` (Level 1 themes 1 to 8 have 5 words).
+- **Theme:** `["Title", [10 words], [6 sentence strings]]` (Level 1 themes 1 to 8 have 5 words). The third element holds the theme’s
+  **practice sentences**: 6 sentences in the sentence-string format below, with **no speaker labels**, 2 to 8 content tokens each, using
+  only words, grammar and kanji the learner has met. They appear in the lesson’s **Sentences** step and in the quiz (up to 4 sentence
+  questions). Inflected forms of theme verbs and い-adjectives count as the theme’s words. Write new themes with the sentences included.
 - **Sentence string** (stories and travel): tokens separated by `" / "`, each token
   `text|reading|meaning`; punctuation is a bare token; then `" = English translation"`.
   Example: `"私|watashi|I / は|wa|(topic) / 学生|gakusei|student / です|desu|am / 。 = I am a student."`
@@ -181,13 +184,18 @@ names defined in earlier files (inside functions, any file's names can be used).
 
 ## 7. How to add a content part (150 words)
 
-1. In `content/content.js`, write the new themes as a new array (for example `const JA4=[...]`, 15 themes × 10 words),
+Tools that help (all in `tools/`): `check-words.js` (word lists), `check-chapters.js` and `check-sentences.js` (stories and practice sentences,
+including a check for words the learner has not met yet), `add-kanji.js` (adds missing kanji with stroke order from KanjiVG and
+readings from KANJI_JA sources), `validate-content.js` (everything, also run by `npm test`). Lesson order: Words, Grammar, Sentences, Story, Quiz, Summary.
+
+1. In `content/content.js`, write the new themes as a new array (for example `const JA5=[...]`, 15 themes × 10 words, each with its 6 sentences),
    10 grammar points (`const GR_JA3=[...]`) and 15 chapters (`const STORY_JA3=[...]`), following section 6.
-2. Append them next to the existing appends: `JA.push(...JA4)`, `STORY_JA.push(...STORY_JA3)`, and
+2. Append them next to the existing appends: `JA.push(...JA5)`, `STORY_JA.push(...STORY_JA3)`, and
    `GR.ja.push(...GR_JA3)` (next to `GR.ja.push(...GR_JA2)`).
 3. In `content/content.js`, add one entry to `PARTS.ja`, for example `{lv:2,t:34,g:20,n:10}`
    (`t` = number of Japanese themes before this part, `g` = number of Japanese grammar points before it).
 4. Update the matching label in `LEVELS`.
+4a. Run `node tools/add-kanji.js` to add the kanji the new Japanese words use.
 5. Run `npm test`. Fix every error.
 6. Run `npm run upload` (needs `.env`). The app downloads the new content at its next start.
 7. If code or `content/content.js` changed, increase `CACHE` in `sw.js`. Commit and push.
@@ -203,7 +211,7 @@ names defined in earlier files (inside functions, any file's names can be used).
 ## 9. Roadmap (agreed order)
 
 Content batches (each about 150 words, 10 grammar points, 15 chapters):
-1. Japanese Level 2 (rest of JLPT N5): about 3 more parts.
+1. Japanese Level 2 (rest of JLPT N5): Part 2 is done (Level 2 now has 300 words); about 2 more parts.
 2. Chinese Level 3 (HSK 3): about 2 parts.
 3. Japanese Level 3 (JLPT N4): about 4 to 5 parts.
 4. Chinese Level 4 (HSK 4): about 4 parts.

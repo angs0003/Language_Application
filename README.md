@@ -10,7 +10,7 @@ with a free Supabase database for sign-in, progress and learning content.
 
 | Tab | What it contains |
 |---|---|
-| **Learn** | Language switch, level and progress, and a path of lessons, story chapters and reviews. Each lesson: new words, grammar, story, quiz, summary. |
+| **Learn** | Language switch, level and progress, and a path of lessons, story chapters and reviews. Each lesson: new words, grammar, 6 practice sentences, story, quiz, summary. |
 | **Practise** | One mixed practice session (due words, kanji and saved words), My words (search, filters, 4 practice modes), Kanji (stroke order step by step), Kana (hiragana and katakana), Grammar guide. |
 | **Listen** | Story chapters and podcast episodes in a line-by-line player (loop, auto-pause, speed, text modes), YouTube videos inside the app (speed, section loop, synced subtitles where a transcript exists), and TV recommendations with ratings. |
 | **Travel** | 8 situations per country (arrival, transport, eating, paying, hotel, small talk, problems, etiquette): what you will hear, what you say, tips, and practice. |
@@ -22,8 +22,8 @@ Other details:
 - Works offline after the first visit. Progress syncs between devices when you sign in with the same email.
 - No AI and no running costs.
 
-Current content: 2 levels per language (300 words each), 20 grammar points, 34 story chapters, 16 travel
-situations, 261 kanji, 142 kana.
+Current content: Japanese 450 words, 30 grammar points, 49 story chapters; Chinese 300 words, 20 grammar points,
+34 story chapters; 6 practice sentences per theme; 16 travel situations; 373 kanji, 142 kana.
 
 ## Project structure
 

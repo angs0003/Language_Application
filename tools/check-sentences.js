@@ -5,6 +5,7 @@
    "token|reading|meaning / token|reading|meaning / 。 = English translation".
    ERROR lines must be fixed. WARN lines should be fixed unless there is a good reason. */
 const fs = require("fs");
+const { knownFor, formMatcher } = require("./lib-known");
 const [lang, file, startArg] = process.argv.slice(2);
 if (!lang || !file || startArg === undefined) { console.log("Usage: node tools/check-sentences.js <ja|zh> <file.json> <firstThemeIndex>"); process.exit(2); }
 const start = +startArg;
@@ -22,11 +23,8 @@ data.forEach((arr, k) => {
   const ti = start + k, th = themes[ti], where = `theme ${ti + 1} (${th ? th[0] : "?"})`;
   if (!th) return err(where, "does not exist");
   if (!Array.isArray(arr) || arr.length !== 6) return err(where, "needs exactly 6 sentences, has", Array.isArray(arr) ? arr.length : "none");
-  const known = new Set();
-  for (let i = 0; i <= ti; i++) themes[i][1].forEach(w => known.add(w[0]));
-  for (let i = 0; i <= ti; i++) (story[i] ? story[i].l : []).forEach(ln => ln.slice(0, ln.lastIndexOf(" = ")).split(" / ").forEach(t => known.add(t.split("|")[0])));
-  for (let g = 0; g <= grammarUpTo(ti); g++) (gr[g][3] || []).forEach(t => known.add(Array.isArray(t) ? t[0] : String(t).split("|")[0]));
-  const own = new Set(th[1].map(w => w[0])), seenEn = new Set();
+  const known = knownFor(G, lang, ti);
+  const isOwn = formMatcher(lang, th[1]), seenEn = new Set(), own = new Set(th[1].map(w => w[0]));
   arr.forEach((ln, si) => {
     const w = `${where} sentence ${si + 1}`;
     if (typeof ln !== "string") return err(w, "not a string");
@@ -43,7 +41,7 @@ data.forEach((arr, k) => {
       if (PUN.test(p[0])) return;
       if (p.length !== 3 || !p[0] || !p[1] || !p[2]) return err(w, "bad token", JSON.stringify(p.join("|")));
       content++;
-      if (own.has(p[0])) usesOwn = true;
+      if (isOwn(p[0])) usesOwn = true;
       if (!known.has(p[0])) warn(w, `word not taught yet: ${p[0]} (${p[1]}, ${p[2]})`);
       if (lang === "ja") {
         if (p[0] === "は" && p[1] !== "wa") err(w, "particle は must have reading wa");
@@ -62,7 +60,7 @@ data.forEach((arr, k) => {
     if (!usesOwn) err(w, "uses none of this theme's words");
     if (toks.some(p => p[0] === "：" || p[0] === ":")) err(w, "no speaker labels in lesson sentences");
   });
-  const usedWords = new Set(); arr.forEach(ln => ln.slice(0, ln.lastIndexOf(" = ")).split(" / ").forEach(t => { if (own.has(t.split("|")[0])) usedWords.add(t.split("|")[0]); }));
+  const usedWords = new Set(); arr.forEach(ln => ln.slice(0, ln.lastIndexOf(" = ")).split(" / ").forEach(t => { const tk = t.split("|")[0]; th[1].forEach(w => { if (formMatcher(lang, [w])(tk)) usedWords.add(w[0]); }); }));
   const unused = [...own].filter(x => !usedWords.has(x));
   if (unused.length > Math.floor(own.size / 2)) warn(where, "the 6 sentences use only", usedWords.size, "of", own.size, "theme words; unused:", unused.join(" "));
 });

@@ -17,7 +17,7 @@ async function solveAll(W, click) { for (let k = 0; k < 60 && !W.eval("view.fini
   // section visibility
   click("Chinese"); click("Skip and start"); tab("Practise"); check(!M().includes("Kana"), "Kanji and kana are hidden for Chinese");
   tab("Learn"); click("Japanese"); click("Skip and start"); tab("Practise"); click("Kana"); check(M().includes("Hiragana: 0 of 71"), "Kana screen shows hiragana progress");
-  W.eval("openSub('kanji')"); check(M().includes("Kanji: 0 of 261"), "Kanji screen shows kanji progress");
+  W.eval("openSub('kanji')"); check(M().includes("Kanji: 0 of " + W.eval("KANJI_JA.length")), "Kanji screen shows kanji progress");
   // kana lesson
   W.eval("startKana('hira',0)"); check(W.eval("view.s") === "kana" && M().includes("あ"), "kana lesson shows the first character");
   for (let i = 0; i < 4; i++) click("Next character");

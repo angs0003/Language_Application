@@ -5,6 +5,7 @@ const src = fs.readFileSync(path.join(__dirname, "..", "content", "content.js"),
 const ctx = {}; vm.createContext(ctx);
 vm.runInContext(src + "\n;this.__={ZH,JA,GR,STORY_ZH,STORY_JA,TRIP_JA,TRIP_ZH,VIDS};", ctx);
 const { ZH, JA, GR, STORY_ZH, STORY_JA, TRIP_JA, TRIP_ZH, VIDS } = ctx.__;
+const { formMatcher } = require("./lib-known");
 const PUN = /^[\s。、，,.!?！？：:；;「」『』“”"'（）()…·\-]+$/;
 let errors = 0; const err = (...m) => { errors++; console.log("ERROR:", ...m); };
 function checkLine(where, ln) {
@@ -32,7 +33,7 @@ for (const [name, themes, width] of [["zh", ZH, 6], ["ja", JA, 7]]) {
         if (t[2].length !== 6) err(name, "theme", ti + 1, "has", t[2].length, "sentences, expected 6");
         t[2].forEach((ln, li) => {
           checkLine(`${name} theme ${ti + 1} sentence ${li + 1}`, ln);
-          if (typeof ln === "string" && !t[1].some(w => ln.split(" = ")[0].split(" / ").some(tok => tok.split("|")[0] === w[0]))) err(name, `theme ${ti + 1} sentence ${li + 1}`, "uses none of the theme's words");
+          if (typeof ln === "string" && !ln.split(" = ")[0].split(" / ").some(tok => formMatcher(name, t[1])(tok.split("|")[0]))) err(name, `theme ${ti + 1} sentence ${li + 1}`, "uses none of the theme's words");
         });
       }
     }
@@ -57,6 +58,13 @@ for (const [name, themes, width] of [["zh", ZH, 6], ["ja", JA, 7]]) {
     (x.transcript || []).forEach((ln, j) => { if (typeof ln.t !== "number") err(name, "video", i + 1, "transcript line", j + 1, "needs a start time t in seconds"); checkLine(`${name} video ${i + 1} transcript ${j + 1}`, ln.line); });
   });
   console.log(`${name}: ${themes.length} themes, ${seen.size} words, ${story.length} chapters, ${GR[name].length} grammar points, ${trip.length} travel situations`);
+}
+{
+  /* Romaji of each Japanese word must convert to its kana (the app builds furigana from the romaji). Warning only. */
+  const ks = fs.readFileSync(path.join(__dirname, "..", "js", "kanji.js"), "utf8");
+  const toHira = new Function(ks.slice(ks.indexOf("const R2H_MAP"), ks.indexOf("const hasKanji")) + "; return toHira;")();
+  let n = 0; JA.forEach((t, ti) => t[1].forEach(w => { if (/^[ぁ-ゖ]+$/.test(w[1]) && toHira(w[2]) !== (w[2].endsWith("wa") ? w[1].replace(/は$/, "わ") : w[1])) { n++; console.log(`WARN: ja theme ${ti + 1} word ${w[0]}: romaji ${w[2]} gives ${toHira(w[2])}, kana is ${w[1]}`); } }));
+  if (!n) console.log("Romaji matches kana for every Japanese word.");
 }
 {
   const K = require("./load-content")();
