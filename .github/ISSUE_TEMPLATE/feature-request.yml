@@ -1,0 +1,24 @@
+name: Feature or change
+description: A new feature or a change to how the app works or looks
+labels: [feature]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What you want
+      description: What the app should do, from the learner's point of view
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: Where in the app
+      description: Tab and screen, for example "Practise tab, My words"
+  - type: textarea
+    id: done
+    attributes:
+      label: How you will know it is done
+      description: One or more things you can check on your phone
+  - type: markdown
+    attributes:
+      value: Write "@claude plan this" in a comment. Claude posts a plan. Reply "@claude approved" to build it.
