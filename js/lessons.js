@@ -209,7 +209,7 @@ function startLesson(words,title,repeat){
   const l=S.lang,types=["meaning","listen","type","speak"];
   const quiz=buildQuiz(l,words,S[l].lc||0);
   const g=GR[l][grFor(l,themeIdxOf(l,words[0]))];
-  view={s:"lesson",lang:l,words,title,repeat:!!repeat,g,step:0,i:0,quiz,ex:{},gex:[],gq:[],aState:"loading",bState:"loading",story:null,dia:null,confirm:false,sheet:null};
+  view={s:"lesson",lang:l,words,title,repeat:!!repeat,g,sents:((CUR[l][themeIdxOf(l,words[0])]||{}).sents)||[],step:0,i:0,quiz,ex:{},gex:[],gq:[],aState:"loading",bState:"loading",story:null,dia:null,confirm:false,sheet:null};
   {const ch=chapter(l,themeIdxOf(l,words[0]));view.story=ch?{title:ch.title,lines:ch.lines}:null;view.aState="none";view.bState="";}
   render();window.scrollTo(0,0);
 }
@@ -218,7 +218,7 @@ function lessonMove(d){
   const v=view;const n=lessonItemCount(v);
   if(d>0){if(v.i<n-1)v.i++;else{v.step++;v.i=0;}}
   else{if(v.i>0)v.i--;else if(v.step>0){v.step--;v.i=lessonItemCount(v)-1;}}
-  if(AI_OFF&&v.step===3){v.step=d>0?4:2;v.i=0;}
+  if(v.step===2&&!v.sents.length){v.step+=d>0?1:-1;v.i=d>0?0:lessonItemCount(v)-1;}
   render();window.scrollTo(0,0);
 }
 function aiMsg(st,what){return st==="none"?"This version has no AI. "+what:st;}
@@ -228,7 +228,7 @@ function screenLesson(){
   const itemNames=["Word","Grammar item","","","Question",""];
   const counts=[ws.length,1+v.gq.length,1,1,v.quiz.length,1];let pos=0;for(let k=0;k<v.step;k++)pos+=counts[k];pos+=v.i;const total=counts.reduce((a,b)=>a+b,0);
   const r={row:"title",title:unitLabel,exit:true,
-    prog:`<div class="ptext">Step ${AI_OFF?[1,2,3,3,4,5][v.step]:v.step+1} of ${AI_OFF?5:6}: ${STEPS[v.step]}</div><div class="psub">${itemNames[v.step]&&n>1?itemNames[v.step]+" "+(v.i+1)+" of "+n:""}</div><div class="bar"><i style="width:${Math.round(pos/total*100)}%"></i></div>`,
+    prog:`<div class="ptext">Step ${v.step+1-(!v.sents.length&&v.step>2?1:0)} of ${v.sents.length?6:5}: ${STEPS[v.step]}</div><div class="psub">${itemNames[v.step]&&n>1?itemNames[v.step]+" "+(v.i+1)+" of "+n:""}</div><div class="bar"><i style="width:${Math.round(pos/total*100)}%"></i></div>`,
     back:{label:"Back",fn:()=>lessonMove(-1),dis:v.step===0&&v.i===0},next:{label:"Continue",fn:()=>lessonMove(1)}};
   let h="";
   const retry=(fn,label)=>`<p><button class="btn sec full" data-a="${A(fn)}">${label}</button></p>`;
@@ -248,18 +248,13 @@ function screenLesson(){
       if(!q.answered)r.next={label:"Check answer",fn:()=>{checkQ(q);render();},dis:!canCheck(q)};
     }
   }else if(v.step===2){
+    h=`<div class="card"><h2>Sentences</h2><p class="small muted">These sentences use this lesson’s words. Lesson words are underlined. Tap any word to open its reference card.</p><p><button class="play" data-a="${A(()=>sayLines(v.sents,l))}">${PLAY}Play all sentences</button></p>${v.sents.map(x=>`<div class="line">${sentHTML(l,x,ws)}</div>`).join("")}</div>`;
+  }else if(v.step===3){
     if(v.bState==="loading"){h=`<div class="card"><h2>Story</h2><p>Writing a story and a dialogue with this lesson’s words and grammar. This usually takes 20 to 90 seconds.</p></div>`;r.next.dis=true;}
     else if(v.story){
       h=`<div class="card"><h2>${esc(v.story.title)}</h2><p class="small muted">Lesson words are underlined. Tap any word to open its reference card.</p><p><button class="play" data-a="${A(()=>sayLines(v.story.lines,l))}">${PLAY}Play whole story</button></p>${v.story.lines.map(x=>`<div class="line">${sentHTML(l,x,ws)}</div>`).join("")}${AI_OFF?"":retry(()=>loadB(v,true),"Write a new story and dialogue")}</div>`;
     }else{
       h=`<div class="card"><h2>Practice sentences</h2><p class="small"><strong>${esc(aiMsg(v.bState,"The practice sentences below replace the story."))}</strong></p>${v.bState!=="none"?retry(()=>loadB(v,true),"Try to write the story again"):""}${ws.map(w=>`<div class="line">${builtinEx(l,w,ws)}</div>`).join("")}</div>`;
-    }
-  }else if(v.step===3){
-    if(v.bState==="loading"){h=`<div class="card"><h2>Dialogue</h2><p>The dialogue is loading.</p></div>`;r.next.dis=true;}
-    else if(v.dia){
-      h=`<div class="card"><h2>${esc(v.dia.title)}</h2>${v.dia.situation?`<p class="small">${esc(v.dia.situation)}</p>`:""}<p><button class="play" data-a="${A(()=>sayLines(v.dia.lines,l))}">${PLAY}Play whole dialogue</button></p>${linesHTML(l,v.dia.lines,ws,false)}</div>`;
-    }else{
-      h=`<div class="card"><h2>Dialogue</h2><p><strong>${esc(aiMsg(v.bState||"The dialogue could not be created.","The dialogue needs AI."))}</strong></p>${v.bState!=="none"?retry(()=>loadB(v,true),"Try again"):""}<p class="small muted">You can continue without the dialogue.</p></div>`;
     }
   }else if(v.step===4){
     const q=v.quiz[v.i];view.q=q;

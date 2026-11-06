@@ -8,8 +8,8 @@
 function parseLine(x){const i=x.lastIndexOf(" = ");const a=i>=0?x.slice(0,i):x,e=i>=0?x.slice(i+3):"";return{tokens:a.split(" / ").map(t=>{const p=t.split("|");return[p[0],p[1]||"",p[2]||""];}),english:e};}
 function chapter(l,n){const d=STORY[l][n];if(!d)return null;if(!d._p)d._p={title:d.t,lines:d.l.map(parseLine),qs:d.q.map(q=>({after:q[0],question:q[1],options:q[2],answer:q[3],why:q[4]||""}))};return d._p;}
 const CUR={
-  zh:ZH.map(([t,ws])=>({title:t,words:ws.map(a=>({w:a[0],r:a[1],m:a[2],ex:[a[3],a[4],a[5]]}))})),
-  ja:JA.map(([t,ws])=>({title:t,words:ws.map(a=>({w:a[0],k:a[1],r:a[2],m:a[3],ex:[a[4],a[5],a[6]]}))}))
+  zh:ZH.map(([t,ws,ss])=>({title:t,sents:(ss||[]).map(parseLine),words:ws.map(a=>({w:a[0],r:a[1],m:a[2],ex:[a[3],a[4],a[5]]}))})),
+  ja:JA.map(([t,ws,ss])=>({title:t,sents:(ss||[]).map(parseLine),words:ws.map(a=>({w:a[0],k:a[1],r:a[2],m:a[3],ex:[a[4],a[5],a[6]]}))}))
 };
 const NUM={"一":"1","二":"2","三":"3","十":"10"};
 const L={zh:{name:"Chinese",code:"zh-CN",hl:"zh-Hans",rd:"pinyin",full:"Mandarin Chinese, Simplified characters"},ja:{name:"Japanese",code:"ja-JP",hl:"ja",rd:"romaji",full:"Japanese"}};
@@ -18,7 +18,7 @@ const LV_START={},GR_START={};
 for(const l of ["ja","zh"]){LV_START[l]=[];GR_START[l]=[];PARTS[l].forEach(p=>{if(LV_START[l].length<p.lv){LV_START[l].push(p.t);GR_START[l].push(p.g);}});}
 function lvOfTheme(l,ti){return partOf(l,ti).lv;}
 function grFor(l,ti){const p=partOf(l,ti);return Math.min(GR[l].length-1,p.g+((ti-p.t)%p.n));}
-const STEPS=["🆕 New words","🧩 Grammar","📖 Story","💬 Dialogue","✏️ Quiz","✅ Summary"];
+const STEPS=["🆕 New words","🧩 Grammar","💬 Sentences","📖 Story","✏️ Quiz","✅ Summary"];
 const DAY=864e5, INTERVAL=[0,1,2,4,8,16];
 
 /* ---------- State and saving ---------- */

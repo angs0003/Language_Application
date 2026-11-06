@@ -8,7 +8,7 @@ function stripSpk(s){const i=s.tokens.findIndex(t=>t[0]==="："||t[0]===":");if(
 function enWords(e){return e.split(/\s+/).map(w=>w.replace(/^[“"(]+|[.,!?;:”")]+$/g,"")).filter(Boolean);}
 const normW=x=>String(x).toLowerCase();
 function themeIdxOf(l,w){const ths=themes(l);for(let i=0;i<ths.length;i++)if(ths[i].words&&ths[i].words.includes(w))return i;return 0;}
-function poolFor(l,words){const idx=[...new Set(words.map(w=>themeIdxOf(l,w)))];return idx.flatMap(i=>{const c=chapter(l,i);return c?c.lines:[];}).map(stripSpk).filter(s=>contentToks(s).length>=1);}
+function poolFor(l,words){const idx=[...new Set(words.map(w=>themeIdxOf(l,w)))];return idx.flatMap(i=>{const c=chapter(l,i);return ((CUR[l][i]||{}).sents||[]).concat(c?c.lines:[]);}).map(stripSpk).filter(s=>contentToks(s).length>=1);}
 function mkBuild(l,s,mode,pool,word){
   const base={type:"build",mode,lang:l,sent:s,placed:[],word:word||null,answered:false,correct:false,sel:null,input:""};
   if(mode==="toEn"){
@@ -43,6 +43,8 @@ function buildQuiz(l,words,k){
   const types=["meaning","blank","listen","type","speak"];
   words.forEach((w,i)=>{let t=types[i%types.length];if(t==="blank"){const s=pool.find(x=>x.tokens.some(z=>z[0]===w.w));const b=s&&mkBlank(l,s,w,pool);if(b){qs.push(b);return;}t="meaning";}qs.push(mkQ(t,w,l));});
   const cands=pool.filter(s=>{const n=contentToks(s).length;return n>=2&&n<=7;});
+  const own=[...new Set(words.map(w=>themeIdxOf(l,w)))].flatMap(i=>(CUR[l][i]||{}).sents||[]).filter(s=>{const n=contentToks(s).length;return n>=2&&n<=8;});
+  if(own.length){const modes=["build","listen","toEn","build"];shuffle(own).slice(0,4).forEach((s,j)=>qs.push(mkBuild(l,s,modes[j],pool)));return qs;}
   const pick=shuffle(cands.length?cands:pool).slice(0,2);
   if(pick[0])qs.push(mkBuild(l,pick[0],"build",pool));
   if(pick[1])qs.push(mkBuild(l,pick[1],(k||0)%2?"toEn":"listen",pool));

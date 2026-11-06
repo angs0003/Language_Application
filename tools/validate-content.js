@@ -26,6 +26,16 @@ for (const [name, themes, width] of [["zh", ZH, 6], ["ja", JA, 7]]) {
       if (seen.has(w[0])) err(name, "duplicate word", w[0], "in themes", seen.get(w[0]) + 1, "and", ti + 1);
       else seen.set(w[0], ti);
     });
+    if (t[2] !== undefined) {
+      if (!Array.isArray(t[2])) err(name, "theme", ti + 1, "sentences must be an array");
+      else {
+        if (t[2].length !== 6) err(name, "theme", ti + 1, "has", t[2].length, "sentences, expected 6");
+        t[2].forEach((ln, li) => {
+          checkLine(`${name} theme ${ti + 1} sentence ${li + 1}`, ln);
+          if (typeof ln === "string" && !t[1].some(w => ln.split(" = ")[0].split(" / ").some(tok => tok.split("|")[0] === w[0]))) err(name, `theme ${ti + 1} sentence ${li + 1}`, "uses none of the theme's words");
+        });
+      }
+    }
   });
   const story = name === "zh" ? STORY_ZH : STORY_JA;
   if (story.length !== themes.length) err(name, `story chapters (${story.length}) must equal themes (${themes.length})`);

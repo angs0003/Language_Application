@@ -16,6 +16,15 @@ const failures = [];
     }
     const learned = W.eval(`learnedWords("${lang}").length`);
     if (learned < 10) failures.push(lang + ": expected at least 10 learned words, got " + learned);
+    // Sentences step: 6 sentences per theme, shown before the story, and sentence questions in the quiz
+    W.eval("goHome()"); W.eval("startLesson(themes(S.lang)[1].words,'Test',true)");
+    if (W.eval("view.sents.length") !== 6) failures.push(lang + ": theme 2 should have 6 sentences");
+    W.eval("view.step=2;view.i=0;render()");
+    if (!M().includes("Play all sentences") || d.querySelectorAll("#main .line").length !== 6) failures.push(lang + ": Sentences step does not show 6 sentences");
+    if (!d.getElementById("hd").textContent.includes("Step 3 of 6")) failures.push(lang + ": Sentences step should be step 3 of 6");
+    if (W.eval("view.quiz.filter(q=>q.type==='build').length") < 3) failures.push(lang + ": quiz should have at least 3 sentence-building questions");
+    W.eval("view.step=3;view.i=0;render()"); if (!M().includes("Play whole story")) failures.push(lang + ": Story step missing after Sentences");
+    W.eval("goHome()");
     console.log(lang + ": flow OK, learned " + learned + " words");
   }
   W.eval("openPod(0)"); if (W.eval("view.segs.length") < 10) failures.push("podcast episode too short");
