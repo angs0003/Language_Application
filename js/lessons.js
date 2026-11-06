@@ -113,23 +113,43 @@ function glossHTML(l,tokens,hw,plain){
 function sentHTML(l,s,hw){return `<div class="sent"><div class="sbody">${glossHTML(l,s.tokens,hw)}${S.settings.showEnglish&&s.english?`<p class="eng">${esc(s.english)}</p>`:""}</div><button class="play" data-a="${A(()=>say(sentText(s),l))}" aria-label="Play audio" title="Play audio">${PLAY}</button></div>`;}
 function builtinEx(l,w,hw){return `<div class="sent"><div class="sbody"><p class="ex" lang="${L[l].hl}">${hl(w.ex[0],hw||[w])}</p>${S.settings.showReading?`<p class="muted" style="margin:0 0 4px">${esc(w.ex[1])}</p>`:""}${S.settings.showEnglish?`<p class="eng">${esc(w.ex[2])}</p>`:""}</div><button class="play" data-a="${A(()=>say(w.ex[0],l))}" aria-label="Play audio" title="Play audio">${PLAY}</button></div>`;}
 function voicesFor(l){const c=L[l].code.toLowerCase();let v=voices.filter(x=>x.lang.replace("_","-").toLowerCase()===c);if(!v.length)v=voices.filter(x=>x.lang.toLowerCase().startsWith(l));return v;}
+/* Speaker lines: a story line starts with a name and a colon ("Ken ： good morning"). The name and colon are not spoken.
+   Each speaker gets a different voice and pitch instead, in the order the speakers first appear in the text. */
+function spkSkip(s){const t=s.tokens;return t&&t.length>2&&/^\s*[：:]\s*$/.test(t[1][0])&&!PUNCT.test(t[0][0])?2:0;}
+function spkName(s){return spkSkip(s)?s.tokens[0][0]:(s.spk||"");}
+function spokenText(s){return s.tokens.slice(spkSkip(s)).map(t=>t[0]).join("");}
+function spkMap(lines){const m={};let n=0;lines.forEach(s=>{const k=spkName(s);if(k&&!(k in m))m[k]=n++;});return m;}
+/* index of the speaker of line s, or undefined when the text has fewer than 2 speakers */
+function spkIdx(map,s){return Object.keys(map).length>1?map[spkName(s)]:undefined;}
+const FEM_RE=/female|woman|kyoko|haruka|ayumi|nanami|mizuki|sayaka|mei-?jia|ting-?ting|hanhan|huihui|yaoyao|xiaoxiao|xiaoyi|lili/i;
+const SPK_PITCH=[1.1,0.85,1.3,0.7];
+/* Sets the voice and pitch of utterance u for speaker number idx. pool = the voices of the language.
+   Voices alternate between ones whose name looks female and the others (the name is the only hint the browser gives). */
+function applySpeaker(u,pool,idx){
+  if(idx==null||idx<0){if(pool[0])u.voice=pool[0];return;}
+  const fem=pool.filter(v=>FEM_RE.test(v.name||"")),oth=pool.filter(v=>!FEM_RE.test(v.name||"")),order=[];
+  for(let i=0;i<Math.max(fem.length,oth.length);i++){if(fem[i])order.push(fem[i]);if(oth[i])order.push(oth[i]);}
+  if(order.length)u.voice=order[idx%order.length];
+  u.pitch=SPK_PITCH[idx%SPK_PITCH.length];
+}
 /* Spoken-word highlight. hlTrack(u,tokens,rootFn,alive) marks the token being spoken by utterance u:
    by the voice's word boundary events when it sends them, otherwise by a timing estimate from the token lengths.
    rootFn returns the element that holds the .tk elements (one per token, in order); alive() says whether this playback is still current. */
 const HL={t:[],msPerChar:220};
 function hlDom(){document.querySelectorAll(".tk.spoken").forEach(e=>e.classList.remove("spoken"));}
 function hlClear(){HL.t.forEach(clearTimeout);HL.t=[];hlDom();}
-function hlTrack(u,tokens,rootFn,alive){
-  if(S.settings.hlWord===false||!tokens||!tokens.length)return;
-  const offs=[];let o=0;tokens.forEach(t=>{offs.push(o);o+=t[0].length;});
+/* skip = number of leading tokens that are not spoken (a speaker name and colon). */
+function hlTrack(u,tokens,rootFn,alive,skip=0){
+  if(S.settings.hlWord===false||!tokens||tokens.length<=skip)return;
+  const offs=[];let o=0;tokens.forEach((t,i)=>{offs.push(i<skip?-1:o);if(i>=skip)o+=t[0].length;});
   const mark=i=>{if(!alive())return;hlDom();const r=rootFn();if(!r)return;const el=r.querySelectorAll(".tk")[i];if(el)el.classList.add("spoken");};
-  const at=c=>{let k=0;for(let j=0;j<offs.length;j++)if(offs[j]<=c)k=j;return k;};
+  const at=c=>{let k=skip;for(let j=skip;j<offs.length;j++)if(offs[j]<=c)k=j;return k;};
   let gotB=false;
   u.onboundary=e=>{if(e.name&&e.name!=="word")return;if(!gotB){gotB=true;HL.t.forEach(clearTimeout);HL.t=[];}mark(at(e.charIndex||0));};
   u.onstart=()=>{
-    if(!alive())return;mark(0);HL.t.forEach(clearTimeout);HL.t=[];
+    if(!alive())return;mark(skip);HL.t.forEach(clearTimeout);HL.t=[];
     const per=HL.msPerChar/(0.9*S.settings.speed);let tm=0;
-    tokens.forEach((t,i)=>{if(i>0)HL.t.push(setTimeout(()=>{if(!gotB)mark(i);},tm));tm+=PUNCT.test(t[0])?120:per*t[0].length;});
+    tokens.forEach((t,i)=>{if(i<skip)return;if(i>skip)HL.t.push(setTimeout(()=>{if(!gotB)mark(i);},tm));tm+=PUNCT.test(t[0])?120:per*t[0].length;});
   };
 }
 function sayLines(lines,l){

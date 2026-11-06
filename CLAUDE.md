@@ -150,6 +150,9 @@ names defined in earlier files (inside functions, any file's names can be used).
   the story reader and the podcast list. It uses the voice's word boundary events when sent, otherwise a timing estimate (`HL.msPerChar`).
   Setting `S.settings.hlWord` (default on). After the last line the item is marked done (`plMarkDone`: `chRead`, `podDone`, `tripDone`),
   the main button becomes the next item (`nextAfter`) and Listen tiles show a tick.
+- **Speaker voices** (`spkSkip`, `spokenText`, `spkMap`, `applySpeaker` in js/lessons.js): story lines start with a name and a colon in the text.
+  The name is shown but not spoken (also not in the English podcast lines). Each speaker gets another voice and pitch, in order of first appearance;
+  voices alternate between names that look female and the rest. Pitch is ignored by some phone voices.
 - **Fading furigana** (`furiFor`, inside `glossHTML`): Japanese tokens containing kanji get a `<ruby>` reading,
   converted from the token's romaji with `toHira()`, unless all kanji in the token are learned.
   Setting `S.settings.furi`: `fade` (default), `always`, `never`. Write romaji so `toHira` gives correct kana

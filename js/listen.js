@@ -26,7 +26,8 @@ function podSegs(l,i){
   P("Words","en","First, the new words. Listen, then say each word out loud.");
   t.words.forEach(w=>{P("Words",l,w.w,{rate:0.9,show:`${w.w}  ${w.r}`,tokens:[[w.w,w.r,w.m]],rd:w.r,gap:900});P("Words","en",w.m,{tr:true,gap:1200});});
   P("Story","en","Now the story. Each line is read in the language, then in English.");
-  ch.lines.forEach(s=>{const tx=sentText(s),rd=s.tokens.map(x=>x[1]).filter(Boolean).join(" ");P("Story",l,tx,{rate:0.9,show:`${tx}  ${rd}`,tokens:s.tokens,rd,gap:700});P("Story","en",s.english,{tr:true,gap:900});});
+  const map=spkMap(ch.lines);
+  ch.lines.forEach(s=>{const k=spkSkip(s),tx=sentText(s),rd=s.tokens.map(x=>x[1]).filter(Boolean).join(" "),si=spkIdx(map,s);P("Story",l,spokenText(s),{rate:0.9,show:`${tx}  ${rd}`,tokens:s.tokens,skip:k,si,rd,gap:700});P("Story","en",k?s.english.replace(/^[^:：]{1,30}[:：]\s*/,""):s.english,{tr:true,si,gap:900});});
   P("Questions","en","Now, two questions about the story. Answer in your head.");
   ch.qs.forEach(q=>{P("Questions","en",`${q.question} The options are: ${q.options.join(", ")}.`,{gap:3500});P("Questions","en",`The answer is: ${q.options[q.answer]}.`,{show:`The answer is: ${q.options[q.answer]}. ${q.why}`,gap:900});});
   P("Outro","en",`This is the end of episode ${i+1}.`);
@@ -45,7 +46,8 @@ function podPlay(v){
     if(v.idx>=v.segs.length){v.playing=false;v.finished=true;const pd=S[l].podDone||(S[l].podDone={});if(!pd[v.i]){pd[v.i]=true;histPush(l,"🎧 Episode "+(v.i+1));}save();if(view===v){render();window.scrollTo(0,0);}return;}
     const s=v.segs[v.idx];podMark(v);
     const u=new SpeechSynthesisUtterance(s.text);u.lang=s.lang==="en"?"en-GB":L[s.lang].code;const vc=s.lang==="en"?enVoice():voiceFor(s.lang);if(vc)u.voice=vc;u.rate=s.rate*S.settings.speed;
-    if(s.tokens)hlTrack(u,s.tokens,()=>document.querySelector(`[data-seg="${v.idx}"]`),()=>tok===playTok);
+    if(s.si!=null)applySpeaker(u,s.lang==="en"?voices.filter(x=>/^en/i.test(x.lang)):voicesFor(s.lang),s.si);
+    if(s.tokens)hlTrack(u,s.tokens,()=>document.querySelector(`[data-seg="${v.idx}"]`),()=>tok===playTok,s.skip||0);
     let fin=false;const next=()=>{if(fin||tok!==playTok)return;fin=true;hlClear();if(!v.loop)v.idx++;setTimeout(step,s.gap);};u.onend=next;u.onerror=next;
     speechSynthesis.speak(u);
   };
@@ -147,7 +149,7 @@ function playerLinesPod(l,i){
 }
 function playerLinesTrip(l,i){
   const d=trip(l,i),out=[];
-  d.role.forEach(ref=>{const k=+ref.slice(1);const s=ref[0]==="h"?d._p.hear[k]:d._p.say[k].p;out.push({tokens:s.tokens,english:s.english,label:ref[0]==="h"?"🧑 Local":"🙋 You"});});
+  d.role.forEach(ref=>{const k=+ref.slice(1);const s=ref[0]==="h"?d._p.hear[k]:d._p.say[k].p;out.push({tokens:s.tokens,english:s.english,label:ref[0]==="h"?"🧑 Local":"🙋 You",spk:ref[0]==="h"?"Local":"You"});});
   return out;
 }
 function openPlayer(kind,i){
@@ -177,12 +179,12 @@ function plMarkDone(v){
 function plStop(v){playTok++;try{speechSynthesis.cancel();}catch(e){}v.playing=false;hlClear();}
 function plPlay(v){
   if(!("speechSynthesis" in window)){note("This browser cannot play speech audio.");return;}
-  speechSynthesis.cancel();const tok=++playTok,l=S.lang,vs=voicesFor(l);v.playing=true;v.done=false;render();
+  speechSynthesis.cancel();const tok=++playTok,l=S.lang,vs=voicesFor(l),map=spkMap(v.lines);v.playing=true;v.done=false;render();
   const step=()=>{
     if(tok!==playTok)return;
     if(v.idx>=v.lines.length){v.playing=false;v.done=true;v.idx=v.lines.length-1;hlClear();plMarkDone(v);if(view===v)render();return;}
-    const s=v.lines[v.idx],u=new SpeechSynthesisUtterance(sentText(s));u.lang=L[l].code;if(vs[0])u.voice=vs[0];u.rate=0.9*S.settings.speed;
-    hlTrack(u,s.tokens,()=>document.querySelector(".plline"),()=>tok===playTok);
+    const s=v.lines[v.idx],u=new SpeechSynthesisUtterance(spokenText(s));u.lang=L[l].code;applySpeaker(u,vs,spkIdx(map,s));u.rate=0.9*S.settings.speed;
+    hlTrack(u,s.tokens,()=>document.querySelector(".plline"),()=>tok===playTok,spkSkip(s));
     let fin=false;const next=()=>{if(fin||tok!==playTok)return;fin=true;hlClear();
       if(v.loop){setTimeout(step,700);return;}
       if(v.auto&&v.idx<v.lines.length-1){v.playing=false;v.waiting=true;if(view===v)render();return;}

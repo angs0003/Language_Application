@@ -38,6 +38,16 @@ const check = (ok, msg) => { if (!ok) failures.push(msg); else console.log("ok:"
   W.eval('HL.msPerChar=1;window.__u2={};hlTrack(__u2,view.lines[0].tokens,()=>document.querySelector(".plline"),()=>true);__u2.onstart()'); await wait(300);
   check(spokenIdx() === toks.length - 1, "without boundary events the highlight follows a timing estimate to the last word"); W.eval("HL.msPerChar=220;hlClear()");
   W.eval("S.settings.hlWord=false;window.__u3={};hlTrack(__u3,view.lines[0].tokens,()=>document.querySelector('.plline'),()=>true)"); check(W.eval("__u3.onstart") === undefined, "the highlight can be switched off in settings"); W.eval("S.settings.hlWord=true");
+  // speakers: the name is not spoken; each speaker gets a different voice setting instead
+  check(W.eval("spkSkip(chapter('ja',0).lines[0])") === 2 && W.eval("spokenText(chapter('ja',0).lines[0])") === "おはよう！", "a story line starting with a name and a colon is spoken without them");
+  check(Object.keys(W.eval("spkMap(chapter('ja',0).lines)")).length >= 2, "speakers are numbered in order of appearance");
+  W.eval("window.__sp=[];speechSynthesis.speak=u=>{__sp.push({t:u.text,p:u.pitch});setTimeout(()=>u.onend&&u.onend(),1);};");
+  W.eval('openPlayer("story",0)'); W.eval("plPlay(view)"); await wait(1500); W.eval("plStop(view)");
+  const sp = W.eval("__sp");
+  check(sp.length >= 2 && !/^(けん|ゆい)/.test(sp[0].t) && !/^(けん|ゆい)/.test(sp[1].t), "the player does not say the speaker names");
+  check(sp[0].p !== sp[1].p, "two speakers get different pitch");
+  check(!W.eval("podSegs('ja',0).some(s=>s.part==='Story'&&/^(けん|ゆい)/.test(s.text))") && !W.eval("podSegs('ja',0).some(s=>s.part==='Story'&&s.lang==='en'&&/^(Ken|Yui):/.test(s.text))"), "the podcast does not say speaker names, in the language or in English");
+  check(W.eval("podSegs('ja',0).filter(s=>s.part==='Story'&&s.lang==='ja').some(s=>s.si===0)") && W.eval("podSegs('ja',0).filter(s=>s.part==='Story'&&s.lang==='ja').some(s=>s.si===1)"), "podcast lines carry a speaker number for the voice");
   // the language sets the colours of the whole app (CSS)
   const css = require("fs").readFileSync(require("path").join(__dirname, "..", "index.html"), "utf8");
   check(/body\[data-lang="zh"\]\{--acc:var\(--zh\)/.test(css) && /body,body\[data-lang="ja"\],body\[data-lang="zh"\]\{--acc:var\(--ja\)/.test(css) && !/body\[data-sec=/.test(css), "colours follow the language, not the tab");

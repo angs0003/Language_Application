@@ -204,9 +204,9 @@ function markLine(i){document.querySelectorAll(".line.now").forEach(e=>e.classLi
 function stopAudio(){playTok++;try{speechSynthesis.cancel();}catch(e){}markLine(-1);hlClear();}
 function playStory(lines,l,start){
   if(!("speechSynthesis" in window)){note("This browser cannot play speech audio.");return;}
-  speechSynthesis.cancel();const tok=++playTok,vs=voicesFor(l);
-  lines.slice(start).forEach((x,j)=>{const i=start+j,u=new SpeechSynthesisUtterance(sentText(x));u.lang=L[l].code;if(vs[0])u.voice=vs[0];u.rate=0.9*S.settings.speed;
-    hlTrack(u,x.tokens,()=>document.querySelector(`[data-line="${i}"]`),()=>tok===playTok);const st=u.onstart;
+  speechSynthesis.cancel();const tok=++playTok,vs=voicesFor(l),map=spkMap(lines);
+  lines.slice(start).forEach((x,j)=>{const i=start+j,u=new SpeechSynthesisUtterance(spokenText(x));u.lang=L[l].code;applySpeaker(u,vs,spkIdx(map,x));u.rate=0.9*S.settings.speed;
+    hlTrack(u,x.tokens,()=>document.querySelector(`[data-line="${i}"]`),()=>tok===playTok,spkSkip(x));const st=u.onstart;
     u.onstart=()=>{if(st)st();if(tok===playTok)markLine(i);};if(i===lines.length-1)u.onend=()=>{if(tok===playTok){markLine(-1);hlClear();}};speechSynthesis.speak(u);});
 }
 function openChapter(n){
