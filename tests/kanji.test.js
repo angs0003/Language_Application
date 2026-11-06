@@ -39,6 +39,8 @@ async function solveAll(W, click) { for (let k = 0; k < 60 && !W.eval("view.fini
   W.eval(`traceSubmit(${JSON.stringify(sample(tk.p[1]))})`); check(M().includes("Stroke 3 of 7"), "a correct stroke moves to the next stroke");
   for (let n = 3; n <= 7; n++) W.eval(`traceSubmit(${JSON.stringify(sample(tk.p[n - 1]))})`);
   check(M().includes("All 7 strokes traced.") && W.eval("view.ks") === 7, "tracing the last stroke shows the finished message");
+  check(W.eval("kLearned('私')") === true && M().includes("marked as learned"), "tracing all strokes marks the kanji as learned");
+  const bBefore = W.eval("S.ja.kanji['私'].b"); click("Trace again"); for (let n = 1; n <= 7; n++) W.eval(`traceSubmit(${JSON.stringify(sample(tk.p[n - 1]))})`); check(W.eval("S.ja.kanji['私'].b") === bBefore, "tracing the same kanji again does not add more credit");
   click("Trace again"); check(M().includes("Stroke 1 of 7") && M().includes("Draw stroke 1 of 7"), "Trace again restarts at stroke 1");
   for (let i = 0; i < 4; i++) click("Next kanji");
   check(!M().includes("Practise these") && !!d.querySelector("#nextbtn") && d.getElementById("nextbtn").textContent === "Finish lesson", "the last kanji of the lesson ends with Finish lesson and no quiz");

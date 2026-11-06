@@ -114,11 +114,13 @@ function traceCheck(d,drawn){
 function curKanji(){return view.s==="klearn"?view.list[view.i]:view.s==="kanji"?kanjiByChar(view.c):null;}
 /* Moves to a stroke and clears the tracing state. */
 function kStep(n){view.ks=n;view.tdone=false;view.tmsg="";view.tshow=false;render();}
+/* Tracing every stroke marks the kanji as learned (box 2 or higher). A second completion does not add credit. */
+function kComplete(c){let g=0;while(!kLearned(c)&&g++<2)kSet("kanji",c,true);save();}
 function traceSubmit(pts){
   const v=view,k=curKanji(),ks=v.ks;if(!k||ks==null||v.tdone)return;
   const r=traceCheck(k.p[ks-1],pts);
   if(r.skip)v.tmsg="That line was too short. Draw the whole stroke.";
-  else if(r.ok){v.tshow=false;v.tmsg="";if(ks>=k.n){v.tdone=true;}else v.ks=ks+1;}
+  else if(r.ok){v.tshow=false;v.tmsg="";if(ks>=k.n){v.tdone=true;kComplete(k.c);}else v.ks=ks+1;}
   else v.tmsg="That stroke did not match. Check where the stroke starts and which way it goes, then try again.";
   render();
 }
@@ -136,7 +138,7 @@ function traceSubmit(pts){
 function traceHTML(k,n){
   const v=view,done=!!v.tdone,solid=done?n:n-1;
   const svg=`<div class="kbox tbig"><svg id="trace" class="ksvg" viewBox="0 0 109 109" role="img" aria-label="Drawing box. Draw stroke ${n} of ${k.n} here.">${k.p.map(d=>`<path d="${d}" class="khide"/>`).join("")}${k.p.slice(0,solid).map(d=>`<path d="${d}"/>`).join("")}${v.tshow&&!done?`<path d="${k.p[n-1]}" class="kcur"/>`:""}<path id="tdraw" class="tdraw" d=""/></svg></div>`;
-  const msg=done?`All ${k.n} strokes traced.`:(v.tmsg||`Draw stroke ${n} of ${k.n} in the box, then lift your finger.`);
+  const msg=done?`All ${k.n} strokes traced. This kanji is marked as learned.`:(v.tmsg||`Draw stroke ${n} of ${k.n} in the box, then lift your finger.`);
   const btn=done?`<button class="btn sec full" data-a="${A(()=>kStep(1))}">Trace again</button>`:`<button class="btn sec full" data-a="${A(()=>{view.tshow=true;render();})}">Show this stroke in the box</button>`;
   return `<div class="tarea">${svg}<p class="small tmsg" role="status" style="margin:0;text-align:center">${esc(msg)}</p>${btn}</div>`;
 }
@@ -171,7 +173,7 @@ function screenKanjiLearn(){
   const v=view,k=v.list[v.i];
   const r={row:"title",title:"🈴 New kanji",back:{label:"Back",fn:()=>{if(v.i>0){v.i--;v.ks=null;render();}else goHome();}},main:kanjiCardHTML(k,v.ks)};
   r.prog=`<div class="ptext">Kanji ${v.i+1} of ${v.list.length}: ${esc(k.c)}</div><div class="bar"><i style="width:${Math.round((v.i+1)/v.list.length*100)}%"></i></div>`;
-  r.next=v.i<v.list.length-1?{label:"Next kanji",fn:()=>{v.i++;v.ks=null;render();window.scrollTo(0,0);}}:{label:"Finish lesson",fn:()=>{v.list.forEach(k=>kSet("kanji",k.c,true));save();goHome();}};
+  r.next=v.i<v.list.length-1?{label:"Next kanji",fn:()=>{v.i++;v.ks=null;render();window.scrollTo(0,0);}}:{label:"Finish lesson",fn:()=>{v.list.forEach(k=>{if(!kSeen(k.c))kSet("kanji",k.c,true);});save();goHome();}};
   return r;
 }
 function kanjiQuestions(list){
