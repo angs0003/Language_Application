@@ -68,7 +68,7 @@ Use only for parallel content work, for example Japanese Level 2 Part 2 and Chin
 - `ERRORS.md`: one line per content problem you notice in the app.
 - `docs/ux-notes.md`: notes from the 5-task phone test after each UI change.
 - `docs/decisions/`: one file per decision, so decided questions are not reopened.
-- `.github/workflows/test.yml`: GitHub runs `npm test` and `npm run lint` on every pull request.
+- `.github/workflows/test.yml`: GitHub runs `npm test`, `npm run lint` and the phone tests (`npm run test:phone`) on every pull request.
 - `.github/workflows/deploy.yml`: after a merge to `main`, GitHub tests again, uploads content (only if `content/content.js` changed),
   sets the cache version and publishes the app. If any step fails, nothing is published.
 
