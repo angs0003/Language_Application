@@ -1,0 +1,42 @@
+name: Dictionary
+# Checks every vocabulary word against CC-CEDICT (Chinese) and JMdict (Japanese) when content changes.
+# Report only: it never fails the pull request and never changes files. The report appears in the
+# workflow summary and as one pull request comment that is updated on every run.
+on:
+  pull_request:
+    paths: [content/content.js, tools/check-dictionary.js, tools/dictionary-exceptions.json]
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pull-requests: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - name: Month key for the dictionary cache
+        id: month
+        run: echo "key=$(date -u +%Y-%m)" >> "$GITHUB_OUTPUT"
+      - uses: actions/cache@v4
+        with:
+          path: tmp/dict
+          key: jmdict-${{ steps.month.outputs.key }}
+      - name: Download JMdict (if not cached)
+        run: ls tmp/dict/jmdict-eng-*.json >/dev/null 2>&1 || npm run dict:get
+      - name: Check words
+        run: |
+          node tools/check-dictionary.js --md report.md
+          cat report.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Comment on the pull request
+        if: github.event_name == 'pull_request'
+        run: |
+          N=${{ github.event.pull_request.number }}
+          gh pr comment "$N" --edit-last --body-file report.md || gh pr comment "$N" --body-file report.md

@@ -8,10 +8,13 @@
     "upload": "node tools/upload-content.js",
     "lint": "eslint .",
     "format": "prettier --write tools tests .claude docs README.md CLAUDE.md",
+    "dict": "node tools/check-dictionary.js",
+    "dict:get": "gh release download --repo scriptin/jmdict-simplified --pattern \"jmdict-eng-[0-9]*.json.zip\" --dir tmp/dict --clobber && unzip -o -q \"tmp/dict/jmdict-eng-*.json.zip\" -d tmp/dict",
     "test:phone": "playwright test"
   },
   "devDependencies": {
     "@playwright/test": "1.65.0",
+    "cedict-json": "1.3.20251213",
     "eslint": "9.17.0",
     "jsdom": "24.1.3",
     "prettier": "3.4.2"

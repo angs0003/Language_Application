@@ -1,0 +1,33 @@
+name: Content error
+description: A wrong word, reading, meaning, sentence or video in the app
+labels: [content-error]
+body:
+  - type: dropdown
+    id: lang
+    attributes:
+      label: Language
+      options: [Japanese, Chinese]
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: Where
+      description: Theme, chapter, travel situation or screen, for example "Chapter 12, line 3"
+    validations:
+      required: true
+  - type: textarea
+    id: wrong
+    attributes:
+      label: What is wrong
+      description: Copy the text exactly as the app shows it
+    validations:
+      required: true
+  - type: textarea
+    id: should
+    attributes:
+      label: What it should be
+      description: Leave empty if you do not know
+  - type: markdown
+    attributes:
+      value: To have Claude fix it, write "@claude fix this" in a comment after you create the issue.
