@@ -339,7 +339,7 @@ function screenReview(){
   const r={row:"title",title:v.mis?"Mistakes":"Review",exit:true,prog:`<div class="ptext">${v.mis?"Mistakes":"Review"}: question ${v.i+1} of ${v.qs.length}</div><div class="psub">Each answer is saved when you check it.</div><div class="bar"><i style="width:${Math.round(v.i/v.qs.length*100)}%"></i></div>`,
     main:`<div class="card">${qHTML(q)}</div>`,back:{label:"Back",fn:()=>{v.i--;render();window.scrollTo(0,0);},dis:v.i===0}};
   if(!q.answered){if(q.type==="speak")r.next={label:"Continue",dis:true};else r.next={label:"Check answer",fn:()=>{checkQ(q);render();},dis:!canCheck(q)};}
-  else r.next={label:"Continue",fn:()=>{if(v.mis&&!q.correct&&!q.again){const x=misList(S.lang).find(m=>m.id===q.mid),nq=x&&misRebuild(x,S.lang);q.again=true;if(nq)v.qs.push(nq);}if(v.i>=v.qs.length-1)v.finished=true;else v.i++;render();window.scrollTo(0,0);}};
+  else r.next={label:"Continue",fn:()=>{if(v.mis&&!q.correct&&!q.again){const x=misList(S.lang).find(m=>m.id===q.mid),nq=x&&misRebuild(x,S.lang);q.again=true;if(nq){nq.again=true;v.qs.push(nq);}}if(v.i>=v.qs.length-1)v.finished=true;else v.i++;render();window.scrollTo(0,0);}};
   return r;
 }
 

@@ -101,6 +101,16 @@ const check = (ok, msg) => { if (!ok) failures.push(msg); else console.log("ok:"
   W.eval("view.q.sel=view.q.opts.findIndex(o=>!o.ok);render()"); click("Check answer");
   const nBefore = W.eval("view.qs.length"); click("Continue");
   check(W.eval("S.ja.mis.length") === 2 && W.eval("view.qs.length") === nBefore + 1, "a wrong answer in Mistakes keeps the item and repeats the question");
+  check(W.eval("view.qs[view.qs.length-1].again") === true, "the repeated question is marked again so it is not queued a second time");
+  // one item answered wrongly twice: the session finishes and the item stays
+  W.eval(`S.ja.mis=[];view={s:"review",qs:[],i:0,finished:false};window.__q=__gq();__q.sel=__q.opts.findIndex(o=>!o.ok);checkQ(__q)`);
+  W.eval("startMistakes()");
+  check(W.eval("view.mis") === true && W.eval("view.qs.length") === 1, "a Mistakes session with one item starts with one question");
+  W.eval("view.q.sel=view.q.opts.findIndex(o=>!o.ok);render()"); click("Check answer"); click("Continue");
+  check(W.eval("view.qs.length") === 2 && W.eval("view.finished") === false, "the wrong answer is repeated once at the end");
+  W.eval("view.q.sel=view.q.opts.findIndex(o=>!o.ok);render()"); click("Check answer"); click("Continue");
+  check(W.eval("view.finished") === true && W.eval("view.qs.length") === 2, "a second wrong answer does not queue a third question and the session finishes");
+  check(W.eval("S.ja.mis.length") === 1, "the item stays in Mistakes after two wrong answers");
   W.eval("S.ja.mis=[]");
   // limit of 50 items
   W.eval(`view={s:"review",qs:[],i:0,finished:false};for(let k=0;k<55;k++){const q=mkGramQ({question:"Q"+k,options:["a","b"],answer:0},"ja",true);q.sel=q.opts.findIndex(o=>!o.ok);checkQ(q);}`);
