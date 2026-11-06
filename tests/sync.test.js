@@ -39,6 +39,15 @@ const check = (ok, msg) => { if (!ok) failures.push(msg); else console.log("ok:"
   B.W.eval("S.ja.saved.splice(0,1);save()"); await wait(2200);
   const row = T.word_progress.find(r => r.word === w);
   check(!row || row.saved === false, "removed saved word is no longer saved in the database");
+  // 5. Mistakes: an item on device A reaches the database and device C; removal on C reaches the database.
+  A.W.eval(`view={s:"review",qs:[],i:0,finished:false};(function(){const q=mkGramQ({question:"Sync question?",options:["a","b"],answer:0},"ja",true);q.sel=q.opts.findIndex(o=>!o.ok);checkQ(q);})()`);
+  await wait(2200);
+  check(T.user_settings[0].data.per.ja.mis.length === 1, "a Mistakes item is saved in the database");
+  const c = makeDom({ db: mockDB(store, user), failures }); await ready(c); await wait(300);
+  const C = tools(c, failures);
+  check(C.W.eval("S.ja.mis.length") === 1, "device C receives the Mistakes item");
+  C.W.eval("S.ja.mis=[];save()"); await wait(2200);
+  check(T.user_settings[0].data.per.ja.mis.length === 0, "removing the item on device C reaches the database");
   failures.forEach(f => console.log("FAIL:", f));
   console.log(failures.length ? failures.length + " failure(s)." : "Sync test OK.");
   process.exit(failures.length ? 1 : 0);
