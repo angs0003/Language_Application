@@ -76,6 +76,46 @@ const check = (ok, msg) => { if (!ok) failures.push(msg); else console.log("ok:"
   W.eval("openVocab()"); click("Meaning quiz"); check(W.eval("view.qs[0].type") === "meaning", "meaning quiz starts");
   W.eval("openVocab()"); click("Listen and choose"); check(W.eval("view.qs[0].type") === "listen", "listen and choose starts");
   W.eval("openVocab()"); click("Flashcards"); check(W.eval("view.s") === "cards", "flashcards start");
+  // --- Mistakes ---
+  W.eval("S.ja.mis=[];S.ja.srs={}");
+  W.eval(`window.__gq=()=>mkGramQ({question:"Choose the correct answer.",options:["A1","B1","C1"],answer:0,why:"Test."},"ja",true)`);
+  W.eval(`view={s:"review",qs:[],i:0,finished:false};window.__q=__gq();__q.sel=__q.opts.findIndex(o=>!o.ok);checkQ(__q)`);
+  check(W.eval("S.ja.mis.length") === 1 && W.eval("S.ja.mis[0].k") === "gram", "a wrong grammar answer adds one item to Mistakes");
+  W.eval("window.__q=__gq();dontKnow(__q)"); check(W.eval("S.ja.mis.length") === 1, "the same question answered wrongly again keeps one item");
+  W.eval(`window.__q=mkMatch("ja",allWords("ja").slice(0,3));__q.answered=true;__q.correct=false;onAnswer(__q);window.__q=mkQ("meaning",allWords("ja")[0],"ja");__q.sel=-1;checkQ(__q)`);
+  check(W.eval("S.ja.mis.length") === 1, "a wrong match or meaning answer does not add an item");
+  W.eval(`window.__q=mkGramQ({question:"Kana?",options:["x","y"],answer:0},"ja",true);__q.kk={store:"kana",key:"あ"};__q.sel=__q.opts.findIndex(o=>!o.ok);checkQ(__q)`);
+  check(W.eval("S.ja.mis.length") === 1, "a wrong kana or kanji question does not add an item");
+  W.eval(`view={s:"review",qs:[],i:0,finished:false};(function(){const w=allWords("ja")[0],pool=poolFor("ja",[w]);const s=pool.find(x=>x.tokens.some(z=>z[0]===w.w));window.__b=mkBlank("ja",s,w,pool);})();__b.sel=(__b.ans+1)%__b.opts.length;checkQ(__b)`);
+  check(W.eval("S.ja.mis.length") === 2 && W.eval("S.ja.mis[1].k") === "blank", "a wrong blank answer adds an item");
+  W.eval(`(function(){const w=allWords("ja")[0],pool=poolFor("ja",[w]),c=pool.filter(s=>contentToks(s).length>=2);window.__bd=mkBuild("ja",c[0],"build",pool);})();dontKnow(__bd)`);
+  check(W.eval("S.ja.mis.length") === 3 && W.eval("S.ja.mis[2].k") === "build", "“I do not know” on a build question adds an item");
+  W.eval("goHome()"); tab("Practise"); check(M().includes("3 to repeat"), "the Practise row shows the number of items");
+  const srsBefore = W.eval("JSON.stringify(S.ja.srs)");
+  click("Mistakes"); check(W.eval("view.s") === "review" && W.eval("view.mis") === true && W.eval("view.qs.length") === 3, "Mistakes starts with all 3 items");
+  W.eval("view.i=view.qs.findIndex(q=>q.type==='blank')"); W.eval("render()");
+  W.eval("solve(view.q)"); click("Check answer"); check(W.eval("S.ja.mis.length") === 2, "a correct answer in Mistakes removes the item");
+  check(W.eval("JSON.stringify(S.ja.srs)") === srsBefore, "a blank question in Mistakes does not change word review timing");
+  click("Continue");
+  W.eval("view.i=view.qs.findIndex(q=>q.type==='gram'&&!q.answered)"); W.eval("render()");
+  W.eval("view.q.sel=view.q.opts.findIndex(o=>!o.ok);render()"); click("Check answer");
+  const nBefore = W.eval("view.qs.length"); click("Continue");
+  check(W.eval("S.ja.mis.length") === 2 && W.eval("view.qs.length") === nBefore + 1, "a wrong answer in Mistakes keeps the item and repeats the question");
+  check(W.eval("view.qs[view.qs.length-1].again") === true, "the repeated question is marked again so it is not queued a second time");
+  // one item answered wrongly twice: the session finishes and the item stays
+  W.eval(`S.ja.mis=[];view={s:"review",qs:[],i:0,finished:false};window.__q=__gq();__q.sel=__q.opts.findIndex(o=>!o.ok);checkQ(__q)`);
+  W.eval("startMistakes()");
+  check(W.eval("view.mis") === true && W.eval("view.qs.length") === 1, "a Mistakes session with one item starts with one question");
+  W.eval("view.q.sel=view.q.opts.findIndex(o=>!o.ok);render()"); click("Check answer"); click("Continue");
+  check(W.eval("view.qs.length") === 2 && W.eval("view.finished") === false, "the wrong answer is repeated once at the end");
+  W.eval("view.q.sel=view.q.opts.findIndex(o=>!o.ok);render()"); click("Check answer"); click("Continue");
+  check(W.eval("view.finished") === true && W.eval("view.qs.length") === 2, "a second wrong answer does not queue a third question and the session finishes");
+  check(W.eval("S.ja.mis.length") === 1, "the item stays in Mistakes after two wrong answers");
+  W.eval("S.ja.mis=[]");
+  // limit of 50 items
+  W.eval(`view={s:"review",qs:[],i:0,finished:false};for(let k=0;k<55;k++){const q=mkGramQ({question:"Q"+k,options:["a","b"],answer:0},"ja",true);q.sel=q.opts.findIndex(o=>!o.ok);checkQ(q);}`);
+  check(W.eval("S.ja.mis.length") === 50 && W.eval("S.ja.mis[0].question") === "Q5", "Mistakes keeps at most 50 items and drops the oldest");
+  W.eval("S.ja.mis=[];goHome()");
   // --- Video player ---
   const calls = [];
   W.eval(`window.YT={Player:function(el,o){this.t=0;this.getCurrentTime=()=>this.t;this.setPlaybackRate=r=>window.__calls.push("rate:"+r);this.seekTo=s=>{this.t=s;window.__calls.push("seek:"+s);};this.playVideo=()=>{};this.destroy=()=>{};window.__p=this;}};window.__calls=[];`);

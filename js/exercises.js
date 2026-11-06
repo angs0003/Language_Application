@@ -15,7 +15,29 @@ function mkQ(type,w,l){
 function canCheck(q){if(q.answered)return false;if(q.type==="build")return q.placed.length>0;if(q.type==="meaning"||q.type==="listen"||q.type==="gram"||q.type==="blank")return q.sel!==null;if(q.type==="type")return q.input.trim().length>0;return false;}
 function checkQ(q){if(q.type==="build")checkBuild(q);else if(q.type==="type")q.correct=readingMatch(q.lang,q.input,q.word);else q.correct=q.sel===q.ans;q.answered=true;onAnswer(q);}
 function dontKnow(q){q.dk=true;q.sel=-1;q.answered=true;q.correct=false;onAnswer(q);}
-function onAnswer(q){buzz(q.correct?30:[40,60,40]);if(q.kk){kSet(q.kk.store,q.kk.key,q.correct);save();}else if(q.vitem){const x=q.vitem;x.u=Date.now();x.b=q.correct?Math.min(5,(x.b||0)+1):1;x.d=Date.now()+(q.correct?INTERVAL[x.b]*DAY:0);save();}else if(view.s==="review"&&q.word){srsSet(q.lang,q.word.w,q.correct);save();}if(view.s==="place"){view.streak=q.correct?0:view.streak+1;}}
+/* ---------- Mistakes (sentence and grammar questions answered wrongly) ---------- */
+const MIS_MAX=50;
+function misKind(q){if(q.kk||q.vitem)return null;return q.type==="build"||q.type==="blank"||q.type==="gram"?q.type:null;}
+function misId(q){const k=misKind(q);if(k==="gram")return "gram|"+q.question+"|"+q.opts.map(o=>o.text).sort().join("/");if(k==="build")return "build|"+q.mode+"|"+q.sent.english+"|"+q.answer.join("/");return "blank|"+q.sent.english+"|"+q.idx;}
+function misList(l){return S[l].mis||(S[l].mis=[]);}
+function misSnap(q){const k=misKind(q);
+  if(k==="gram")return {question:q.question,plain:q.plain,why:q.why,big:q.big||"",opts:q.opts.map(o=>({text:o.text,reading:o.reading,english:o.english,ok:o.ok}))};
+  if(k==="build")return {mode:q.mode,sent:q.sent,word:q.word,answer:q.answer,tiles:q.tiles};
+  return {sent:q.sent,idx:q.idx,opts:q.opts,word:q.word};}
+function misAdd(q){const k=misKind(q);if(!k)return;const l=q.lang,id=q.mid||misId(q),list=misList(l);
+  if(list.some(x=>x.id===id))return;
+  list.push(Object.assign({id,k,t:Date.now()},misSnap(q)));while(list.length>MIS_MAX)list.shift();save();}
+function misRemove(l,id){const list=misList(l),i=list.findIndex(x=>x.id===id);if(i>=0){list.splice(i,1);save();}}
+function misRebuild(x,l){
+  try{
+    if(x.k==="gram"){const sh=shuffle(x.opts.map(o=>Object.assign({},o)));const q=mkGramQ({question:x.question,options:sh.map(o=>({text:o.text,reading:o.reading,english:o.english})),answer:sh.findIndex(o=>o.ok),why:x.why},l,x.plain);if(x.big)q.big=x.big;q.mid=x.id;return q;}
+    if(x.k==="build"){if(!x.sent||!x.tiles||!x.answer)return null;return {type:"build",mode:x.mode,lang:l,sent:x.sent,placed:[],word:x.word||null,answered:false,correct:false,sel:null,input:"",answer:x.answer,tiles:shuffle(x.tiles.map(t=>Object.assign({},t))),mid:x.id};}
+    if(x.k==="blank"){if(!x.sent||!x.opts||!x.word)return null;const opts=shuffle(x.opts.map(o=>Object.assign({},o)));return {type:"blank",lang:l,sent:x.sent,idx:x.idx,opts,ans:opts.findIndex(o=>o.text===x.word.w),word:x.word,answered:false,correct:false,sel:null,input:"",mid:x.id};}
+  }catch(e){/* an item that cannot be rebuilt is dropped by the caller */}
+  return null;}
+function misTrack(q){if(view.s==="place"||view.s==="test")return;if(!misKind(q))return;
+  if(q.correct){if(view.mis)misRemove(q.lang,q.mid||misId(q));}else misAdd(q);}
+function onAnswer(q){buzz(q.correct?30:[40,60,40]);misTrack(q);if(q.kk){kSet(q.kk.store,q.kk.key,q.correct);save();}else if(q.vitem){const x=q.vitem;x.u=Date.now();x.b=q.correct?Math.min(5,(x.b||0)+1):1;x.d=Date.now()+(q.correct?INTERVAL[x.b]*DAY:0);save();}else if(view.s==="review"&&!view.mis&&q.word){srsSet(q.lang,q.word.w,q.correct);save();}if(view.s==="place"){view.streak=q.correct?0:view.streak+1;}}
 
 function qHTML(q,opts){
   if(q.type==="match"||q.type==="blank"||q.type==="build")return exHTML(q,opts);

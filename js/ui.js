@@ -128,6 +128,13 @@ function startMixed(any){
   if(!qs.length){note("You have no learned words yet. Start with a lesson in Learn.");return;}
   view={s:"review",qs,i:0,finished:false};render();window.scrollTo(0,0);
 }
+function startMistakes(){
+  const l=S.lang,qs=[],bad=[];
+  misList(l).slice(0,10).forEach(x=>{const q=misRebuild(x,l);if(q)qs.push(q);else bad.push(x.id);});
+  bad.forEach(id=>misRemove(l,id));
+  if(!qs.length){note("You have no mistakes to repeat.");return;}
+  view={s:"review",qs,i:0,finished:false,mis:true};render();window.scrollTo(0,0);
+}
 function homePractise(l,r){
   const dw=dueList(l).length,dk=l==="ja"?kanjiDue().length:0,ds=savedDue(l).length,tot=dw+dk+ds;
   const parts=[dw?`${dw} words`:"",dk?`${dk} kanji`:"",ds?`${ds} saved words`:""].filter(Boolean).join(", ");
@@ -138,6 +145,7 @@ function homePractise(l,r){
   const kanaN=l==="ja"?["hira","kata"].reduce((a,s)=>a+KANA[s].flatMap(x=>x[1]).filter(([c])=>kanaLearned(c)).length,0):0;
   const gd=(S[l].grDone||[]).length;
   let rows=uiRow(uiTileIcon("star"),"My words",`${sv} saved · ${ds} due`,openVocab);
+  const mn=misList(l).length;rows+=uiRow(uiTileIcon("review"),"Mistakes",mn?`${mn} to repeat`:"None to repeat",startMistakes);
   if(l==="ja")rows+=uiRow(uiTileChar("私"),"Kanji",`${kl} of ${kn.length} learned`,()=>openSub("kanji"))+uiRow(uiTileChar("あ"),"Kana",`${kanaN} of 142 learned`,()=>openSub("kana"));
   rows+=uiRow(uiTileIcon("grammar"),"Grammar",`${gd} of ${GR[l].length} points`,()=>openSub("grammar"));
   h+=uiCard(rows,"list");
