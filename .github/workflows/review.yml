@@ -1,0 +1,51 @@
+name: Review
+# Automatic review of every non-draft pull request: security checks and design rules.
+# Posts one comment with numbered findings. It never changes files. Uses Sonnet to save usage.
+# To review only on request instead, delete the "pull_request:" trigger and comment "@claude review" on the pull request.
+on:
+  pull_request:
+    types: [opened, ready_for_review, reopened]
+
+concurrency:
+  group: review-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - uses: anthropics/claude-code-action@v1
+        env:
+          GH_TOKEN: ${{ github.token }}
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # Pull requests that Claude itself opens are reviewed too.
+          allowed_bots: "claude[bot]"
+          prompt: |
+            Review pull request #${{ github.event.pull_request.number }} of ${{ github.repository }}. Do not edit any file.
+            1. Run: git diff --stat origin/${{ github.base_ref }}...HEAD and git diff origin/${{ github.base_ref }}...HEAD to see the change.
+            2. Apply the security-reviewer checklist (.claude/agents/security-reviewer.md) to the changed files.
+            3. If any file in js/ or index.html changed, apply the /design-check rules (.claude/commands/design-check.md) to the changed screens and run node tests/smoke.js.
+            4. If content/content.js changed, run node tools/validate-content.js and apply the content-reviewer checklist (.claude/agents/content-reviewer.md) to the changed lines only.
+            5. Flag any change to .github/workflows/ or .claude/settings.json as "needs owner attention", with one line on what it allows.
+            Post exactly one comment with: gh pr comment ${{ github.event.pull_request.number }} --body-file <file>.
+            Comment format: a heading "Automatic review", then numbered findings, most serious first, each as "file, location, problem, suggested fix", then one line: "Ready to merge" or "Not ready to merge".
+            Write literally: no idioms; state confidence levels.
+          claude_args: |
+            --model sonnet
+            --max-turns 25
+            --allowedTools "Read,Grep,Glob,Write,Bash(git diff *),Bash(git log *),Bash(node tests/smoke.js),Bash(node tools/validate-content.js),Bash(npm audit *),Bash(gh pr comment *),Bash(gh pr view *)"

@@ -221,16 +221,20 @@ readings from KANJI_JA sources), `validate-content.js` (everything, also run by 
 
 ## 9. Team setup in .claude/
 
-Commands: `/add-part`, `/check-content`, `/design-check`, `/release` (`.claude/commands/`). Subagents: `content-writer`,
-`content-reviewer`, `ui-engineer`, `test-runner`, `release-manager`, `coach`, `security-reviewer` (runs inside `/release`),
-`data-engineer` (owns supabase.sql, js/sync.js, normalize() defaults and the sync tests) (`.claude/agents/`). Hooks (`.claude/settings.json`):
-the content validator runs after edits to `content/content.js`, and `npm test` must pass before commit, push or upload.
+Commands (`.claude/commands/`): `/add-part`, `/check-content`, `/design-check`, `/release`, `/add-video`, `/curate-videos`,
+`/retro`, `/maintain`, `/ux-review`, `/content-report` (local only), `/content-gaps` (safe for public logs).
+Subagents (`.claude/agents/`, 10): `planner` (read-only; writes the plan before any change), `content-writer`, `content-reviewer`,
+`ui-engineer`, `test-runner`, `release-manager`, `coach`, `security-reviewer` (runs inside `/release`), `video-curator`
+(VIDS and TVREC only), `data-engineer` (owns supabase.sql, js/sync.js, normalize() defaults and the sync tests).
+Hooks (`.claude/settings.json`): the content validator runs after edits to `content/content.js`, and `npm test` must pass
+before commit, push or upload.
 Improvement loop: `/retro` after every release (coach subagent proposes edits to this file, the agents, the commands and the
-tests, with evidence), `/maintain` monthly, `/ux-review` quarterly, `/content-report` monthly. Inputs: `ERRORS.md`,
+tests, with evidence), `/maintain` and `/content-gaps` monthly (automatic, see section 12), `/ux-review` quarterly,
+`/content-report` monthly on the owner's computer. Inputs: GitHub issues (label `content-error` for content problems),
 `docs/ux-notes.md`, `docs/decisions/`. Delivery (decision 0004): agents work on a branch and open a pull request;
 GitHub Actions runs `test` on the pull request; `main` accepts changes only through a pull request with a green `test` check;
 after the owner merges, `deploy.yml` tests again, uploads content, sets `CACHE` and publishes to GitHub Pages.
-Guide for the owner: `docs/claude-code-team.md`. Keep these files consistent with sections 3, 6 and 8 when rules change.
+Guide for the owner: `docs/claude-code-team.md`. Keep these files consistent with sections 3, 6, 8 and 12 when rules change.
 
 ## 10. Roadmap (agreed order)
 
@@ -269,3 +273,19 @@ mistakes review for sentences and grammar; Chinese character (hanzi) lessons lik
 3. Vibration does not work on iPhone browsers.
 4. Content was written without a native-speaker review. If the owner reports an error,
    fix it in `content.js` and re-run the checks.
+
+## 12. Working unattended in GitHub (decision 0005)
+
+The repository is public: every Actions log, comment and pull request is public.
+
+1. **Triggers:** `claude.yml` (the owner writes `@claude` in an issue or comment), `review.yml` (every non-draft pull request),
+   `monthly.yml` (1st of every month: `/maintain` and `/content-gaps`, each opens an issue). Login: the owner's
+   Claude subscription token (`CLAUDE_CODE_OAUTH_TOKEN`). These workflows never receive the Supabase secrets.
+2. **Plan first:** for anything that is not a small fix (under 30 changed lines, one file, no behaviour change), use the
+   `planner` subagent, post the plan as a comment and stop. Build only after the owner comments `@claude approved`.
+3. **One issue, one branch, one pull request.** Branch names: `content/...`, `feature/...`, `fix/...`, `chore/...`.
+   The pull request description lists the changes in numbered points and contains `Closes #N`.
+4. **Never:** push to `main`, run `npm run upload`, change `CACHE`, edit `.github/workflows/` or `.claude/settings.json`
+   unless the issue names the file, read the database, or print environment variables.
+5. **Reports** (monthly runs, reviews) change no files. The owner acts on them with `@claude do items N and M`.
+6. **Personal data** (learning progress) is never read in GitHub Actions. `/content-report` runs only on the owner's computer.

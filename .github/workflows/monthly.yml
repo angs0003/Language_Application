@@ -1,0 +1,48 @@
+name: Monthly
+# On the 1st of every month (21:17 UTC, which is 08:17 on the 2nd in Melbourne during daylight saving),
+# Claude runs /maintain and /content-gaps and opens one issue for each with the report.
+# Nothing is changed. To act on a report, comment on its issue, for example "@claude do items 1 and 3".
+# Run it by hand from Actions -> Monthly -> Run workflow.
+on:
+  schedule:
+    - cron: "17 21 1 * *"
+  workflow_dispatch:
+
+concurrency:
+  group: claude
+  cancel-in-progress: false
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      max-parallel: 1
+      matrix:
+        include:
+          - command: /maintain
+            title: "Monthly maintenance report"
+            label: maintenance
+          - command: /content-gaps
+            title: "Monthly content gaps report"
+            label: content-gaps
+    permissions:
+      contents: read
+      issues: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - uses: anthropics/claude-code-action@v1
+        env:
+          GH_TOKEN: ${{ github.token }}
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: ${{ matrix.command }}
+          claude_args: |
+            --max-turns 40
+            --allowedTools "Read,Grep,Glob,Write,WebSearch,WebFetch,Bash(node tools/validate-content.js),Bash(npm outdated *),Bash(npm audit *),Bash(git log *),Bash(gh issue list *),Bash(gh issue create *)"
+            --append-system-prompt "You run unattended on a schedule. Do not wait for approval and do not change any repository file. When the report is complete, write it to report.md and create one issue with: gh issue create --title '${{ matrix.title }} (YYYY-MM)' --label ${{ matrix.label }} --body-file report.md, using the current year and month. End the report with: 'To act on items, comment @claude do items N and M.'"

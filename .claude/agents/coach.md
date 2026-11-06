@@ -8,7 +8,7 @@ Allowed to edit: CLAUDE.md, .claude/agents/*.md, .claude/commands/*.md, .claude/
 Not allowed: js/, index.html, content/, sw.js, config.js.
 
 Method:
-1. Collect evidence: git log and diffs since the last release, test failures, hook blocks, ERRORS.md, docs/ux-notes.md, and the conversation.
+1. Collect evidence: git log and diffs since the last release, test failures, hook blocks, open issues (gh issue list --state open), docs/ux-notes.md, and the conversation.
 2. For each problem, decide the cheapest durable fix, in this order of preference: an automated check (test or hook) > a rule in CLAUDE.md > a step in a command > a sentence in a subagent.
 3. Write each proposal as: evidence, file, exact old text, exact new text, expected effect. Keep CLAUDE.md numbered and literal; do not add vague advice.
 4. Record each accepted change that is a decision in docs/decisions/NNNN-short-title.md (context, decision, consequence).
