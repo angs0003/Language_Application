@@ -24,9 +24,9 @@ function podSegs(l,i){
   const P=(part,lang,text,o)=>segs.push(Object.assign({part,lang,text,show:text,rate:1,gap:500,tr:false},o||{}));
   P("Intro","en",`Welcome to the Language Steps podcast. Episode ${i+1}: ${t.title}. Today you will hear ${t.words.length} words, then the story ${ch.title}.`);
   P("Words","en","First, the new words. Listen, then say each word out loud.");
-  t.words.forEach(w=>{P("Words",l,w.w,{rate:0.9,show:`${w.w}  ${w.r}`,gap:900});P("Words","en",w.m,{tr:true,gap:1200});});
+  t.words.forEach(w=>{P("Words",l,w.w,{rate:0.9,show:`${w.w}  ${w.r}`,tokens:[[w.w,w.r,w.m]],rd:w.r,gap:900});P("Words","en",w.m,{tr:true,gap:1200});});
   P("Story","en","Now the story. Each line is read in the language, then in English.");
-  ch.lines.forEach(s=>{const tx=sentText(s),rd=s.tokens.map(x=>x[1]).filter(Boolean).join(" ");P("Story",l,tx,{rate:0.9,show:`${tx}  ${rd}`,gap:700});P("Story","en",s.english,{tr:true,gap:900});});
+  ch.lines.forEach(s=>{const tx=sentText(s),rd=s.tokens.map(x=>x[1]).filter(Boolean).join(" ");P("Story",l,tx,{rate:0.9,show:`${tx}  ${rd}`,tokens:s.tokens,rd,gap:700});P("Story","en",s.english,{tr:true,gap:900});});
   P("Questions","en","Now, two questions about the story. Answer in your head.");
   ch.qs.forEach(q=>{P("Questions","en",`${q.question} The options are: ${q.options.join(", ")}.`,{gap:3500});P("Questions","en",`The answer is: ${q.options[q.answer]}.`,{show:`The answer is: ${q.options[q.answer]}. ${q.why}`,gap:900});});
   P("Outro","en",`This is the end of episode ${i+1}.`);
@@ -35,7 +35,7 @@ function podSegs(l,i){
 function enVoice(){return voices.find(v=>/^en[-_](AU|GB)/i.test(v.lang))||voices.find(v=>/^en/i.test(v.lang));}
 function openPod(i){view={s:"pod",i,segs:podSegs(S.lang,i),idx:0,playing:false,slow:false,finished:false};render();window.scrollTo(0,0);}
 function podMark(v){document.querySelectorAll(".seg.now").forEach(e=>e.classList.remove("now"));const el=document.querySelector(`[data-seg="${v.idx}"]`);if(el){el.classList.add("now");if(el.scrollIntoView)el.scrollIntoView({block:"center"});}const pt=document.getElementById("podpart");if(pt&&v.segs[v.idx])pt.textContent=`Part ${POD_PARTS.indexOf(v.segs[v.idx].part)+1} of 5: ${v.segs[v.idx].part}`;}
-function podStop(v){playTok++;try{speechSynthesis.cancel();}catch(e){}v.playing=false;}
+function podStop(v){playTok++;try{speechSynthesis.cancel();}catch(e){}v.playing=false;hlClear();}
 function podPlay(v){
   if(!("speechSynthesis" in window)){note("This browser cannot play speech audio.");return;}
   speechSynthesis.cancel();const tok=++playTok,l=S.lang;v.playing=true;render();
@@ -45,7 +45,8 @@ function podPlay(v){
     if(v.idx>=v.segs.length){v.playing=false;v.finished=true;const pd=S[l].podDone||(S[l].podDone={});if(!pd[v.i]){pd[v.i]=true;histPush(l,"🎧 Episode "+(v.i+1));}save();if(view===v){render();window.scrollTo(0,0);}return;}
     const s=v.segs[v.idx];podMark(v);
     const u=new SpeechSynthesisUtterance(s.text);u.lang=s.lang==="en"?"en-GB":L[s.lang].code;const vc=s.lang==="en"?enVoice():voiceFor(s.lang);if(vc)u.voice=vc;u.rate=s.rate*S.settings.speed;
-    let fin=false;const next=()=>{if(fin||tok!==playTok)return;fin=true;if(!v.loop)v.idx++;setTimeout(step,s.gap);};u.onend=next;u.onerror=next;
+    if(s.tokens)hlTrack(u,s.tokens,()=>document.querySelector(`[data-seg="${v.idx}"]`),()=>tok===playTok);
+    let fin=false;const next=()=>{if(fin||tok!==playTok)return;fin=true;hlClear();if(!v.loop)v.idx++;setTimeout(step,s.gap);};u.onend=next;u.onerror=next;
     speechSynthesis.speak(u);
   };
   step();
@@ -62,8 +63,8 @@ function screenPod(){
   const r={row:"title",title:`🎧 Episode ${v.i+1}: ${t.title}`,back:{label:"Back",fn:()=>{podStop(v);goHome();}},main:""};
   if(v.finished){
     r.prog=`<div class="ptext">Episode finished</div>`;
-    r.main=`<div class="card tint"><h2>✅ Episode ${v.i+1} finished</h2><p style="margin:0">${esc(t.title)}</p></div>${recsHTML(l,{k:"pod",ti:v.i})}`;
-    r.next={label:"Play again",fn:()=>{v.finished=false;v.idx=0;podPlay(v);}};return r;
+    r.main=`<div class="card tint"><h2>✅ Episode ${v.i+1} finished</h2><p style="margin:0">${esc(t.title)}</p><p class="small muted" style="margin:0">This episode is marked as listened.</p><button class="btn link" data-a="${A(()=>{v.finished=false;v.idx=0;podPlay(v);})}">Play again</button></div>`;
+    r.next=nextAfter("pod",v.i,true);return r;
   }
   const cs=v.segs[v.idx]||v.segs[0];
   r.prog=`<div class="ptext" id="podpart">Part ${POD_PARTS.indexOf(cs.part)+1} of 5: ${cs.part}</div><div class="psub">The line being played is highlighted.</div>`;
@@ -73,7 +74,7 @@ function screenPod(){
   let last="";
   v.segs.forEach((s,k)=>{if(s.part!==last){last=s.part;h+=`<p class="q" style="margin-top:10px">${POD_PARTS.indexOf(s.part)+1}. ${s.part}</p>`;}
     if(s.tr&&!S.settings.podEn)return;if(S.settings.sub==="none")return;if(S.settings.sub==="target"&&s.lang==="en")return;
-    h+=`<div class="seg${k===v.idx&&(v.playing||v.idx>0)?" now":""}" data-seg="${k}"><span class="small muted">${s.lang==="en"?"Host":"🗣️"}</span> <span ${s.lang!=="en"?`lang="${L[l].hl}" class="cjk2"`:""}>${esc(s.show)}</span></div>`;});
+    h+=`<div class="seg${k===v.idx&&(v.playing||v.idx>0)?" now":""}" data-seg="${k}"><span class="small muted">${s.lang==="en"?"Host":"🗣️"}</span> ${s.tokens&&s.lang!=="en"?`<span lang="${L[l].hl}" class="cjk2">${s.tokens.map(t=>`<span class="tk pl">${esc(t[0])}</span>`).join("")}</span> <span class="small muted">${esc(s.rd||"")}</span>`:`<span ${s.lang!=="en"?`lang="${L[l].hl}" class="cjk2"`:""}>${esc(s.show)}</span>`}</div>`;});
   h+=`</div>`;
   r.main=h;
   r.next=v.playing?{label:"⏸️ Pause",fn:()=>{podStop(v);render();}}:{label:v.idx>0?"▶️ Resume":"▶️ Play episode",fn:()=>podPlay(v)};
@@ -157,17 +158,34 @@ function openPlayer(kind,i){
   S[l].lastListen={kind,i};save();
   stopAudio();view={s:"player",kind,i,lines,title,idx:0,playing:false,loop:false,auto:!!S.settings.autoPause,done:false};render();window.scrollTo(0,0);
 }
-function plStop(v){playTok++;try{speechSynthesis.cancel();}catch(e){}v.playing=false;}
+/* The item after this one, for the Next button once playback has finished. list=true opens the list view instead of the player. */
+function nextAfter(kind,i,list){
+  const l=S.lang,ths=themes(l),n=i+1;let ok=false,label="",fn;
+  if(kind==="pod"){ok=!!(ths[n]&&ths[n].words&&chapter(l,n));label="Next episode";fn=list?()=>openPod(n):()=>openPlayer("pod",n);}
+  else if(kind==="story"){ok=!!(ths[n]&&ths[n].words&&chapter(l,n)&&ths[n].words.every(w=>isL(l,w)));label="Next chapter";fn=list?()=>openChapter(n):()=>openPlayer("story",n);}
+  else{ok=n<TRIP[l].length;label="Next situation";fn=()=>openPlayer("trip",n);}
+  return ok?{label,fn}:{label:"Back to Listen",fn:()=>setTab("listen")};
+}
+/* Marks a story, podcast episode or travel conversation as done after it was played to the end. */
+function plMarkDone(v){
+  const l=S.lang,i=v.i;
+  if(v.kind==="story"){const rd=S[l].chRead||(S[l].chRead=[]);if(!rd.includes(i)){rd.push(i);histPush(l,"📖 Chapter "+(i+1));}}
+  else if(v.kind==="pod"){const pd=S[l].podDone||(S[l].podDone={});if(!pd[i]){pd[i]=true;histPush(l,"🎧 Episode "+(i+1));}}
+  else{const td=S[l].tripDone||(S[l].tripDone={});td[i]=true;}
+  save();
+}
+function plStop(v){playTok++;try{speechSynthesis.cancel();}catch(e){}v.playing=false;hlClear();}
 function plPlay(v){
   if(!("speechSynthesis" in window)){note("This browser cannot play speech audio.");return;}
   speechSynthesis.cancel();const tok=++playTok,l=S.lang,vs=voicesFor(l);v.playing=true;v.done=false;render();
   const step=()=>{
     if(tok!==playTok)return;
-    if(v.idx>=v.lines.length){v.playing=false;v.done=true;v.idx=v.lines.length-1;if(view===v)render();return;}
+    if(v.idx>=v.lines.length){v.playing=false;v.done=true;v.idx=v.lines.length-1;hlClear();plMarkDone(v);if(view===v)render();return;}
     const s=v.lines[v.idx],u=new SpeechSynthesisUtterance(sentText(s));u.lang=L[l].code;if(vs[0])u.voice=vs[0];u.rate=0.9*S.settings.speed;
-    let fin=false;const next=()=>{if(fin||tok!==playTok)return;fin=true;
+    hlTrack(u,s.tokens,()=>document.querySelector(".plline"),()=>tok===playTok);
+    let fin=false;const next=()=>{if(fin||tok!==playTok)return;fin=true;hlClear();
       if(v.loop){setTimeout(step,700);return;}
-      if(v.auto){v.playing=false;v.waiting=true;if(view===v)render();return;}
+      if(v.auto&&v.idx<v.lines.length-1){v.playing=false;v.waiting=true;if(view===v)render();return;}
       v.idx++;if(view===v&&v.idx<v.lines.length)render();setTimeout(step,600);};
     u.onend=next;u.onerror=next;speechSynthesis.speak(u);
   };
@@ -181,12 +199,12 @@ function screenPlayer(){
   let screen;
   if(m==="none")screen=`<p class="plhide">Text hidden (listening only)</p>`;
   else screen=`<div class="plline">${glossHTML(l,s.tokens,[],m==="target")}</div>${m==="both"&&S.settings.showEnglish&&s.english?`<p class="plen">${esc(s.english)}</p>`:""}`;
-  r.main=`<div class="card plscreen" aria-live="polite">${screen}${v.done?`<p class="small center" style="margin-top:12px"><strong>✅ Finished. Tap “Play from the start” to listen again.</strong></p>`:""}${v.waiting?`<p class="small center muted" style="margin-top:12px">Auto-pause: tap “⏭️ Next line” or “▶️ Play”.</p>`:""}</div>
+  r.main=`<div class="card plscreen" aria-live="polite">${screen}${v.done?`<p class="small center" style="margin-top:12px"><strong>✅ Finished. This ${({story:"chapter",pod:"episode",trip:"conversation"})[v.kind]} is marked as done.</strong></p><p class="center" style="margin:0"><button class="btn link" data-a="${A(()=>{v.idx=0;plPlay(v);})}">Play again</button></p>`:""}${v.waiting?`<p class="small center muted" style="margin-top:12px">Auto-pause: tap “⏭️ Next line” or “▶️ Play”.</p>`:""}</div>
   <div class="card"><div class="inline" style="justify-content:space-between"><button class="btn sec" ${v.idx===0?"disabled":""} data-a="${A(()=>plGo(v,-1))}">⏮️ Previous line</button><button class="btn sec" ${v.idx>=v.lines.length-1?"disabled":""} data-a="${A(()=>{v.waiting=false;plGo(v,1);})}">Next line ⏭️</button></div>
   <div class="inline" style="margin-top:10px"><button class="play" aria-pressed="${v.loop}" data-a="${A(()=>{v.loop=!v.loop;render();})}">🔁 Loop line: ${v.loop?"on":"off"}</button><button class="play" aria-pressed="${v.auto}" data-a="${A(()=>{v.auto=!v.auto;S.settings.autoPause=v.auto;save();render();})}">⏸️ Auto-pause after each line: ${v.auto?"on":"off"}</button></div>
   <div style="margin-top:10px">${speedHTML()}</div><div style="margin-top:8px">${subChips()}</div>
   <p class="small muted" style="margin:10px 0 0">Tap any word to see its meaning and ⭐ save it. Playback pauses while the word card is open.</p></div>`;
-  r.next=v.playing?{label:"⏸️ Pause",fn:()=>{plStop(v);render();}}:v.done?{label:"▶️ Play from the start",fn:()=>{v.idx=0;plPlay(v);}}:{label:v.waiting?"▶️ Play next line":"▶️ Play",fn:()=>{if(v.waiting){v.waiting=false;v.idx=Math.min(v.lines.length-1,v.idx+1);}plPlay(v);}};
+  r.next=v.playing?{label:"⏸️ Pause",fn:()=>{plStop(v);render();}}:v.done?nextAfter(v.kind,v.i):{label:v.waiting?"▶️ Play next line":"▶️ Play",fn:()=>{if(v.waiting){v.waiting=false;v.idx=Math.min(v.lines.length-1,v.idx+1);}plPlay(v);}};
   return r;
 }
 

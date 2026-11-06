@@ -157,12 +157,12 @@ function homeListen(l,r){
     if(fn)h+=uiCard(`<div class="nxt">${uiTileChar(ch,true)}<span class="lrt">${uiLabel("CONTINUE")}<span class="nxh">${esc(title)}</span></span><button class="playbig" aria-label="Play" data-a="${A(fn)}">${ico("play",24)}</button></div>`,"hero");}
   const tiles=[];
   const lvIdx=ths.map((t,i)=>i).filter(i=>lvOfTheme(l,i)===lv);
-  if(f==="all"||f==="stories")lvIdx.forEach(i=>{const t=ths[i],un=t.words.every(w=>isL(l,w));if(un&&chapter(l,i))tiles.push({k:"Story",ch:[...t.words[0].w][0],t:chapter(l,i).title,m:`${chapter(l,i).lines.length} lines`,fn:()=>openPlayer("story",i)});});
-  if(f==="all"||f==="podcast")lvIdx.slice(0,f==="all"?4:99).forEach(i=>{const t=ths[i];tiles.push({k:"Podcast",ch:[...t.words[0].w][0],t:"Episode "+(i+1)+": "+t.title,m:(st.podDone||{})[i]?"Listened":"Words and story",fn:()=>openPod(i)});});
+  if(f==="all"||f==="stories")lvIdx.forEach(i=>{const t=ths[i],un=t.words.every(w=>isL(l,w));if(un&&chapter(l,i))tiles.push({k:"Story",ch:[...t.words[0].w][0],t:chapter(l,i).title,m:(st.chRead||[]).includes(i)?"Listened":`${chapter(l,i).lines.length} lines`,done:(st.chRead||[]).includes(i),fn:()=>openPlayer("story",i)});});
+  if(f==="all"||f==="podcast")lvIdx.slice(0,f==="all"?4:99).forEach(i=>{const t=ths[i];tiles.push({k:"Podcast",ch:[...t.words[0].w][0],t:"Episode "+(i+1)+": "+t.title,m:(st.podDone||{})[i]?"Listened":"Words and story",done:!!(st.podDone||{})[i],fn:()=>openPod(i)});});
   if(f==="all"||f==="video"){(VIDS[l]||[]).filter(x=>x.id&&(!x.lvn||x.lvn<=lv)).forEach(x=>tiles.push({k:"Video",ico:"video",t:x.title,m:[x.len,x.ch].filter(Boolean).join(" · "),fn:()=>openVideo(x.id)}));
     (st.videos||[]).forEach(x=>tiles.push({k:"Video",ico:"video",t:x.title,m:x.watched?"Watched":"Your video",fn:()=>openVideo(x.id)}));}
   h+=`<div class="sechd"><h2>For ${esc((LEVELS[l][lv-1]||["Level "+lv])[0])}</h2></div>`;
-  h+=tiles.length?`<div class="tgrid">${tiles.map(x=>`<button class="tile" data-a="${A(x.fn)}"><span class="tart" ${x.ch?`lang="${L[l].hl}"`:""}>${x.ch?esc(x.ch):ico(x.ico||"play",34)}<span class="tkind">${esc(x.k)}</span></span><span class="tt">${esc(x.t)}</span><span class="tm">${esc(x.m||"")}</span></button>`).join("")}</div>`
+  h+=tiles.length?`<div class="tgrid">${tiles.map(x=>`<button class="tile" data-a="${A(x.fn)}"><span class="tart" ${x.ch?`lang="${L[l].hl}"`:""}>${x.ch?esc(x.ch):ico(x.ico||"play",34)}<span class="tkind">${esc(x.k)}</span>${x.done?`<span class="tdone">${STATUS.ok}</span>`:""}</span><span class="tt">${esc(x.t)}</span><span class="tm">${esc(x.m||"")}</span></button>`).join("")}</div>`
     :uiCard(`<p style="margin:0" class="muted">${f==="stories"?"Story chapters unlock when you learn all words of their theme.":"Nothing here yet."}</p>`);
   if(f==="all"||f==="video")h+=uiCard(uiRow(uiTileIcon("plus"),"Add a video","Paste a YouTube link, then watch it here",()=>openSub("watchadd")),"list")+tvCard(l,lv);
   r.main=h;

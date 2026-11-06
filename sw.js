@@ -1,6 +1,6 @@
 /* Offline support. Increase CACHE (for example to "ls-v3") every time you change
    index.html, js/*.js or content/content.js, so phones download the new version. */
-const CACHE = "ls-v7";
+const CACHE = "ls-v8";
 const CORE = ["./", "./index.html", "./js/core.js", "./js/exercises.js", "./js/lessons.js", "./js/sections.js", "./js/exercise-types.js", "./js/path.js", "./js/listen.js", "./js/kanji.js", "./js/sync.js", "./js/ui.js", "./js/loader.js", "./js/content-rows.js", "./content/content.js",
   "./config.js", "./manifest.json", "./icon-192.png", "./icon-512.png"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE))); self.skipWaiting(); });

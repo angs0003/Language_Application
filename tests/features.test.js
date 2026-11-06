@@ -19,6 +19,28 @@ const check = (ok, msg) => { if (!ok) failures.push(msg); else console.log("ok:"
   check(W.eval("view.done") === true, "player plays to the end without auto-pause");
   click("No text"); check(M().includes("Text hidden"), "no-text mode hides the line"); click("Both languages");
   W.eval('openPlayer("pod",0)'); check(W.eval("view.lines.length") > 6, "podcast episode opens in the player");
+  // finishing: marked as done, Next button, tick on the Listen tile
+  check(W.eval("S.ja.chRead.includes(0)") === true, "a story played to the end is marked as read");
+  W.eval('openPlayer("pod",0)'); W.eval("view.idx=view.lines.length-1;plPlay(view)"); await wait(1200);
+  check(W.eval("S.ja.podDone[0]") === true && W.eval("view.done") === true && M().includes("marked as done"), "a podcast episode played to the end is marked as listened");
+  check(d.getElementById("nextbtn").textContent === "Next episode", "after the episode the main button is Next episode");
+  d.getElementById("nextbtn").click(); check(W.eval("view.s") === "player" && W.eval("view.kind") === "pod" && W.eval("view.i") === 1, "Next episode opens episode 2");
+  check(W.eval("nextAfter('trip',0).label") === "Next situation", "a travel conversation offers Next situation");
+  check(W.eval("nextAfter('trip',TRIP.ja.length-1).label") === "Back to Listen", "the last item ends with Back to Listen");
+  W.eval("setTab('listen')"); check(!!d.querySelector(".tile .tdone"), "a listened episode shows a tick on its Listen tile");
+  // spoken-word highlight
+  W.eval('openPlayer("story",0)');
+  const toks = W.eval("view.lines[0].tokens"), spokenIdx = () => [...d.querySelectorAll(".plline .tk")].findIndex(e => e.classList.contains("spoken"));
+  W.eval('window.__u={};hlTrack(__u,view.lines[0].tokens,()=>document.querySelector(".plline"),()=>true);__u.onstart()');
+  check(spokenIdx() === 0, "the first word is highlighted when speech starts");
+  W.eval(`__u.onboundary({name:"word",charIndex:${toks[0][0].length}})`); check(spokenIdx() === 1, "a word boundary event moves the highlight to that word");
+  W.eval("hlClear()"); check(spokenIdx() === -1, "the highlight is removed when speech stops");
+  W.eval('HL.msPerChar=1;window.__u2={};hlTrack(__u2,view.lines[0].tokens,()=>document.querySelector(".plline"),()=>true);__u2.onstart()'); await wait(300);
+  check(spokenIdx() === toks.length - 1, "without boundary events the highlight follows a timing estimate to the last word"); W.eval("HL.msPerChar=220;hlClear()");
+  W.eval("S.settings.hlWord=false;window.__u3={};hlTrack(__u3,view.lines[0].tokens,()=>document.querySelector('.plline'),()=>true)"); check(W.eval("__u3.onstart") === undefined, "the highlight can be switched off in settings"); W.eval("S.settings.hlWord=true");
+  // the language sets the colours of the whole app (CSS)
+  const css = require("fs").readFileSync(require("path").join(__dirname, "..", "index.html"), "utf8");
+  check(/body\[data-lang="zh"\]\{--acc:var\(--zh\)/.test(css) && /body,body\[data-lang="ja"\],body\[data-lang="zh"\]\{--acc:var\(--ja\)/.test(css) && !/body\[data-sec=/.test(css), "colours follow the language, not the tab");
   W.eval('openPlayer("trip",0)'); check(M().includes("Local") || d.getElementById("prog").textContent.includes("Local"), "travel conversation opens in the player with speaker labels");
   // tap a word in the player and save it with its sentence
   W.eval('openPlayer("story",1)'); d.querySelector(".plline .tk:not(.pu)").click(); click("Save word");

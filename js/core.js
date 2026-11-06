@@ -24,7 +24,7 @@ const DAY=864e5, INTERVAL=[0,1,2,4,8,16];
 /* ---------- State and saving ---------- */
 const KEY="language-steps-v1";
 const blank=()=>({placed:false,unit:0,done:[],srs:{},custom:[],gen:{},gi:0,ref:{},lc:0,chRead:[],talkDone:{},tripDone:{},tripOpen:{},podDone:{},hist:[],lst:0,lastLesson:[],saved:[],videos:[],videosWatched:{},kana:{},kanji:{}});
-const DEF={showReading:true,showEnglish:true,slow:false,speaking:true,speakMode:"",size:5,gloss:false,vib:true,podEn:true,speed:1,sub:"both",autoPause:false,furi:"fade"};
+const DEF={showReading:true,showEnglish:true,slow:false,speaking:true,speakMode:"",size:5,gloss:false,vib:true,podEn:true,speed:1,sub:"both",autoPause:false,furi:"fade",hlWord:true};
 function normalize(d){const s={v:1,updatedAt:d.updatedAt||0,lang:d.lang==="ja"?"ja":"zh",tab:d.tab||"path",lastActive:d.lastActive||0,settings:Object.assign({},DEF,d.settings||{}),zh:Object.assign(blank(),d.zh||{}),ja:Object.assign(blank(),d.ja||{})};return s;}
 let S=normalize({});
 try{const t=localStorage.getItem(KEY);if(t){const d=JSON.parse(t);if(d&&d.v===1)S=normalize(d);}}catch(e){}

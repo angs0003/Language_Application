@@ -201,12 +201,13 @@ Reply with only JSON in this shape:
 }
 let playTok=0;
 function markLine(i){document.querySelectorAll(".line.now").forEach(e=>e.classList.remove("now"));if(i<0)return;const el=document.querySelector(`[data-line="${i}"]`);if(el){el.classList.add("now");if(el.scrollIntoView)el.scrollIntoView({block:"center"});}}
-function stopAudio(){playTok++;try{speechSynthesis.cancel();}catch(e){}markLine(-1);}
+function stopAudio(){playTok++;try{speechSynthesis.cancel();}catch(e){}markLine(-1);hlClear();}
 function playStory(lines,l,start){
   if(!("speechSynthesis" in window)){note("This browser cannot play speech audio.");return;}
   speechSynthesis.cancel();const tok=++playTok,vs=voicesFor(l);
   lines.slice(start).forEach((x,j)=>{const i=start+j,u=new SpeechSynthesisUtterance(sentText(x));u.lang=L[l].code;if(vs[0])u.voice=vs[0];u.rate=0.9*S.settings.speed;
-    u.onstart=()=>{if(tok===playTok)markLine(i);};if(i===lines.length-1)u.onend=()=>{if(tok===playTok)markLine(-1);};speechSynthesis.speak(u);});
+    hlTrack(u,x.tokens,()=>document.querySelector(`[data-line="${i}"]`),()=>tok===playTok);const st=u.onstart;
+    u.onstart=()=>{if(st)st();if(tok===playTok)markLine(i);};if(i===lines.length-1)u.onend=()=>{if(tok===playTok){markLine(-1);hlClear();}};speechSynthesis.speak(u);});
 }
 function openChapter(n){
   const l=S.lang,ch=chapter(l,n);if(!ch)return;

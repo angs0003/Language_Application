@@ -41,9 +41,11 @@ async function solveAll(W, click) { for (let k = 0; k < 60 && !W.eval("view.fini
   check(M().includes("All 7 strokes traced.") && W.eval("view.ks") === 7, "tracing the last stroke shows the finished message");
   click("Trace again"); check(M().includes("Stroke 1 of 7") && M().includes("Draw stroke 1 of 7"), "Trace again restarts at stroke 1");
   for (let i = 0; i < 4; i++) click("Next kanji");
-  click("Practise these 5"); check(W.eval("view.qs.some(q=>q.question&&q.question.startsWith('How do you read'))"), "practice includes reading-in-a-word questions");
-  await solveAll(W, click);
-  check(W.eval("Object.keys(S.ja.kanji).length") === 5, "5 kanji have review timing after the lesson");
+  check(!M().includes("Practise these") && !!d.querySelector("#nextbtn") && d.getElementById("nextbtn").textContent === "Finish lesson", "the last kanji of the lesson ends with Finish lesson and no quiz");
+  click("Finish lesson");
+  check(W.eval("Object.keys(S.ja.kanji).length") === 5 && W.eval("view.s") !== "klearn", "5 kanji have review timing after the lesson without a quiz");
+  W.eval("startKanjiQuiz(KANJI_JA.slice(0,5))"); check(W.eval("view.qs.some(q=>q.question&&q.question.startsWith('How do you read'))"), "kanji practice still includes reading-in-a-word questions");
+  await solveAll(W, click); W.eval("libSec='kanji';goHome()");
   // language drop-down and Learn preview
   W.eval("libSec=null;goHome()"); tab("Learn");
   check(!d.querySelector(".seg") && !!d.querySelector('#hd button[aria-label^="Language"]'), "language switch is a drop-down in the top bar");

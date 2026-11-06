@@ -30,9 +30,9 @@ learner who needs audio. The app must be **autism- and ADHD-friendly** (see sect
 The approved design is on the owner's design canvas ("Language Steps app mockups", row "Full-detail screens").
 Match it for any new screen.
 
-1. **Navigation:** a bottom tab bar with 4 tabs: **Learn** (blue), **Practise** (green-teal), **Listen** (purple),
-   **Travel** (brown). Settings is behind the profile button (top right of a tab screen). Do not add a 5th tab;
-   put new features inside an existing tab.
+1. **Navigation:** a bottom tab bar with 4 tabs: **Learn**, **Practise**, **Listen**, **Travel**. The tabs share one colour (see rule 6).
+   The language drop-down (Japanese or Chinese) and the profile button (Settings) are in the top bar of a tab screen.
+   Do not add a 5th tab; put new features inside an existing tab.
 2. **One primary action per screen.** On tab screens it is the button inside the highlighted card (`.card.hero`).
    On all other screens it is the right-hand button of the bottom bar. Back is the left-hand button.
 3. **Lesson template:** close button and progress bar at the top, one content area, Back and Continue at the bottom.
@@ -41,8 +41,9 @@ Match it for any new screen.
    `STATUS.ok / half / todo / no`. `deEmoji()` removes any emoji that slips into rendered text; do not rely on it for new code.
 5. **Components** (js/ui.js): `uiCard`, `uiLabel`, `uiBtn` (styles `pri`, `sec`, `link` only), `uiSeg`, `uiRow`,
    `uiTileIcon`, `uiTileChar`, `uiBar`, plus `.ibtn` icon buttons and `.tile` content tiles. Every icon-only button needs an `aria-label`.
-6. **Colour and type:** tokens are CSS variables in index.html (`--c-learn`, `--t-learn`, ...). The screen's section sets
-   `--acc` and `--tint` through `body[data-sec]` (`secOf()`). Fonts: Atkinson Hyperlegible; Noto Sans JP/SC for characters.
+6. **Colour and type:** tokens are CSS variables in index.html (`--c-learn`, `--t-learn`, ...). The **language** sets the colours of the whole app
+   through `body[data-lang]`: Japanese is indigo blue (`--ja`, `--jaT`), Chinese is red (`--zh`, `--zhT`), with a slightly tinted background for Chinese.
+   Tabs and sections do not have their own colours. Fonts: Atkinson Hyperlegible; Noto Sans JP/SC for characters.
    Characters (kanji, kana, hanzi) are used as artwork instead of photos.
 7. **Touch targets** at least 44 px (most are 48 to 56 px). Body text 17 px.
 8. **No timers, no auto-advance, no streak loss, no leaderboards, no flashing or animation.**
@@ -141,10 +142,14 @@ names defined in earlier files (inside functions, any file's names can be used).
 - **🈴 Kana and kanji** (Japanese tab only; `homeKanji`): hiragana and katakana rows (`KANA`, 71 + 71 characters)
   with a learn screen per character (`screenKana`) and practice (`kanaQuiz`: reading choice, listen and choose,
   match pairs); kanji in order of first appearance in the vocabulary (`KANJI_JA`, 261 now), learned 5 at a time
-  (`screenKanjiLearn`), each with a card (`kanjiCardHTML`: meanings, on/kun readings, stroke count, step-by-step
+  (`screenKanjiLearn`, ends with "Finish lesson": no quiz, the 5 kanji get review timing through `kSet`), each with a card (`kanjiCardHTML`: meanings, on/kun readings, stroke count, step-by-step
   stroke order, words from the lessons). Practice (`kanjiQuestions`): meaning, kanji from meaning, reading in a word,
   match pairs. Progress: `S.ja.kana` and `S.ja.kanji` (`{b,d,u}`), synced as `word_progress` rows with
   lang `ja-kana` / `ja-kanji`. A kana or kanji counts as learned at box ≥ 2.
+- **Spoken-word highlight** (`hlTrack`, `hlClear` in js/lessons.js): the word being spoken gets `.tk.spoken` in the Player, "Play all sentences",
+  the story reader and the podcast list. It uses the voice's word boundary events when sent, otherwise a timing estimate (`HL.msPerChar`).
+  Setting `S.settings.hlWord` (default on). After the last line the item is marked done (`plMarkDone`: `chRead`, `podDone`, `tripDone`),
+  the main button becomes the next item (`nextAfter`) and Listen tiles show a tick.
 - **Fading furigana** (`furiFor`, inside `glossHTML`): Japanese tokens containing kanji get a `<ruby>` reading,
   converted from the token's romaji with `toHira()`, unless all kanji in the token are learned.
   Setting `S.settings.furi`: `fade` (default), `always`, `never`. Write romaji so `toHira` gives correct kana

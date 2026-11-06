@@ -171,7 +171,7 @@ function screenKanjiLearn(){
   const v=view,k=v.list[v.i];
   const r={row:"title",title:"🈴 New kanji",back:{label:"Back",fn:()=>{if(v.i>0){v.i--;v.ks=null;render();}else goHome();}},main:kanjiCardHTML(k,v.ks)};
   r.prog=`<div class="ptext">Kanji ${v.i+1} of ${v.list.length}: ${esc(k.c)}</div><div class="bar"><i style="width:${Math.round((v.i+1)/v.list.length*100)}%"></i></div>`;
-  r.next=v.i<v.list.length-1?{label:"Next kanji",fn:()=>{v.i++;v.ks=null;render();window.scrollTo(0,0);}}:{label:`Practise these ${v.list.length}`,fn:()=>startKanjiQuiz(v.list)};
+  r.next=v.i<v.list.length-1?{label:"Next kanji",fn:()=>{v.i++;v.ks=null;render();window.scrollTo(0,0);}}:{label:"Finish lesson",fn:()=>{v.list.forEach(k=>kSet("kanji",k.c,true));save();goHome();}};
   return r;
 }
 function kanjiQuestions(list){
