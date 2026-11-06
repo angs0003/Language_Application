@@ -329,7 +329,7 @@ function screenReview(){
   const v=view;
   if(v.finished&&v.mis){const n=misList(S.lang).length;
     return {row:"title",title:"Mistakes",prog:`<div class="ptext">Mistakes: finished</div><div class="psub">Still in Mistakes: ${n}</div><div class="bar"><i style="width:100%"></i></div>`,
-      main:`<div class="card"><h2>All mistakes repeated</h2><p>You answered every question in this session correctly.</p><p>Still in Mistakes: ${n}.</p></div>`,
+      main:`<div class="card"><h2>Mistakes session finished</h2><p>Correct: ${v.qs.filter(q=>q.correct).length} of ${v.qs.length}.</p><p>Questions you answered correctly are removed from Mistakes. Questions you answered incorrectly stay in Mistakes for your next session.</p><p>Still in Mistakes: ${n}.</p></div>`,
       back:{label:"Back",dis:true},next:{label:"Go to home",fn:goHome}};}
   if(v.finished){const c=v.qs.filter(q=>q.correct).length;
     return {row:"title",title:"Review",prog:`<div class="ptext">Review: finished</div><div class="psub">Correct: ${c} of ${v.qs.length}</div><div class="bar"><i style="width:100%"></i></div>`,
