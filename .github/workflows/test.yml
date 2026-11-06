@@ -16,3 +16,7 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run lint
+      - name: Phone tests (real browser engine at phone sizes)
+        run: |
+          npx playwright install --with-deps chromium
+          npm run test:phone

@@ -93,7 +93,7 @@ const PLAY=`<span aria-hidden="true">🔊</span>`;
 /* ---------- Audio: speech output ---------- */
 let voices=[];
 function loadVoices(){try{voices=speechSynthesis.getVoices();}catch(e){voices=[];}}
-if("speechSynthesis" in window){loadVoices();speechSynthesis.onvoiceschanged=()=>{loadVoices();if(view.s==="settings")render();};}
+if("speechSynthesis" in window){loadVoices();speechSynthesis.onvoiceschanged=()=>{loadVoices();/* view is defined later, in js/lessons.js; voices can load first */if(typeof view!=="undefined"&&view.s==="settings")render();};}
 function voiceFor(l){const c=L[l].code.toLowerCase();return voices.find(v=>v.lang.replace("_","-").toLowerCase()===c)||voices.find(v=>v.lang.toLowerCase().startsWith(l));}
 function say(text,l){
   if(!("speechSynthesis" in window)){note("This browser cannot play speech audio.");return;}
