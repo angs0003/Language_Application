@@ -75,7 +75,9 @@ names defined in earlier files (inside functions, any file's names can be used).
 | `config.js` | Supabase URL and **anon** key (public by design). |
 | `.env` (not in Git) | `SUPABASE_URL` and **`SUPABASE_SERVICE_ROLE_KEY`** for uploads. Never commit it; never put the service key in browser code. |
 | `supabase.sql` | Tables and row-level security. Re-runnable. |
-| `sw.js` | Service worker (offline). **Increase `CACHE` on every release.** |
+| `sw.js` | Service worker (offline). **Do not change `CACHE` by hand**: the Deploy workflow sets it to `ls-<commit ID>` on every release. |
+| `.github/workflows/test.yml` | Runs `npm test` and `npm run lint` on every pull request (required check `test` before merging to `main`). |
+| `.github/workflows/deploy.yml` | After a merge to `main`: test, upload content if `content/content.js` changed (secrets in GitHub), set `CACHE`, publish to GitHub Pages. |
 | `tools/validate-content.js` | Structural check of the content, plus a content → rows → content round trip. |
 | `tools/upload-content.js` | Uploads content to the `content` table (`npm run upload`). Deletes rows that no longer exist. |
 | `tests/smoke.js` | Simulated-browser flow test without a database. |
@@ -205,16 +207,17 @@ readings from KANJI_JA sources), `validate-content.js` (everything, also run by 
 4. Update the matching label in `LEVELS`.
 4a. Run `node tools/add-kanji.js` to add the kanji the new Japanese words use.
 5. Run `npm test`. Fix every error.
-6. Run `npm run upload` (needs `.env`). The app downloads the new content at its next start.
-7. If code or `content/content.js` changed, increase `CACHE` in `sw.js`. Commit and push.
+6. Run `/release`: it commits to a branch and opens a pull request. Do not run `npm run upload` and do not change `CACHE`.
+7. After the owner merges, the Deploy workflow uploads the content and publishes. The app downloads the new content at its next start.
 
 ## 8. Definition of done (every change)
 
 1. `npm test` passes (content check, round trip, smoke, sync, features and kanji tests), and `npm run lint` reports no errors.
 2. No design rule in section 3 is broken.
 3. New visible text is literal and uses the existing terms.
-4. `sw.js` `CACHE` is increased if any served file changed. Content changes are uploaded with `npm run upload`.
-5. Changes are committed and pushed; tell the owner what changed, in numbered points.
+4. Changes are committed to a branch (never to `main`) and a pull request to `main` is open. Never push to `main`.
+   Do not change `CACHE` in `sw.js` and do not run `npm run upload`: the Deploy workflow does both after the merge.
+5. Tell the owner what changed, in numbered points, with the pull request link. The owner merges after the `test` check is green.
 
 ## 9. Team setup in .claude/
 
@@ -224,7 +227,9 @@ Commands: `/add-part`, `/check-content`, `/design-check`, `/release` (`.claude/c
 the content validator runs after edits to `content/content.js`, and `npm test` must pass before commit, push or upload.
 Improvement loop: `/retro` after every release (coach subagent proposes edits to this file, the agents, the commands and the
 tests, with evidence), `/maintain` monthly, `/ux-review` quarterly, `/content-report` monthly. Inputs: `ERRORS.md`,
-`docs/ux-notes.md`, `docs/decisions/`. GitHub Actions runs `npm test` and `npm run lint` on every push.
+`docs/ux-notes.md`, `docs/decisions/`. Delivery (decision 0004): agents work on a branch and open a pull request;
+GitHub Actions runs `test` on the pull request; `main` accepts changes only through a pull request with a green `test` check;
+after the owner merges, `deploy.yml` tests again, uploads content, sets `CACHE` and publishes to GitHub Pages.
 Guide for the owner: `docs/claude-code-team.md`. Keep these files consistent with sections 3, 6 and 8 when rules change.
 
 ## 10. Roadmap (agreed order)

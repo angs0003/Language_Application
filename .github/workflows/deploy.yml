@@ -1,0 +1,95 @@
+name: Deploy
+# Publishes the app to GitHub Pages after a change reaches main (normally by merging a pull request).
+# Order: test -> upload content (only if content changed) -> set the cache version -> publish.
+# Nothing is published if any step fails.
+# One-time setup: see docs/claude-code-team.md, section 8.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      upload:
+        description: "Upload content/content.js to the database even if it did not change"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+# Only one deploy at a time; a newer deploy waits for the running one to finish.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm test
+      - run: npm run lint
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.pages.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+
+      - name: Check whether content changed
+        id: changes
+        env:
+          BEFORE: ${{ github.event.before }}
+          FORCE: ${{ github.event.inputs.upload }}
+        run: |
+          if [ "$FORCE" = "true" ]; then echo "content=true" >> "$GITHUB_OUTPUT"; exit 0; fi
+          if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ] || ! git cat-file -e "$BEFORE" 2>/dev/null; then
+            echo "No previous commit to compare with; uploading content to be safe."
+            echo "content=true" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          if git diff --name-only "$BEFORE" "$GITHUB_SHA" | grep -qx "content/content.js"; then
+            echo "content=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "content=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload content to the database
+        if: steps.changes.outputs.content == 'true'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: npm run upload
+
+      - name: Build the site folder (served files only)
+        run: |
+          mkdir _site
+          cp index.html config.js sw.js manifest.json icon-192.png icon-512.png _site/
+          cp -r js content _site/
+          # Cache version from the commit, so every release makes phones download the new files.
+          VERSION="ls-${GITHUB_SHA::8}"
+          sed -i -E "s/^const CACHE = \"[^\"]*\";/const CACHE = \"$VERSION\";/" _site/sw.js
+          grep -q "const CACHE = \"$VERSION\";" _site/sw.js || { echo "Could not set CACHE in sw.js"; exit 1; }
+          echo "Cache version: $VERSION"
+
+      - id: pages
+        uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - uses: actions/deploy-pages@v4

@@ -1,6 +1,6 @@
 ---
 name: security-reviewer
-description: Read-only security check of Language Steps before a release: secrets, database rules, dependencies, embedded content. Use before /release and after any change to config.js, supabase.sql, js/sync.js, js/loader.js, sw.js or the hooks.
+description: Read-only security check of Language Steps before a release: secrets, database rules, dependencies, embedded content. Use before /release and after any change to config.js, supabase.sql, js/sync.js, js/loader.js, sw.js, the hooks or .github/workflows/.
 tools: Read, Grep, Glob, Bash(git status), Bash(git diff *), Bash(git log *), Bash(npm audit *)
 ---
 You review Language Steps for security problems. You never edit files.
@@ -11,4 +11,5 @@ Check each item and report "pass" or "fail with details":
 4. Third-party scripts: every CDN script in index.html is pinned to an exact version; report versions and whether npm audit (if a package-lock.json exists) shows known vulnerabilities.
 5. Hooks and commands: .claude/hooks scripts run only the project's own commands; no command downloads and runs remote code.
 6. Sign-in: the magic-link redirect in js/loader.js points to the app's own origin and path.
+7. Workflows (.github/workflows/): secrets are used only as `${{ secrets.NAME }}` in an `env:` block, only in deploy.yml, and only in the "Upload content to the database" step; no step prints a secret (no echo, cat or env dump of secret variables); workflows do not run on `pull_request_target`; every `uses:` action is from `actions/` with a pinned major version; the site folder `_site` copies only index.html, config.js, sw.js, manifest.json, the icons, js/ and content/ (never .env, tools/, tests/ or .claude/).
 End with a numbered list of failures (most serious first) and one line: "Safe to release" or "Not safe to release".
