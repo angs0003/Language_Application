@@ -59,7 +59,7 @@ Match it for any new screen.
 | `js/loader.js` | Starts the app: requires sign-in, loads content from the database (or the device copy), then loads the app files listed in `APP_FILES`, in order. |
 | `js/content-rows.js` | Converts content to database rows and back (`buildRows`, `buildContent`). Shared by the browser and Node tools. |
 | `js/core.js` | State, saving, helpers, audio, review timing. |
-| `js/exercises.js` | Question building, checking and rendering. |
+| `js/exercises.js` | Question building, checking and rendering; Mistakes recording (`misTrack`, `misRebuild`). |
 | `js/lessons.js` | View state, click handling, placement quiz, lesson flow, review session, settings. |
 | `js/sections.js` | Themes list, grammar guide, theme and grammar pages, story reader, travel situations. |
 | `js/exercise-types.js` | Match pairs, build sentence, listen and build, build English, fill the blank. |
@@ -82,7 +82,7 @@ names defined in earlier files (inside functions, any file's names can be used).
 | `tools/upload-content.js` | Uploads content to the `content` table (`npm run upload`). Deletes rows that no longer exist. |
 | `tests/smoke.js` | Simulated-browser flow test without a database. |
 | `tests/sync.test.js` | Simulated-database test: sign-in screen, content from the database, two-device progress sync. |
-| `tests/features.test.js` | Player, My words (filters, search, 4 practice modes) and video player (speed, section loop, synced subtitles). |
+| `tests/features.test.js` | Player, My words (filters, search, 4 practice modes), Mistakes practice and video player (speed, section loop, synced subtitles). |
 | `tests/smoke.js` design checks | On each tab screen: no emoji, at most one primary button, no icon button without a label. |
 | `tests/kanji.test.js` | Kana lessons, kanji lessons and stroke steps, fading furigana, TV list, kanji/kana sync. |
 | `tests/phone/phone.spec.js` | Real browser (Chromium) at 360x740 and 412x915: each tab in both languages and the first lesson. No script errors, no sideways scrolling, at most one primary button, touch targets of at least 44 x 44 px (`npm run test:phone`; runs in the `test` check). |
@@ -116,7 +116,7 @@ names defined in earlier files (inside functions, any file's names can be used).
 
 ### State, rendering and features
 - `S`: `{v:1, updatedAt, lastActive, lang, tab, settings:{...}, zh:{...}, ja:{...}}`. Per language: `placed, srs{word:{b,d,u}},
-  gi, grDone[], lc, lst, chRead[], tripDone{}, tripOpen{}, podDone{}, hist[], lastLesson[], saved[], videos[]`.
+  gi, grDone[], lc, lst, chRead[], tripDone{}, tripOpen{}, podDone{}, hist[], lastLesson[], saved[], videos[], mis[]`.
   Always load through `normalize()`. Call `save()` after any change.
 - `render()` (js/ui.js) calls one `screenX()` per view (`view.s`): `home, lesson, place, review, test, settings, theme, gram, story,
   trip, pod, cards`. Each returns `{row, title, prog, main, back:{label,fn,dis}, next:{label,fn,dis}, exit}`.
@@ -149,6 +149,11 @@ names defined in earlier files (inside functions, any file's names can be used).
   stroke order, words from the lessons). Practice (`kanjiQuestions`): meaning, kanji from meaning, reading in a word,
   match pairs. Progress: `S.ja.kana` and `S.ja.kanji` (`{b,d,u}`), synced as `word_progress` rows with
   lang `ja-kana` / `ja-kanji`. A kana or kanji counts as learned at box ≥ 2.
+- **Mistakes** (`S[lang].mis`, newest first, at most 50 per language): wrong answers to sentence and grammar questions (kinds `build`, `blank`, `gram`,
+  including story comprehension and travel reply questions) are recorded by `misTrack` (js/exercises.js, called from `onAnswer`; not during the placement quiz or test).
+  Each item stores a snapshot of the question; `misRebuild` turns it back into a question. `startMistakes` (js/ui.js, row "Mistakes" in `homePractise`) opens a
+  review session (`view.mis=true`) with up to 10 items. A wrong answer repeats the question in the same session until it is answered correctly; a correct answer
+  removes the item. `mis` is synced inside `user_settings.data.per[lang]` (not as separate rows); on a conflict the newer side wins as a whole list (last-write-wins).
 - **Spoken-word highlight** (`hlTrack`, `hlClear` in js/lessons.js): the word being spoken gets `.tk.spoken` in the Player, "Play all sentences",
   the story reader and the podcast list. It uses the voice's word boundary events when sent, otherwise a timing estimate (`HL.msPerChar`).
   Setting `S.settings.hlWord` (default on). After the last line the item is marked done (`plMarkDone`: `chRead`, `podDone`, `tripDone`),
