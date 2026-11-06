@@ -110,7 +110,7 @@ function glossHTML(l,tokens,hw,plain){
     if(PUNCT.test(t[0])||(!t[1]&&!t[2]))return `<span class="tk pu"><span class="tx" lang="${L[l].hl}">${esc(t[0])}</span></span>`;
     return `<button class="tk${set.has(t[0])?" hw":""}" data-a="${A(()=>openWord(l,t,tokens))}"><span class="tx" lang="${L[l].hl}">${(()=>{const f=furiFor(l,t);return f?`<ruby>${esc(t[0])}<rt>${esc(f)}</rt></ruby>`:esc(t[0]);})()}</span>${S.settings.gloss&&!plain?`<span class="tr">${esc(t[1])}</span><span class="tm">${esc(t[2])}</span>`:""}</button>`;}).join("")}</div>`;
 }
-function sentHTML(l,s,hw){return `<div class="sent"><div class="sbody">${glossHTML(l,s.tokens,hw)}${S.settings.showEnglish&&s.english?`<p class="eng">${esc(s.english)}</p>`:""}</div><button class="play" data-a="${A(()=>say(sentText(s),l))}" aria-label="Play audio" title="Play audio">${PLAY}</button></div>`;}
+function sentHTML(l,s,hw){return `<div class="sent"><div class="sbody">${glossHTML(l,s.tokens,hw)}${S.settings.showEnglish&&s.english?`<p class="eng">${esc(s.english)}</p>`:""}</div><button class="play" data-a="${A(()=>say(spokenText(s),l))}" aria-label="Play audio" title="Play audio">${PLAY}</button></div>`;}
 function builtinEx(l,w,hw){return `<div class="sent"><div class="sbody"><p class="ex" lang="${L[l].hl}">${hl(w.ex[0],hw||[w])}</p>${S.settings.showReading?`<p class="muted" style="margin:0 0 4px">${esc(w.ex[1])}</p>`:""}${S.settings.showEnglish?`<p class="eng">${esc(w.ex[2])}</p>`:""}</div><button class="play" data-a="${A(()=>say(w.ex[0],l))}" aria-label="Play audio" title="Play audio">${PLAY}</button></div>`;}
 function voicesFor(l){const c=L[l].code.toLowerCase();let v=voices.filter(x=>x.lang.replace("_","-").toLowerCase()===c);if(!v.length)v=voices.filter(x=>x.lang.toLowerCase().startsWith(l));return v;}
 /* Speaker lines: a story line starts with a name and a colon ("Ken ： good morning"). The name and colon are not spoken.
@@ -154,9 +154,11 @@ function hlTrack(u,tokens,rootFn,alive,skip=0){
 }
 function sayLines(lines,l){
   if(!("speechSynthesis" in window)){note("This browser cannot play speech audio.");return;}
-  speechSynthesis.cancel();hlClear();const tok=++playTok,vs=voicesFor(l);
+  speechSynthesis.cancel();hlClear();const tok=++playTok,vs=voicesFor(l),map=spkMap(lines);
   const rootAt=k=>()=>{const r=document.querySelectorAll("#main .line");return r.length===lines.length?r[k]:null;};
-  lines.forEach((x,k)=>{const u=new SpeechSynthesisUtterance(sentText(x));u.lang=L[l].code;const b=x.speaker==="B";const v=vs.length>1?vs[b?1:0]:vs[0];if(v)u.voice=v;if(vs.length<2)u.pitch=b?0.75:1.25;u.rate=0.9*S.settings.speed;hlTrack(u,x.tokens,rootAt(k),()=>tok===playTok);if(k===lines.length-1)u.onend=()=>{if(tok===playTok)hlClear();};speechSynthesis.speak(u);});
+  lines.forEach((x,k)=>{const u=new SpeechSynthesisUtterance(spokenText(x));u.lang=L[l].code;const si=spkIdx(map,x);
+    if(si!=null)applySpeaker(u,vs,si);else{const b=x.speaker==="B";const v=vs.length>1?vs[b?1:0]:vs[0];if(v)u.voice=v;if(vs.length<2)u.pitch=b?0.75:1.25;}
+    u.rate=0.9*S.settings.speed;hlTrack(u,x.tokens,rootAt(k),()=>tok===playTok,spkSkip(x));if(k===lines.length-1)u.onend=()=>{if(tok===playTok)hlClear();};speechSynthesis.speak(u);});
 }
 /* Word reference card */
 function openWord(l,t,toks){if(view.s==="player"&&view.playing)plStop(view);const k=allWords(l).find(w=>w.w===t[0]);view.sheet={l,text:t[0],r:k?k.r:t[1],m:k?k.m:t[2],state:"",data:null,sent:toks?toks.map(x=>x[0]).join(""):"",tk:toks&&toks.length<=20?toks:null,src:srcLabel()};if(!AI_OFF)loadRef(view.sheet);render();}

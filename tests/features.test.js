@@ -46,6 +46,9 @@ const check = (ok, msg) => { if (!ok) failures.push(msg); else console.log("ok:"
   const sp = W.eval("__sp");
   check(sp.length >= 2 && !/^(けん|ゆい)/.test(sp[0].t) && !/^(けん|ゆい)/.test(sp[1].t), "the player does not say the speaker names");
   check(sp[0].p !== sp[1].p, "two speakers get different pitch");
+  W.eval("__sp.length=0;sayLines(chapter('ja',0).lines,'ja')"); await wait(50); const sp2 = W.eval("__sp");
+  check(sp2.length === 6 && sp2.every(x => !/^(けん|ゆい)/.test(x.t)) && new Set(sp2.map(x => x.p)).size >= 2, "Play all lines (lesson story step, theme pages) does not say names and changes voice per speaker");
+  W.eval("__sp.length=0;say(spokenText(chapter('ja',0).lines[0]),'ja')"); check(!/^けん/.test(W.eval("__sp")[0].t), "playing a single story line does not say the name");
   check(!W.eval("podSegs('ja',0).some(s=>s.part==='Story'&&/^(けん|ゆい)/.test(s.text))") && !W.eval("podSegs('ja',0).some(s=>s.part==='Story'&&s.lang==='en'&&/^(Ken|Yui):/.test(s.text))"), "the podcast does not say speaker names, in the language or in English");
   check(W.eval("podSegs('ja',0).filter(s=>s.part==='Story'&&s.lang==='ja').some(s=>s.si===0)") && W.eval("podSegs('ja',0).filter(s=>s.part==='Story'&&s.lang==='ja').some(s=>s.si===1)"), "podcast lines carry a speaker number for the voice");
   // the language sets the colours of the whole app (CSS)

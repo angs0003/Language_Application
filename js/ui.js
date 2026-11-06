@@ -78,7 +78,7 @@ function langMenuHTML(){
 /* Mini preview inside the Learn hero card: up to 5 words of the lesson and one example sentence (or the first 2 story lines). */
 function stepPreview(l,x){
   const t=CUR[l][x.i];if(!t)return "";
-  const sentRow=s=>`<li><span class="pm"><span lang="${L[l].hl}">${esc(sentText(s))}</span>${s.english?`<br><span class="small muted">${esc(s.english)}</span>`:""}</span><button class="play" aria-label="Play audio" title="Play audio" data-a="${A(()=>say(sentText(s),l))}">${PLAY}</button></li>`;
+  const sentRow=s=>`<li><span class="pm"><span lang="${L[l].hl}">${esc(sentText(s))}</span>${s.english?`<br><span class="small muted">${esc(s.english)}</span>`:""}</span><button class="play" aria-label="Play audio" title="Play audio" data-a="${A(()=>say(spokenText(s),l))}">${PLAY}</button></li>`;
   if(x.kind==="story"){const c=chapter(l,x.i),ls=c&&c.lines?c.lines.slice(0,2):[];return ls.length?`<ul class="prevlist" aria-label="Story preview">${ls.map(sentRow).join("")}</ul>`:"";}
   const ws=(t.words||[]).slice(0,5),ss=(t.sents||[]).slice(0,2);
   const row=w=>`<li><span class="pw" lang="${L[l].hl}">${esc(w.w)}</span><span class="pm"><span class="small">${esc(l==="ja"&&w.k&&w.k!==w.w?w.k+" · "+w.r:w.r||"")}</span><br>${esc(w.m)}</span><button class="play" aria-label="Play audio" title="Play audio" data-a="${A(()=>say(w.w,l))}">${PLAY}</button></li>`;

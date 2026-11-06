@@ -114,7 +114,7 @@ function myWordsCard(l){
 function playLoop(s,l,i){
   if(!("speechSynthesis" in window)){note("This browser cannot play speech audio.");return;}
   speechSynthesis.cancel();const tok=++playTok,vs=voicesFor(l);
-  const go=()=>{if(tok!==playTok)return;const u=new SpeechSynthesisUtterance(sentText(s));u.lang=L[l].code;if(vs[0])u.voice=vs[0];u.rate=0.9*S.settings.speed;u.onstart=()=>{if(tok===playTok&&i!=null)markLine(i);};u.onend=()=>{if(tok===playTok)setTimeout(go,800);};speechSynthesis.speak(u);};
+  const go=()=>{if(tok!==playTok)return;const u=new SpeechSynthesisUtterance(spokenText(s));u.lang=L[l].code;if(vs[0])u.voice=vs[0];u.rate=0.9*S.settings.speed;u.onstart=()=>{if(tok===playTok&&i!=null)markLine(i);};u.onend=()=>{if(tok===playTok)setTimeout(go,800);};speechSynthesis.speak(u);};
   go();
 }
 const SUBS=[["both","Both languages"],["target","Target only"],["none","No text"]];
