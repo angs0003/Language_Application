@@ -113,6 +113,8 @@ Supabase's free plan limits how many sign-in emails it sends per hour. If no ema
 
 ### With Claude Code (recommended)
 
+The repository includes a ready-made team setup: 8 commands, 8 subagents and 2 hooks. See `docs/claude-code-team.md`.
+
 1. Download the repository: `git clone https://github.com/YOUR-USERNAME/language-steps.git`
 2. Put your `.env` file into that folder. It is listed in `.gitignore`, so Git never uploads it.
 3. Open a terminal in the folder, start Claude Code, and ask, for example:

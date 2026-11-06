@@ -202,13 +202,24 @@ readings from KANJI_JA sources), `validate-content.js` (everything, also run by 
 
 ## 8. Definition of done (every change)
 
-1. `npm test` passes (content check, round trip, smoke, sync, features and kanji tests).
+1. `npm test` passes (content check, round trip, smoke, sync, features and kanji tests), and `npm run lint` reports no errors.
 2. No design rule in section 3 is broken.
 3. New visible text is literal and uses the existing terms.
 4. `sw.js` `CACHE` is increased if any served file changed. Content changes are uploaded with `npm run upload`.
 5. Changes are committed and pushed; tell the owner what changed, in numbered points.
 
-## 9. Roadmap (agreed order)
+## 9. Team setup in .claude/
+
+Commands: `/add-part`, `/check-content`, `/design-check`, `/release` (`.claude/commands/`). Subagents: `content-writer`,
+`content-reviewer`, `ui-engineer`, `test-runner`, `release-manager`, `coach`, `security-reviewer` (runs inside `/release`),
+`data-engineer` (owns supabase.sql, js/sync.js, normalize() defaults and the sync tests) (`.claude/agents/`). Hooks (`.claude/settings.json`):
+the content validator runs after edits to `content/content.js`, and `npm test` must pass before commit, push or upload.
+Improvement loop: `/retro` after every release (coach subagent proposes edits to this file, the agents, the commands and the
+tests, with evidence), `/maintain` monthly, `/ux-review` quarterly, `/content-report` monthly. Inputs: `ERRORS.md`,
+`docs/ux-notes.md`, `docs/decisions/`. GitHub Actions runs `npm test` and `npm run lint` on every push.
+Guide for the owner: `docs/claude-code-team.md`. Keep these files consistent with sections 3, 6 and 8 when rules change.
+
+## 10. Roadmap (agreed order)
 
 Content batches (each about 150 words, 10 grammar points, 15 chapters):
 1. Japanese Level 2 (rest of JLPT N5): Part 2 is done (Level 2 now has 300 words); about 2 more parts.
@@ -238,7 +249,7 @@ Feature ideas discussed but not built: kana lessons (Japanese) and pinyin/tone l
 typed AI role-play through a server function; calm motivation (daily goal, progress calendar);
 mistakes review for sentences and grammar; Chinese character (hanzi) lessons like the kanji section.
 
-## 10. Known limitations
+## 11. Known limitations
 
 1. Audio uses the device's speech voices. Quality depends on the device.
 2. Speech recognition works in Chrome (Android and computers). On iPhone it depends on Safari settings.

@@ -160,6 +160,7 @@ function screenGram(){
 /* ---------- Stories ---------- */
 let pregenBusy=false,pregenN=-1,pregenL="",pregenP=null;
 async function pregen(l){return;
+  // eslint-disable-next-line no-unreachable -- pre-generation is switched off while AI_OFF is true
   if(pregenBusy)return;const unlocked=Math.min(1+(S[l].lc||0),40);let n=-1;
   for(let k=0;k<unlocked;k++){if(!C[`${l}.ch.${k}`]){n=k;break;}}
   if(n<0||!(await hasAI()))return;

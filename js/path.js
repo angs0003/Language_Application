@@ -13,6 +13,7 @@ function planSteps(l,count){
     let ch=-1;for(let i=0;i<STORY[l].length;i++){if(!read.has(i)&&ths[i]&&ths[i].words&&ths[i].words.every(w=>learned.has(w.w))){ch=i;break;}}
     if(ch>=0){out.push({k:"story",n:ch});read.add(ch);continue;}
     const nextTrip=()=>{for(let i=0;i<TRIP[l].length;i++)if(!tdone.has(i))return i;return -1;};
+    // eslint-disable-next-line no-constant-condition -- trip steps are switched off on purpose
     if(false&&lst>=2){const ti=nextTrip();if(ti>=0){out.push({k:"trip",i:ti});tdone.add(ti);lst=0;continue;}}
     const ws=[],titles=[];for(const t of ths){if(!t.words)continue;for(const w of t.words){if(ws.length>=n)break;if(!learned.has(w.w)){ws.push(w);if(!titles.includes(t.title))titles.push(t.title);}}if(ws.length>=n)break;}
     if(!ws.length)break;
