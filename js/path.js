@@ -4,10 +4,10 @@
 /* ---------- Simple home: one next step ---------- */
 let libSec=null;
 function histPush(l,label){const h=S[l].hist||(S[l].hist=[]);h.push(label);if(h.length>10)h.shift();}
-function planSteps(l,count){
+function planSteps(l,count,skipDue){
   const learned=new Set(learnedWords(l)),read=new Set(S[l].chRead||[]),td=S[l].tripDone||{},tdone=new Set(Object.keys(td).filter(k=>td[k]).map(Number)),ths=themes(l),n=S.settings.size,out=[];let lst=S[l].lst||0;
-  const due=dueList(l).length;if(due>=5)out.push({k:"review",due});
-  const sd=savedDue(l).length;if(sd>=5)out.push({k:"cards",due:sd});
+  const due=dueList(l).length;if(due>=5&&!skipDue)out.push({k:"review",due});
+  const sd=savedDue(l).length;if(sd>=5&&!skipDue)out.push({k:"cards",due:sd});
   let guard=0;
   while(out.length<count&&guard++<50){
     let ch=-1;for(let i=0;i<STORY[l].length;i++){if(!read.has(i)&&ths[i]&&ths[i].words&&ths[i].words.every(w=>learned.has(w.w))){ch=i;break;}}

@@ -161,7 +161,8 @@ function screenKanjiCard(){
   const v=view,k=kanjiByChar(v.c);
   const r={row:"title",title:`🈴 ${k.c}: ${k.m[0]||""}`,back:{label:"Back",fn:goHome},main:kanjiCardHTML(k,v.ks)};
   const e=(S.ja.kanji||{})[k.c];r.prog=`<div class="ptext">${kLearned(k.c)?"✅ Learned":e?"🟡 Started":"⭕ Not started"}</div>`;
-  r.next={label:"Practise this kanji",fn:()=>startKanjiQuiz([k])};
+  const all=KJ(),ni=all.findIndex(x=>x.c===k.c)+1;
+  r.next=ni<all.length?{label:"Next kanji",fn:()=>openKanji(all[ni].c)}:{label:"Back to kanji list",fn:goHome};
   return r;
 }
 /* kanji lesson and practice */

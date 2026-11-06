@@ -80,9 +80,9 @@ function stepPreview(l,x){
   const t=CUR[l][x.i];if(!t)return "";
   const sentRow=s=>`<li><span class="pm"><span lang="${L[l].hl}">${esc(sentText(s))}</span>${s.english?`<br><span class="small muted">${esc(s.english)}</span>`:""}</span><button class="play" aria-label="Play audio" title="Play audio" data-a="${A(()=>say(sentText(s),l))}">${PLAY}</button></li>`;
   if(x.kind==="story"){const c=chapter(l,x.i),ls=c&&c.lines?c.lines.slice(0,2):[];return ls.length?`<ul class="prevlist" aria-label="Story preview">${ls.map(sentRow).join("")}</ul>`:"";}
-  const ws=(t.words||[]).slice(0,5),s0=(t.sents||[])[0];
+  const ws=(t.words||[]).slice(0,5),ss=(t.sents||[]).slice(0,2);
   const row=w=>`<li><span class="pw" lang="${L[l].hl}">${esc(w.w)}</span><span class="pm"><span class="small">${esc(l==="ja"&&w.k&&w.k!==w.w?w.k+" · "+w.r:w.r||"")}</span><br>${esc(w.m)}</span><button class="play" aria-label="Play audio" title="Play audio" data-a="${A(()=>say(w.w,l))}">${PLAY}</button></li>`;
-  return `<ul class="prevlist" aria-label="Lesson preview">${ws.map(row).join("")}${s0?sentRow(s0):""}</ul>${(t.words||[]).length>ws.length?`<p class="small muted" style="margin:0">and ${(t.words||[]).length-ws.length} more words in this lesson</p>`:""}`;
+  return `<ul class="prevlist" aria-label="Lesson preview">${ws.map(row).join("")}${ss.map(sentRow).join("")}</ul>${(t.words||[]).length>ws.length?`<p class="small muted" style="margin:0">and ${(t.words||[]).length-ws.length} more words in this lesson</p>`:""}`;
 }
 function homeLearn(l,r){
   const st=S[l];let h="";
@@ -94,7 +94,7 @@ function homeLearn(l,r){
   const words=idx.flatMap(i=>ths[i].words||[]),nL=words.filter(w=>isL(l,w)).length,lvx=LEVELS[l][lv-1]||["Level "+lv,""];
   h+=`<div class="lvline"><div class="lvtop"><label for="lvl" class="lvsel"><span><strong>${esc(lvx[0])}</strong> · ${esc(lvx[1])}</span><select id="lvl">${LEVELS[l].map((x,i)=>`<option value="${i+1}" ${lv===i+1?"selected":""}>${esc(x[0])}: ${esc(x[1])}${x[2]?"":" (not built yet)"}</option>`).join("")}</select></label><span class="muted">${nL} of ${words.length} words</span></div>${uiBar(words.length?nL/words.length*100:0)}</div>`;
   if(!idx.length){h+=uiCard(`<h2>${esc(lvx[0])} is not built yet</h2><p style="margin:0">${esc(lvx[3]||"")}</p>`);r.main=h;return;}
-  const nx=planSteps(l,1)[0];
+  const nx=planSteps(l,1,true)[0],due=planSteps(l,1)[0];/* nx: next lesson or story; due: a review step, if one is due */
   const items=[];
   idx.forEach(i=>{const t=ths[i],c=t.words.filter(w=>isL(l,w)).length,done=c>=t.words.length;
     items.push({kind:"lesson",i,ch:[...t.words[0].w][0],title:t.title,sub:done?"Learned":c?`${c} of ${t.words.length} words learned`:`Lesson · ${t.words.length} words`,done});
@@ -107,13 +107,11 @@ function homeLearn(l,r){
     const lead=x.kind==="story"?`<span class="pn ${state}">${ico("book",26)}</span>`:`<span class="pn ${state}" lang="${L[l].hl}">${esc(x.ch)}</span>`;
     return `<button class="pitem" ${state==="locked"?"":""} data-a="${A(()=>x.kind==="story"?(x.done||x.open?openChapter(x.i):openTheme(x.i)):openTheme(x.i))}">${lead}<span class="lrt"><span class="lrh">${esc(x.title)}</span><span class="lrs">${esc(x.sub)}</span></span></button>`;};
   let path="";
-  if(nx&&(nx.k==="review"||nx.k==="cards")){
-    path+=uiCard(`<div class="nxt"><span class="pn big">${ico("review",32)}</span><span class="lrt">${uiLabel("NEXT")}<span class="nxh">${esc(nextInfo.title)}</span><span class="lrs">${esc(nextInfo.desc)}</span></span></div>${uiBtn("Start review",nextInfo.start)}`,"hero");
-  }
   const before=nextIdx>=0?items.slice(Math.max(0,nextIdx-2),nextIdx):items.filter(x=>x.done).slice(-2);
   if(nextIdx>=0){const x=items[nextIdx];
     /* the next step comes first, with a preview of what it contains; finished and later items follow below it */
     path+=uiCard(`<div class="nxt">${x.kind==="story"?`<span class="pn big">${ico("book",32)}</span>`:`<span class="pn big" lang="${L[l].hl}">${esc(x.ch)}</span>`}<span class="lrt">${uiLabel(x.kind==="story"?"NEXT STORY":"NEXT LESSON")}<span class="nxh">${esc(x.kind==="story"?x.title.replace(/^Story: /,""):x.title)}</span><span class="lrs">${esc(nextInfo.desc)}</span></span></div>${stepPreview(l,x)}${uiBtn(x.kind==="story"?"Read the story":"Start lesson",nextInfo.start)}`,"hero");
+    if(due&&(due.k==="review"||due.k==="cards")){const di=stepInfo(l,due);path+=uiCard(uiRow(uiTileIcon("review"),esc(di.title),esc(di.desc),di.start),"list");}
     items.slice(nextIdx+1,nextIdx+4).forEach(x=>path+=node(x,"locked"));
     before.forEach(x=>path+=node(x,x.done?"done":"todo"));
   }else{before.forEach(x=>path+=node(x,x.done?"done":"todo"));if(!nx)path+=uiCard(`<h2>Level finished</h2><p style="margin:0">You learned every word in this level.</p>`);}
