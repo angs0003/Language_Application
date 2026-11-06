@@ -55,6 +55,7 @@ async function solveAll(W, click) { for (let k = 0; k < 60 && !W.eval("view.fini
   click("Chinese"); check(W.eval("S.lang") === "zh" && d.getElementById("hd").textContent.includes("中文"), "choosing Chinese changes the language and the button");
   lang("ja");
   const hero = d.querySelector("#main .card.hero"); check(!!hero && hero.querySelectorAll(".prevlist li").length >= 2, "the Learn hero card shows a preview of the next lesson");
+  check(!d.querySelector("#main .pn.done"), "finished themes are not listed on the Learn tab");
   check(d.querySelector("#main .path").firstElementChild === hero || d.querySelector("#main .path .card.hero") === hero, "the next lesson is the first card of the path");
   // the next lesson stays first even when a review is due; the review is a row below it
   W.eval("themes('ja').slice(0,2).flatMap(t=>t.words).slice(0,8).forEach(w=>{S.ja.srs[w.w]={b:1,d:0,u:Date.now()};});render()");

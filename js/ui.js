@@ -107,14 +107,12 @@ function homeLearn(l,r){
     const lead=x.kind==="story"?`<span class="pn ${state}">${ico("book",26)}</span>`:`<span class="pn ${state}" lang="${L[l].hl}">${esc(x.ch)}</span>`;
     return `<button class="pitem" ${state==="locked"?"":""} data-a="${A(()=>x.kind==="story"?(x.done||x.open?openChapter(x.i):openTheme(x.i)):openTheme(x.i))}">${lead}<span class="lrt"><span class="lrh">${esc(x.title)}</span><span class="lrs">${esc(x.sub)}</span></span></button>`;};
   let path="";
-  const before=nextIdx>=0?items.slice(Math.max(0,nextIdx-2),nextIdx):items.filter(x=>x.done).slice(-2);
   if(nextIdx>=0){const x=items[nextIdx];
-    /* the next step comes first, with a preview of what it contains; finished and later items follow below it */
+    /* the next step comes first, with a preview of what it contains; only the next 3 items follow it. Finished themes are not listed here (see "All themes in this level"). */
     path+=uiCard(`<div class="nxt">${x.kind==="story"?`<span class="pn big">${ico("book",32)}</span>`:`<span class="pn big" lang="${L[l].hl}">${esc(x.ch)}</span>`}<span class="lrt">${uiLabel(x.kind==="story"?"NEXT STORY":"NEXT LESSON")}<span class="nxh">${esc(x.kind==="story"?x.title.replace(/^Story: /,""):x.title)}</span><span class="lrs">${esc(nextInfo.desc)}</span></span></div>${stepPreview(l,x)}${uiBtn(x.kind==="story"?"Read the story":"Start lesson",nextInfo.start)}`,"hero");
     if(due&&(due.k==="review"||due.k==="cards")){const di=stepInfo(l,due);path+=uiCard(uiRow(uiTileIcon("review"),esc(di.title),esc(di.desc),di.start),"list");}
     items.slice(nextIdx+1,nextIdx+4).forEach(x=>path+=node(x,"locked"));
-    before.forEach(x=>path+=node(x,x.done?"done":"todo"));
-  }else{before.forEach(x=>path+=node(x,x.done?"done":"todo"));if(!nx)path+=uiCard(`<h2>Level finished</h2><p style="margin:0">You learned every word in this level.</p>`);}
+  }else if(!nx)path+=uiCard(`<h2>Level finished</h2><p style="margin:0">You learned every word in this level.</p>`);
   h+=`<div class="path">${path}</div><button class="btn link" data-a="${A(()=>openSub("themes"))}">All themes in this level</button>`;
   r.main=h;
 }

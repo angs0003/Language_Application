@@ -71,7 +71,7 @@ const check = (ok, msg) => { if (!ok) failures.push(msg); else console.log("ok:"
   click("Test video"); await wait(400);
   check(W.eval("view.s") === "video" && !!d.getElementById("ytp"), "video opens in the in-app player");
   W.eval("__p.t=6"); await wait(400); check(d.getElementById("vsub").textContent.includes("ありがとう"), "subtitles follow the video time");
-  click("0.75×"); check(W.eval("__calls").includes("rate:0.75"), "speed control sets the playback rate");
+  check(!M().includes("Speed") && !/0\.75×/.test(M()), "the video screen has no speed control");
   W.eval("__p.t=10"); click("Set start here"); W.eval("__p.t=20"); click("Set end here"); click("Loop: off");
   W.eval("__p.t=21"); await wait(400); check(W.eval("__p.t") === 10, "section loop jumps back to the start point");
   click("Mark as watched"); check(W.eval("S.ja.videosWatched.BBBBBBBBBBB") === true, "watched state is saved");
