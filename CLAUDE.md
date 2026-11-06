@@ -196,7 +196,8 @@ names defined in earlier files (inside functions, any file's names can be used).
 
 Tools that help (all in `tools/`): `check-words.js` (word lists), `check-chapters.js` and `check-sentences.js` (stories and practice sentences,
 including a check for words the learner has not met yet), `add-kanji.js` (adds missing kanji with stroke order from KanjiVG and
-readings from KANJI_JA sources), `validate-content.js` (everything, also run by `npm test`). Lesson order: Words, Grammar, Sentences, Story, Quiz, Summary.
+readings from KANJI_JA sources), `validate-content.js` (everything, also run by `npm test`), `check-dictionary.js`
+(`npm run dict`: each word's reading against CC-CEDICT and JMdict; report only; `npm run dict:get` downloads JMdict to `tmp/dict/`). Lesson order: Words, Grammar, Sentences, Story, Quiz, Summary.
 
 1. In `content/content.js`, write the new themes as a new array (for example `const JA5=[...]`, 15 themes × 10 words, each with its 6 sentences),
    10 grammar points (`const GR_JA3=[...]`) and 15 chapters (`const STORY_JA3=[...]`), following section 6.
