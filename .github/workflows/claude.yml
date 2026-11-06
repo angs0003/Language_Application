@@ -1,0 +1,53 @@
+name: Claude
+# Responds to "@claude" in issues, issue comments and pull request comments.
+# Only accounts with write access to the repository can trigger it (the owner). Others get no response.
+# Flow on an issue: "@claude ..." -> the planner posts a plan -> owner replies "@claude approved" ->
+# Claude builds on a branch and opens a pull request -> the test check runs -> owner merges -> Deploy publishes.
+# Login: the owner's Claude subscription token (secret CLAUDE_CODE_OAUTH_TOKEN, from `claude setup-token`).
+# This workflow never receives the Supabase secrets.
+on:
+  issues:
+    types: [opened]
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+  pull_request_review:
+    types: [submitted]
+
+# One Claude run at a time; later requests wait.
+concurrency:
+  group: claude
+  cancel-in-progress: false
+
+jobs:
+  claude:
+    if: |
+      (github.event_name == 'issues' && contains(github.event.issue.body, '@claude')) ||
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
+      (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
+      (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      id-token: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      # Installs jsdom, eslint and prettier so the hooks and npm test work inside the run.
+      - run: npm ci
+      - uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          claude_args: |
+            --max-turns 40
+            --allowedTools "Bash(npm test),Bash(npm run lint),Bash(npm run validate),Bash(node tools/*),Bash(node tests/*),Bash(git status),Bash(git diff *),Bash(git log *)"
+            --append-system-prompt "You run unattended in GitHub Actions for Language Steps. Follow CLAUDE.md section 12. In short: (1) If the request is not a small fix and the thread has no comment from the owner containing '@claude approved', use the planner subagent, post its plan as your comment, and stop without changing files. (2) After approval, build exactly the approved plan on a new branch, run npm test and npm run lint, and open a pull request to main whose description lists the changes in numbered points and links the issue with 'Closes #N'. (3) Never push to main, never edit .github/workflows/ unless the issue names the file, never run npm run upload, never change CACHE in sw.js. (4) Write literally: no idioms, numbered steps, state confidence levels."

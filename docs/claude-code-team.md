@@ -20,6 +20,8 @@ small fix, approve the plan, then let Claude Code build. Use `/clear` to start a
 | `/check-content` | Validate and review content without changing it |
 | `/design-check` | Check changed screens against the design rules |
 | `/release` | Security check, tests, commit to a branch, open a pull request (you merge; the Deploy workflow publishes) |
+| `/add-video` | Add one video you chose to the catalogue, after the video-curator checks it |
+| `/curate-videos` | Find and check new catalogue videos for a level |
 
 Improvement commands:
 
@@ -28,12 +30,14 @@ Improvement commands:
 | `/retro` | after every release | Proposes edits to the handbook, agents, commands and checks, with evidence |
 | `/maintain` | monthly | Dependency and tool versions, dead code, documentation drift |
 | `/ux-review` | quarterly | Research, design audit, ranked UI/UX proposals (wireframes before code) |
-| `/content-report` | monthly | Your progress, weak themes, content gaps, open errors |
+| `/content-report` | monthly, on your computer only | Your progress, weak themes, content gaps, open errors (reads your personal progress) |
+| `/content-gaps` | monthly, automatic | Missing content and open content-error issues; no personal data |
 
 ## 3. Subagents (Claude Code picks them by task, or name them)
 
 | Subagent | Job | Can edit |
 |---|---|---|
+| `planner` | Writes the plan before any change; posts it on the issue when Claude runs in GitHub | nothing (read-only) |
 | `content-writer` | Writes content parts | `content/` only |
 | `content-reviewer` | Reviews content for correctness and consistency | nothing (read-only) |
 | `ui-engineer` | Screens, components, styles; keeps the design rules | `js/`, `index.html` |
@@ -41,6 +45,7 @@ Improvement commands:
 | `release-manager` | Tests, commit to a branch, push the branch, open a pull request | git (never `main`) |
 | `coach` | Improves the team setup from evidence (retrospectives) | `CLAUDE.md`, `.claude/`, `docs/decisions/`, new test checks |
 | `security-reviewer` | Secrets, database rules, scripts, sign-in redirect; runs inside `/release` | nothing (read-only) |
+| `video-curator` | Finds and checks YouTube videos against fixed rules; adds approved ones | `VIDS` and `TVREC` in `content/content.js` |
 | `data-engineer` | Tables, security rules, progress sync, sync tests | `supabase.sql`, `js/sync.js`, `js/content-rows.js`, `tests/sync.test.js`, `normalize()` |
 
 Example: "Use the ui-engineer subagent to add a Hanzi section to the Practise tab, following the kanji section."
@@ -65,7 +70,7 @@ Use only for parallel content work, for example Japanese Level 2 Part 2 and Chin
 
 ## 6. Files the team reads and writes
 
-- `ERRORS.md`: one line per content problem you notice in the app.
+- GitHub issues: one issue per content problem (template **Content error**, label `content-error`). `ERRORS.md` now only points to them.
 - `docs/ux-notes.md`: notes from the 5-task phone test after each UI change.
 - `docs/decisions/`: one file per decision, so decided questions are not reopened.
 - `.github/workflows/test.yml`: GitHub runs `npm test` and `npm run lint` on every pull request.
@@ -103,3 +108,31 @@ Use only for parallel content work, for example Japanese Level 2 Part 2 and Chin
 4. **Protect main:** Settings → Rules → Rulesets → New branch ruleset. Target: the default branch.
    Turn on **Require a pull request before merging** (required approvals: 0, because you are the only person)
    and **Require status checks to pass**, add the check `test`. Turn on **Block force pushes**.
+
+## 9. Working from GitHub (your phone is enough)
+
+Claude can work without your computer. It uses your work Claude seat through the secret `CLAUDE_CODE_OAUTH_TOKEN`.
+Everything in this repository is public, including Claude's comments and the Actions logs.
+
+| You do | What happens |
+|---|---|
+| New issue → **Content error**, then comment `@claude fix this` | Small fix: Claude makes a branch and a pull request. Larger change: Claude posts a plan first |
+| New issue → **Feature or change**, then comment `@claude plan this` | The planner posts a plan with assumptions, files, tests and risks |
+| Comment `@claude approved` | Claude builds the plan on a branch and opens a pull request (`Closes #N`) |
+| Comment `@claude <change>` on a pull request | Claude changes that pull request |
+| Open a pull request (or Claude opens one) | **Review** posts one comment: security, design rules, content checks, "Ready to merge" or not |
+| Nothing (1st of every month) | **Monthly** opens 2 issues: maintenance report and content gaps report. Comment `@claude do items 1 and 3` to act |
+| Merge a pull request with a green `test` check | **Deploy** publishes it |
+
+If Claude replies with a link named "Create PR" instead of opening the pull request, tap the link, then tap **Create pull request**.
+
+Limits per run: 40 turns and 30 minutes for `@claude` work, 25 turns and 20 minutes for reviews (Sonnet). Only one Claude run at a time.
+Each run uses your seat's usage limit. If the limit is reached, the run fails; run it again later from Actions or comment again.
+
+### One-time setup
+
+1. On your computer, signed in to Claude Code with your work seat, run `claude setup-token`. Copy the token it prints.
+2. GitHub → Settings → Secrets and variables → Actions → **New repository secret**: name `CLAUDE_CODE_OAUTH_TOKEN`, paste the token.
+3. Check that the Claude GitHub App is installed on this repository (it is needed for `@claude`).
+4. The labels `content-error`, `feature`, `maintenance` and `content-gaps` already exist (Issues → Labels).
+5. Test it: create a **Content error** issue for a real or invented small problem and comment `@claude fix this`.
