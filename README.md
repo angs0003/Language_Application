@@ -119,13 +119,14 @@ The repository includes a ready-made team setup: 8 commands, 8 subagents and 2 h
 2. Put your `.env` file into that folder. It is listed in `.gitignore`, so Git never uploads it.
 3. Open a terminal in the folder, start Claude Code, and ask, for example:
    "Read CLAUDE.md, then add Japanese Level 2 Part 2."
-4. Claude Code follows `CLAUDE.md`: it edits the files, runs `npm test`, uploads new content with
-   `npm run upload`, increases the cache version in `sw.js`, commits and pushes.
+4. Claude Code follows `CLAUDE.md`: it edits the files, runs `npm test`, commits to a branch and opens a
+   pull request (`/release`). You merge the pull request on GitHub when the `test` check is green.
+5. The Deploy workflow (`.github/workflows/deploy.yml`) then tests again, uploads new content, sets the cache
+   version and publishes. One-time setup: `docs/claude-code-team.md`, section 8.
 
 ### What appears when
 
-- **New content** (after `npm run upload`): at the app's next start.
-- **Code or design changes** (after a push to GitHub): within 1 to 2 minutes, at the next start of the app.
+- **Content, code or design changes** (after you merge the pull request): 1 to 3 minutes later, at the next start of the app.
 
 ### Commands
 

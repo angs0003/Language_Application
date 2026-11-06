@@ -19,7 +19,7 @@ small fix, approve the plan, then let Claude Code build. Use `/clear` to start a
 | `/add-part ja 2 2` | Write Japanese Level 2, Part 2 (150 words, 10 grammar points, 15 chapters), reviewed and tested, not released |
 | `/check-content` | Validate and review content without changing it |
 | `/design-check` | Check changed screens against the design rules |
-| `/release` | Test, upload content, bump the cache version, commit, push |
+| `/release` | Security check, tests, commit to a branch, open a pull request (you merge; the Deploy workflow publishes) |
 
 Improvement commands:
 
@@ -38,7 +38,7 @@ Improvement commands:
 | `content-reviewer` | Reviews content for correctness and consistency | nothing (read-only) |
 | `ui-engineer` | Screens, components, styles; keeps the design rules | `js/`, `index.html` |
 | `test-runner` | Runs tests and explains failures | nothing |
-| `release-manager` | Upload, cache version, commit, push | `sw.js`, git |
+| `release-manager` | Tests, commit to a branch, push the branch, open a pull request | git (never `main`) |
 | `coach` | Improves the team setup from evidence (retrospectives) | `CLAUDE.md`, `.claude/`, `docs/decisions/`, new test checks |
 | `security-reviewer` | Secrets, database rules, scripts, sign-in redirect; runs inside `/release` | nothing (read-only) |
 | `data-engineer` | Tables, security rules, progress sync, sync tests | `supabase.sql`, `js/sync.js`, `js/content-rows.js`, `tests/sync.test.js`, `normalize()` |
@@ -50,7 +50,7 @@ Example: "Use the ui-engineer subagent to add a Hanzi section to the Practise ta
 | Hook | When | Effect |
 |---|---|---|
 | `validate-content.js` | After any edit to `content/content.js` | Runs the validator; errors are sent back to Claude Code to fix |
-| `guard-release.js` | Before `git commit`, `git push` or `npm run upload` | Runs `npm test`; blocks the command if a test fails |
+| `guard-release.js` | Before `git commit`, `git push` or `npm run upload` | Runs `npm test`; blocks the command if a test fails. (`npm run upload` from your computer is now only an emergency route; the Deploy workflow normally uploads.) |
 
 ## 5. Agent teams (optional, experimental, higher cost)
 
@@ -61,18 +61,43 @@ Use only for parallel content work, for example Japanese Level 2 Part 2 and Chin
    npm test passing."
 3. Then ask for the team: "Create an agent team: one teammate writes Japanese Level 2 Part 2 in content/ja.js, one writes
    Chinese Level 3 Part 1 in content/zh.js, one reviews both with the content-reviewer rules. Use Sonnet for teammates."
-4. Review the shared task list with Ctrl+T, then run `/release` yourself.
+4. Review the shared task list with Ctrl+T, then run `/release` yourself and merge the pull request.
 
 ## 6. Files the team reads and writes
 
 - `ERRORS.md`: one line per content problem you notice in the app.
 - `docs/ux-notes.md`: notes from the 5-task phone test after each UI change.
 - `docs/decisions/`: one file per decision, so decided questions are not reopened.
-- `.github/workflows/test.yml`: GitHub runs `npm test` and `npm run lint` on every push.
+- `.github/workflows/test.yml`: GitHub runs `npm test` and `npm run lint` on every pull request.
+- `.github/workflows/deploy.yml`: after a merge to `main`, GitHub tests again, uploads content (only if `content/content.js` changed),
+  sets the cache version and publishes the app. If any step fails, nothing is published.
 
 ## 7. Habits that keep quality high
 
 1. One task per conversation.
 2. Approve the plan before the build.
-3. Read the final report; it must list tests run, upload result and cache version.
-4. Keep `.env` on your computer only.
+3. Read the final report; it must list tests run and the pull request link.
+4. Merge only when the pull request shows a green `test` check. To undo a release, open the merged pull request
+   on GitHub and tap **Revert**, then merge the revert pull request.
+5. Keep `.env` on your computer only. The copy of the service key for the Deploy workflow lives in GitHub secrets.
+
+## 8. How a change goes live
+
+1. Claude Code works on a branch and opens a pull request (`/release`).
+2. GitHub runs the `test` check on the pull request.
+3. You read the pull request and merge it when `test` is green. This is the only manual step.
+4. The Deploy workflow runs on `main`: test → upload content if it changed → set `CACHE` → publish to GitHub Pages.
+5. The app shows the change 1 to 3 minutes after the merge, at its next start.
+6. If the Deploy workflow fails: open **Actions** on GitHub, read the failed step, fix it in a new pull request,
+   or run the workflow again with **Run workflow** (tick "Upload content" to force a content upload).
+
+### One-time GitHub setup (in this order)
+
+1. **Secrets:** Settings → Secrets and variables → Actions → **New repository secret**. Add `SUPABASE_URL` and
+   `SUPABASE_SERVICE_ROLE_KEY` with the same values as in your `.env`.
+2. **Merge the pull request** that adds `deploy.yml`. Until step 3, the site still updates from the branch.
+3. **Pages source:** Settings → Pages → Build and deployment → Source: **GitHub Actions**. Then open
+   Actions → Deploy → **Run workflow** once, to publish through the new workflow.
+4. **Protect main:** Settings → Rules → Rulesets → New branch ruleset. Target: the default branch.
+   Turn on **Require a pull request before merging** (required approvals: 0, because you are the only person)
+   and **Require status checks to pass**, add the check `test`. Turn on **Block force pushes**.
