@@ -19,7 +19,7 @@ const ICONS={
  book:'<path d="M4 4h6a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H4z"/><path d="M20 4h-6a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h7z"/>',
  grammar:'<path d="M4 6h16"/><path d="M4 12h10"/><path d="M4 18h7"/>', video:'<rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 9l5 3-5 3z"/>',
  plus:'<path d="M12 5v14"/><path d="M5 12h14"/>', tv:'<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M8 21h8"/><path d="M12 18v3"/>',
- review:'<path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/>',
+ review:'<path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/>', chevd:'<path d="M6 9l6 6 6-6"/>',
 };
 function ico(n,size=22,extra=""){return `<svg class="ico" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" ${extra}>${ICONS[n]||""}</svg>`;}
 const STATUS={ok:'<span class="st st-ok" aria-label="Done">'+'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg></span>',
@@ -66,10 +66,26 @@ function screenHome(){
   r.main=(noteText?uiCard(`<p style="margin:0"><strong>${esc(noteText)}</strong></p>`):"")+genCard()+r.main;
   return r;
 }
-const langSeg=()=>uiSeg([["ja","日本語 Japanese"],["zh","中文 Chinese"]],S.lang,k=>{if(k!==S.lang)setLang(k);});
+/* Language drop-down in the top bar of the tab screens (replaces the full-width switch). */
+const LANG_OPTS=[["ja","日本語","Japanese"],["zh","中文","Chinese"]];
+function langMenuHTML(){
+  const cur=LANG_OPTS.find(o=>o[0]===S.lang)||LANG_OPTS[0],open=!!view.langOpen;
+  const btn=`<button class="langb" aria-haspopup="menu" aria-expanded="${open}" aria-label="Language: ${cur[2]}. Change language" data-a="${A(()=>{view.langOpen=!view.langOpen;render();})}"><span lang="${L[cur[0]].hl}">${cur[1]}</span>${ico("chevd",18)}</button>`;
+  const menu=open?`<button class="langscrim" aria-label="Close language menu" data-a="${A(()=>{view.langOpen=false;render();})}"></button><div class="langmenu" role="menu">${LANG_OPTS.map(o=>`<button role="menuitemradio" aria-checked="${o[0]===S.lang}" data-a="${A(()=>{view.langOpen=false;if(o[0]!==S.lang)setLang(o[0]);else render();})}"><span lang="${L[o[0]].hl}">${o[1]}</span> ${o[2]}</button>`).join("")}</div>`:"";
+  return {btn,menu};
+}
 /* Learn */
+/* Mini preview inside the Learn hero card: up to 5 words of the lesson and one example sentence (or the first 2 story lines). */
+function stepPreview(l,x){
+  const t=CUR[l][x.i];if(!t)return "";
+  const sentRow=s=>`<li><span class="pm"><span lang="${L[l].hl}">${esc(sentText(s))}</span>${s.english?`<br><span class="small muted">${esc(s.english)}</span>`:""}</span><button class="play" aria-label="Play audio" title="Play audio" data-a="${A(()=>say(sentText(s),l))}">${PLAY}</button></li>`;
+  if(x.kind==="story"){const c=chapter(l,x.i),ls=c&&c.lines?c.lines.slice(0,2):[];return ls.length?`<ul class="prevlist" aria-label="Story preview">${ls.map(sentRow).join("")}</ul>`:"";}
+  const ws=(t.words||[]).slice(0,5),s0=(t.sents||[])[0];
+  const row=w=>`<li><span class="pw" lang="${L[l].hl}">${esc(w.w)}</span><span class="pm"><span class="small">${esc(l==="ja"&&w.k&&w.k!==w.w?w.k+" · "+w.r:w.r||"")}</span><br>${esc(w.m)}</span><button class="play" aria-label="Play audio" title="Play audio" data-a="${A(()=>say(w.w,l))}">${PLAY}</button></li>`;
+  return `<ul class="prevlist" aria-label="Lesson preview">${ws.map(row).join("")}${s0?sentRow(s0):""}</ul>${(t.words||[]).length>ws.length?`<p class="small muted" style="margin:0">and ${(t.words||[]).length-ws.length} more words in this lesson</p>`:""}`;
+}
 function homeLearn(l,r){
-  const st=S[l];let h=langSeg();
+  const st=S[l];let h="";
   if(!st.placed){
     h+=uiCard(`${uiLabel("START HERE")}<h2>Placement quiz</h2><p>The quiz finds your starting point in ${L[l].name}. It asks for the meaning of one word at a time and stops after 3 incorrect answers in a row. Choose “I do not know” instead of guessing.</p>${uiBtn("Start placement quiz",startPlacement)}<button class="btn link" data-a="${A(()=>{st.placed=true;save();render();})}">Skip and start at Theme 1</button>`,"hero");
     r.main=h;return;
@@ -95,11 +111,12 @@ function homeLearn(l,r){
     path+=uiCard(`<div class="nxt"><span class="pn big">${ico("review",32)}</span><span class="lrt">${uiLabel("NEXT")}<span class="nxh">${esc(nextInfo.title)}</span><span class="lrs">${esc(nextInfo.desc)}</span></span></div>${uiBtn("Start review",nextInfo.start)}`,"hero");
   }
   const before=nextIdx>=0?items.slice(Math.max(0,nextIdx-2),nextIdx):items.filter(x=>x.done).slice(-2);
-  before.forEach(x=>path+=node(x,x.done?"done":"todo"));
   if(nextIdx>=0){const x=items[nextIdx];
-    path+=uiCard(`<div class="nxt">${x.kind==="story"?`<span class="pn big">${ico("book",32)}</span>`:`<span class="pn big" lang="${L[l].hl}">${esc(x.ch)}</span>`}<span class="lrt">${uiLabel(x.kind==="story"?"NEXT STORY":"NEXT LESSON")}<span class="nxh">${esc(x.kind==="story"?x.title.replace(/^Story: /,""):x.title)}</span><span class="lrs">${esc(nextInfo.desc)}</span></span></div>${uiBtn(x.kind==="story"?"Read the story":"Start lesson",nextInfo.start)}`,"hero");
+    /* the next step comes first, with a preview of what it contains; finished and later items follow below it */
+    path+=uiCard(`<div class="nxt">${x.kind==="story"?`<span class="pn big">${ico("book",32)}</span>`:`<span class="pn big" lang="${L[l].hl}">${esc(x.ch)}</span>`}<span class="lrt">${uiLabel(x.kind==="story"?"NEXT STORY":"NEXT LESSON")}<span class="nxh">${esc(x.kind==="story"?x.title.replace(/^Story: /,""):x.title)}</span><span class="lrs">${esc(nextInfo.desc)}</span></span></div>${stepPreview(l,x)}${uiBtn(x.kind==="story"?"Read the story":"Start lesson",nextInfo.start)}`,"hero");
     items.slice(nextIdx+1,nextIdx+4).forEach(x=>path+=node(x,"locked"));
-  }else if(!nx)path+=uiCard(`<h2>Level finished</h2><p style="margin:0">You learned every word in this level.</p>`);
+    before.forEach(x=>path+=node(x,x.done?"done":"todo"));
+  }else{before.forEach(x=>path+=node(x,x.done?"done":"todo"));if(!nx)path+=uiCard(`<h2>Level finished</h2><p style="margin:0">You learned every word in this level.</p>`);}
   h+=`<div class="path">${path}</div><button class="btn link" data-a="${A(()=>openSub("themes"))}">All themes in this level</button>`;
   r.main=h;
 }
@@ -154,7 +171,7 @@ function homeListen(l,r){
 }
 /* Travel */
 function homeTravel(l,r){
-  let h=uiSeg([["ja","Japan"],["zh","China"]],l,k=>{if(k!==S.lang)setLang(k);});
+  let h="";
   const done=S[l].tripDone||{},list=TRIP[l],ni=list.findIndex((x,i)=>!done[i]);
   if(ni>=0){const d=list[ni];h+=uiCard(`${uiLabel("NEXT SITUATION")}<div class="nxt">${uiTileIcon("travel")}<span class="lrt"><span class="nxh">${esc(d.t)}</span><span class="lrs">${esc(d.intro)}</span></span></div>${uiBtn("Start",()=>openTrip(ni))}`,"hero");}
   else h+=uiCard(`<h2>All situations practised</h2><p class="muted" style="margin:0">Open any situation to practise it again.</p>`);
@@ -183,7 +200,8 @@ function render(){
   r=(map[v]||screenHome)();
   const hd=document.getElementById("hd");
   if(r.tab){
-    hd.innerHTML=`<div class="wrap hdrow"><h1 class="hdt">${esc(r.title)}</h1><button class="ibtn" aria-label="Profile and settings" data-a="${A(()=>{view={s:"settings"};render();window.scrollTo(0,0);})}">${ico("user")}</button></div><div id="prog" hidden></div>`;
+    const lm=langMenuHTML();
+    hd.innerHTML=`<div class="wrap hdrow"><h1 class="hdt">${esc(r.title)}</h1><span class="hdacts">${lm.btn}<button class="ibtn" aria-label="Profile and settings" data-a="${A(()=>{view={s:"settings"};render();window.scrollTo(0,0);})}">${ico("user")}</button></span></div>${lm.menu}<div id="prog" hidden></div>`;
   }else{
     const left=r.exit?`<button class="ibtn" aria-label="Exit" data-a="${A(()=>{view.confirm=true;render();window.scrollTo(0,0);})}">${ico("x")}</button>`:`<button class="ibtn" aria-label="Back" data-a="${A(r.back&&r.back.fn&&!r.back.dis?r.back.fn:goHome)}">${ico("back")}</button>`;
     hd.innerHTML=`<div class="wrap hdrow sm">${left}<div class="hdmid">${r.title?`<span class="hdt2">${esc(r.title)}</span>`:""}<div id="prog" class="prog">${r.prog||""}</div></div></div>`;

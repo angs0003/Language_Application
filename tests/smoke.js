@@ -3,10 +3,10 @@ const { makeDom, wait, ready, tools } = require("./helpers");
 const failures = [];
 (async () => {
   const dom = makeDom({ db: null, failures }); await ready(dom);
-  const { d, W, M, click, answerUntil, doLesson, startNext, tab } = tools(dom, failures);
+  const { d, W, M, click, answerUntil, doLesson, startNext, tab, lang: pickLang } = tools(dom, failures);
   if (W.eval("LS_CONTENT_SOURCE") !== "bundled") failures.push("expected bundled content");
   for (const lang of ["ja", "zh"]) {
-    click(lang === "ja" ? "Japanese" : "Chinese"); click("Skip and start");
+    pickLang(lang); click("Skip and start");
     for (let round = 0; round < 5; round++) {
       if (W.eval("view.s") !== "home") W.eval("goHome()"); tab("Learn"); startNext(); await wait(5); const s = W.eval("view.s");
       if (s === "lesson") await doLesson();

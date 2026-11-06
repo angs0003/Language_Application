@@ -65,6 +65,8 @@ function tools(dom, failures) {
   }
   const startNext = () => { const b = d.querySelector(".card.hero .btn.pri"); if (!b) throw new Error("no next-step button | " + M().slice(0, 150)); b.click(); };
   const tab = t => { const b = [...d.querySelectorAll(".tabb")].find(b => b.textContent.includes(t)); if (!b) throw new Error("tab not found: " + t); b.click(); };
-  return { d, W, M, click, answerUntil, doLesson, startNext, tab };
+  /* Picks a language in the top-bar drop-down: lang("ja") or lang("zh"). */
+  const lang = l => { const b = d.querySelector('#hd button[aria-label^="Language"]'); if (!b) throw new Error("language button not found"); b.click(); click(l === "ja" ? "Japanese" : "Chinese"); };
+  return { d, W, M, click, answerUntil, doLesson, startNext, tab, lang };
 }
 module.exports = { mockDB, makeDom, wait, ready, tools, root };

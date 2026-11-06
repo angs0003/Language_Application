@@ -4,8 +4,8 @@ const failures = [];
 const check = (ok, msg) => { if (!ok) failures.push(msg); else console.log("ok:", msg); };
 (async () => {
   const dom = makeDom({ db: null, failures }); await ready(dom);
-  const { d, W, M, click, tab } = tools(dom, failures);
-  click("Japanese"); click("Skip and start");
+  const { d, W, M, click, tab, lang } = tools(dom, failures);
+  lang("ja"); click("Skip and start");
   // --- Player ---
   W.eval('openPlayer("story",0)');
   check(W.eval("view.s") === "player" && d.getElementById("prog").textContent.includes("Line 1 of 6"), "player opens a story at line 1 of 6");

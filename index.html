@@ -197,6 +197,21 @@ textarea{font:inherit;font-size:14px;width:100%;padding:8px;border:2px solid var
 .ksvg path{fill:none;stroke:var(--ink);stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round}
 .ksvg path.khide{stroke:var(--grid)}
 .ksvg path.kcur{stroke:var(--acc);stroke-width:4.5}
+.ksvg path.tdraw{stroke:var(--acc);stroke-width:4.5}
+.tarea{display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:14px}
+.kbox.tbig{width:min(100%,280px);height:auto;aspect-ratio:1/1}
+.kbox.tbig .ksvg{display:block;touch-action:none;user-select:none;-webkit-user-select:none;cursor:crosshair}
+.langb{flex:none;min-width:48px;height:48px;padding:0 12px;border-radius:24px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:16px;display:flex;align-items:center;gap:4px;cursor:pointer}
+.hdacts{display:flex;align-items:center;gap:8px}
+.langscrim{position:fixed;inset:0;border:0;background:transparent;padding:0;cursor:default}
+.langmenu{position:absolute;top:calc(100% - 4px);right:max(20px,calc((100% - 560px)/2 + 20px));z-index:6;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:6px;display:flex;flex-direction:column;min-width:200px}
+.langmenu button{font:inherit;font-size:17px;min-height:48px;border:0;border-radius:10px;background:transparent;color:var(--ink);text-align:left;padding:0 14px;cursor:pointer}
+.langmenu button[aria-checked="true"]{background:var(--tint);font-weight:700}
+.prevlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.prevlist li{display:flex;align-items:center;gap:10px;min-height:48px;border-top:1px solid var(--line)}
+.prevlist li:first-child{border-top:0}
+.prevlist .pw{font-size:22px;min-width:52px;font-family:"Noto Sans JP","Noto Sans SC",sans-serif}
+.prevlist .pm{flex:1;min-width:0}
 ruby rt{font-size:.45em;color:var(--muted)}
 
 /* ===== Design system v2 (approved full-detail screens) ===== */
