@@ -108,7 +108,7 @@ function homeLearn(l,r){
     nextIdx=items.findIndex(x=>x.kind==="story"?x.open:!x.done);
     if(nextIdx>=0){const x=items[nextIdx],t=ths[x.i];
       nextInfo=x.kind==="story"?{desc:"Read and listen to the whole chapter, then answer 2 questions.",start:()=>openChapter(x.i)}
-        :{desc:`${t.words.filter(w=>!isL(l,w)).length} new words, grammar, a story, a dialogue and a quiz.`,start:()=>startLesson(t.words.filter(w=>!isL(l,w)),t.title)};}
+        :{desc:lessonDesc(t.words.filter(w=>!isL(l,w)).length),start:()=>startLesson(t.words.filter(w=>!isL(l,w)),t.title)};}
   }
   const node=(x,state)=>{
     const lead=x.kind==="story"?`<span class="pn ${state}">${ico("book",26)}</span>`:`<span class="pn ${state}" lang="${L[l].hl}">${esc(x.ch)}</span>`;
