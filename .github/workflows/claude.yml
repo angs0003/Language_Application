@@ -4,6 +4,7 @@ name: Claude
 # Flow on an issue: "@claude ..." -> the planner posts a plan -> owner replies "@claude approved" ->
 # Claude builds on a branch and opens a pull request -> the test check runs -> owner merges -> Deploy publishes.
 # Login: the owner's Claude subscription token (secret CLAUDE_CODE_OAUTH_TOKEN, from `claude setup-token`).
+# Pull requests: opened with the owner's fine-grained token (secret CLAUDE_PR_TOKEN, Pull requests: write only).
 # This workflow never receives the Supabase secrets.
 on:
   issues:
@@ -28,7 +29,7 @@ jobs:
       (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
       (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude'))
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     permissions:
       contents: write
       pull-requests: write
@@ -44,10 +45,16 @@ jobs:
           node-version: 20
       # Installs jsdom, eslint and prettier so the hooks and npm test work inside the run.
       - run: npm ci
+      # Browser for the phone tests, so Claude can run npm run test:phone before opening a pull request.
+      - run: npx playwright install --with-deps chromium
       - uses: anthropics/claude-code-action@v1
+        env:
+          # Fine-grained token of the owner (this repository only, Pull requests: write).
+          # Used only by "gh pr create", so the pull request is opened by the owner and the test and Review workflows start.
+          GH_TOKEN: ${{ secrets.CLAUDE_PR_TOKEN }}
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           claude_args: |
-            --max-turns 40
-            --allowedTools "Bash(npm test),Bash(npm run lint),Bash(npm run validate),Bash(node tools/*),Bash(node tests/*),Bash(git status),Bash(git diff *),Bash(git log *)"
-            --append-system-prompt "You run unattended in GitHub Actions for Language Steps. Follow CLAUDE.md section 12. In short: (1) If the request is not a small fix and the thread has no comment from the owner containing '@claude approved', use the planner subagent, post its plan as your comment, and stop without changing files. (2) After approval, build exactly the approved plan on a new branch, run npm test and npm run lint, and open a pull request to main whose description lists the changes in numbered points and links the issue with 'Closes #N'. (3) Never push to main, never edit .github/workflows/ unless the issue names the file, never run npm run upload, never change CACHE in sw.js. (4) Write literally: no idioms, numbered steps, state confidence levels."
+            --max-turns 60
+            --allowedTools "Bash(npm test),Bash(npm run lint),Bash(npm run test:phone),Bash(gh pr create *),Bash(gh pr view *),Bash(npm run validate),Bash(node tools/*),Bash(node tests/*),Bash(git status),Bash(git diff *),Bash(git log *)"
+            --append-system-prompt "You run unattended in GitHub Actions for Language Steps. Follow CLAUDE.md section 12. In short: (1) If the request is not a small fix and the thread has no comment from the owner containing '@claude approved', use the planner subagent, post its plan as your comment, and stop without changing files. (2) After approval, build exactly the approved plan on a new branch, run npm test, npm run lint and npm run test:phone and fix every failure, then open the pull request yourself with: gh pr create --base main --head <your branch> --title <title> --body-file <file>. The description lists the changes in numbered points and contains 'Closes #N'. Post the pull request link in your comment. If gh pr create fails, post the error line and the Create PR link instead. (3) Never push to main, never edit .github/workflows/ unless the issue names the file, never run npm run upload, never change CACHE in sw.js. (4) Write literally: no idioms, numbered steps, state confidence levels."
