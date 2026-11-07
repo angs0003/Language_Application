@@ -144,7 +144,7 @@ names defined in earlier files (inside functions, any file's names can be used).
   video has a `transcript`. Watched state: `videos[].watched` and `S[lang].videosWatched` for catalogue videos.
 - **🈴 Kana and kanji** (Japanese tab only; `homeKanji`): hiragana and katakana rows (`KANA`, 71 + 71 characters)
   with a learn screen per character (`screenKana`) and practice (`kanaQuiz`: reading choice, listen and choose,
-  match pairs); kanji in order of first appearance in the vocabulary (`KANJI_JA`, 261 now), learned 5 at a time
+  match pairs); kanji in order of first appearance in the vocabulary (`KANJI_JA`, 535 now), learned 5 at a time
   (`screenKanjiLearn`, ends with "Finish lesson": no quiz, the 5 kanji get review timing through `kSet`), each with a card (`kanjiCardHTML`: meanings, on/kun readings, stroke count, step-by-step
   stroke order, words from the lessons). Practice (`kanjiQuestions`): meaning, kanji from meaning, reading in a word,
   match pairs. Progress: `S.ja.kana` and `S.ja.kanji` (`{b,d,u}`), synced as `word_progress` rows with
@@ -166,7 +166,7 @@ names defined in earlier files (inside functions, any file's names can be used).
 - **Fading furigana** (`furiFor`, inside `glossHTML`): Japanese tokens containing kanji get a `<ruby>` reading,
   converted from the token's romaji with `toHira()`, unless all kanji in the token are learned.
   Setting `S.settings.furi`: `fade` (default), `always`, `never`. Write romaji so `toHira` gives correct kana
-  (for example `kin’youbi` with an apostrophe before `y`).
+  (for example `kin’youbi` with an apostrophe before `y`, and `dzu` for づ: `kodzutsumi`).
 - **TV list** (`TVREC`, `tvCard` in Watch): title, service, length, why it fits, rating with its source, suggested level.
 - AI: `AI_OFF=true`. Never call AI APIs from the browser. If AI is added later, use a server function.
 
@@ -249,7 +249,7 @@ Guide for the owner: `docs/claude-code-team.md`. Keep these files consistent wit
 ## 10. Roadmap (agreed order)
 
 Content batches (each about 150 words, 10 grammar points, 15 chapters):
-1. Japanese Level 2 (rest of JLPT N5): Part 2 is done (Level 2 now has 300 words); about 2 more parts.
+1. Done (not yet released): Japanese Level 2 (rest of JLPT N5), Parts 1 to 4 (Level 2 has 600 words; Japanese has 750 words, 79 themes, 50 grammar points). Some words are usually taught at JLPT N4; the Level 2 label says so.
 2. Chinese Level 3 (HSK 3): about 2 parts.
 3. Japanese Level 3 (JLPT N4): about 4 to 5 parts.
 4. Chinese Level 4 (HSK 4): about 4 parts.
