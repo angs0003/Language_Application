@@ -21,12 +21,14 @@ function planSteps(l,count,skipDue){
   }
   return out;
 }
+/* One description for every lesson card (the lesson steps are words, grammar, sentences, story, quiz). */
+const lessonDesc=n=>`${n} new words, grammar, practice sentences, a story and a quiz.`;
 function stepInfo(l,st){
   if(st.k==="cards")return{e:"⭐",title:`My words: ${st.due} due`,desc:"Flashcards of the words you saved.",start:startCards};
   if(st.k==="review")return{e:"🔁",title:`Review: ${st.due} words`,desc:"Practise the words that are due today.",start:startReview};
   if(st.k==="story"){const c=chapter(l,st.n);return{e:"📖",title:`Story chapter ${st.n+1}: ${c.title}`,desc:"Read and listen to the whole chapter, then answer 2 questions.",start:()=>openChapter(st.n)};}
   if(st.k==="trip"){const d=TRIP[l][st.i];return{e:"✈️",title:`Travel: ${d.t}`,desc:d.intro,start:()=>openTrip(st.i)};}
-  return{e:"🆕",title:`Lesson: ${st.titles.join(" and ")}`,desc:`${st.words.length} new words, grammar, a story, a dialogue and a quiz.`,start:()=>startLesson(st.words,st.titles.join(" and "))};
+  return{e:"🆕",title:`Lesson: ${st.titles.join(" and ")}`,desc:lessonDesc(st.words.length),start:()=>startLesson(st.words,st.titles.join(" and "))};
 }
 const LIB=[["path","🧭","Themes and words"],["trip","✈️","Travel situations"],["grammar","🧩","Grammar guide"],["stories","📖","Stories"],["talk","💬","AI conversations"],["review","🔁","Review"],["settings","⚙️","Settings"]];
 const isOpen=(k,d)=>view.open&&k in view.open?view.open[k]:d;
