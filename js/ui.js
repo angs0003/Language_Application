@@ -102,7 +102,14 @@ function homeLearn(l,r){
   let nextIdx=-1;
   if(nx&&nx.k==="lesson"){const ti=themeIdxOf(l,nx.words[0]);nextIdx=items.findIndex(x=>x.kind==="lesson"&&x.i===ti);}
   else if(nx&&nx.k==="story")nextIdx=items.findIndex(x=>x.kind==="story"&&x.i===nx.n);
-  const nextInfo=nx?stepInfo(l,nx):null;
+  let nextInfo=nx&&nextIdx>=0?stepInfo(l,nx):null;
+  /* The next step overall may belong to another level (for example Level 1 is not finished). The viewed level then shows its own next item in order. */
+  if(nextIdx<0){
+    nextIdx=items.findIndex(x=>x.kind==="story"?x.open:!x.done);
+    if(nextIdx>=0){const x=items[nextIdx],t=ths[x.i];
+      nextInfo=x.kind==="story"?{desc:"Read and listen to the whole chapter, then answer 2 questions.",start:()=>openChapter(x.i)}
+        :{desc:`${t.words.filter(w=>!isL(l,w)).length} new words, grammar, a story, a dialogue and a quiz.`,start:()=>startLesson(t.words.filter(w=>!isL(l,w)),t.title)};}
+  }
   const node=(x,state)=>{
     const lead=x.kind==="story"?`<span class="pn ${state}">${ico("book",26)}</span>`:`<span class="pn ${state}" lang="${L[l].hl}">${esc(x.ch)}</span>`;
     return `<button class="pitem" ${state==="locked"?"":""} data-a="${A(()=>x.kind==="story"?(x.done||x.open?openChapter(x.i):openTheme(x.i)):openTheme(x.i))}">${lead}<span class="lrt"><span class="lrh">${esc(x.title)}</span><span class="lrs">${esc(x.sub)}</span></span></button>`;};
@@ -111,8 +118,9 @@ function homeLearn(l,r){
     /* the next step comes first, with a preview of what it contains; only the next 3 items follow it. Finished themes are not listed here (see "All themes in this level"). */
     path+=uiCard(`<div class="nxt">${x.kind==="story"?`<span class="pn big">${ico("book",32)}</span>`:`<span class="pn big" lang="${L[l].hl}">${esc(x.ch)}</span>`}<span class="lrt">${uiLabel(x.kind==="story"?"NEXT STORY":"NEXT LESSON")}<span class="nxh">${esc(x.kind==="story"?x.title.replace(/^Story: /,""):x.title)}</span><span class="lrs">${esc(nextInfo.desc)}</span></span></div>${stepPreview(l,x)}${uiBtn(x.kind==="story"?"Read the story":"Start lesson",nextInfo.start)}`,"hero");
     if(due&&(due.k==="review"||due.k==="cards")){const di=stepInfo(l,due);path+=uiCard(uiRow(uiTileIcon("review"),esc(di.title),esc(di.desc),di.start),"list");}
-    items.slice(nextIdx+1,nextIdx+4).forEach(x=>path+=node(x,"locked"));
-  }else if(!nx)path+=uiCard(`<h2>Level finished</h2><p style="margin:0">You learned every word in this level.</p>`);
+    const after=items.slice(nextIdx+1).filter(x=>!x.done).slice(0,3),firstLesson=after.findIndex(x=>x.kind==="lesson");
+    after.forEach((x,j)=>{if(j===firstLesson)path+=uiLabel("NEXT THEME");path+=node(x,"locked");});
+  }else if(!nx||!idx.some(i=>!ths[i].words.every(w=>isL(l,w))))path+=uiCard(`<h2>Level finished</h2><p style="margin:0">You learned every word in this level.</p>`);
   h+=`<div class="path">${path}</div><button class="btn link" data-a="${A(()=>openSub("themes"))}">All themes in this level</button>`;
   r.main=h;
 }
