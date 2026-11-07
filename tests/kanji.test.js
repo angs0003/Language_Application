@@ -11,9 +11,10 @@ async function solveAll(W, click) { for (let k = 0; k < 60 && !W.eval("view.fini
   const dom = makeDom({ db: mockDB(store, user), failures }); await ready(dom); await wait(100);
   const { d, W, M, click, tab, lang } = tools(dom, failures);
   // conversions
-  const conv = { watashi: "わたし", gakkou: "がっこう", konnichiwa: "こんにちわ", isshuukan: "いっしゅうかん", juppun: "じゅっぷん", "kin'youbi": "きんようび", kodzutsumi: "こづつみ", tsudzukeru: "つづける", "benkyou shimasu": "べんきょうします" };
+  const conv = { watashi: "わたし", gakkou: "がっこう", konnichiwa: "こんにちわ", isshuukan: "いっしゅうかん", juppun: "じゅっぷん", "kin'youbi": "きんようび", kodzutsumi: "こづつみ", tsudzukeru: "つづける", hanadji: "はなぢ", "benkyou shimasu": "べんきょうします" };
   for (const [r, h] of Object.entries(conv)) check(W.eval(`toHira(${JSON.stringify(r)})`) === h, `romaji ${r} converts to ${h}`);
   check(W.eval('toRomaji("しょく")') === "shoku" && W.eval('toRomaji("がっこう")') === "gakkou" && W.eval('toRomaji("わたし")') === "watashi", "kana readings convert to Hepburn romaji");
+  check(W.eval('toRomaji("づ")') === "zu" && W.eval('toRomaji("ぢ")') === "ji", "づ and ぢ convert to zu and ji in Hepburn romaji");
   // section visibility
   lang("zh"); click("Skip and start"); tab("Practise"); check(!M().includes("Kana"), "Kanji and kana are hidden for Chinese");
   tab("Learn"); lang("ja"); click("Skip and start"); tab("Practise"); click("Kana"); check(M().includes("Hiragana: 0 of 71"), "Kana screen shows hiragana progress");
