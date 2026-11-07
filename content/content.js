@@ -152,7 +152,7 @@ q:[[1,"How does Xiao Wen’s mum come to Beijing?",["By train","By plane","By ta
 "今天|jīntiān|today / 他们|tāmen|they / 学习|xuéxí|study / 汉字|hànzì|Chinese characters / 。 = Today they study Chinese characters.",
 "小文|Xiǎo Wén|Xiao Wen (name) / 写|xiě|writes / 汉字|hànzì|Chinese characters / 。 = Xiao Wen writes Chinese characters.",
 "李|Lǐ|Li (family name) / 老师|lǎoshī|teacher / ： / 小文|Xiǎo Wén|Xiao Wen (name) / ， / 请|qǐng|please / 读|dú|read aloud / 这个|zhège|this / 字|zì|character / 。 = Teacher Li: Xiao Wen, please read this character.",
-"下午|xiàwǔ|in the afternoon / 大明|Dàmíng|Daming (name) / 去|qù|goes / 工作|gōngzuò|to work / 。 = In the afternoon Daming goes to work."],
+"下午|xiàwǔ|in the afternoon / 大明|Dàmíng|Daming (name) / 回家|huí jiā|goes home / 。 = In the afternoon Daming goes home."],
 q:[[2,"What do they study today?",["Chinese characters","English","Music"],0,"Line 3: 学习汉字 means “study Chinese characters”."],[4,"What does Teacher Li ask Xiao Wen to do?",["Read a character aloud","Write a book","Go home"],0,"Line 5: 请读这个字 means “please read this character”."]]},
 {t:"A film together",l:[
 "小文|Xiǎo Wén|Xiao Wen (name) / 喜欢|xǐhuan|likes / 看|kàn|watching / 电影|diànyǐng|films / 。 = Xiao Wen likes watching films.",
@@ -637,7 +637,7 @@ q:[[2,"What time does the exam start?",["Eight o’clock","Nine o’clock","Ten 
 "三|sān|three / 天|tiān|days / 以后|yǐhòu|after / ， / 小文|Xiǎo Wén|Xiao Wen / 的|de|’s / 病|bìng|illness / 好|hǎo|better / 了|le|(change) / 。 = After three days, Xiao Wen was better."],
 q:[[1,"What is wrong with Xiao Wen?",["A fever and her nose","Her foot hurts","Nothing"],0,"Line 2: 发烧，鼻子也不舒服."],[4,"What did Daming bring?",["Fruit","Medicine","Noodles"],0,"Line 5: 送了水果."]]},
 {t:"Because of the rain",l:[
-"星期六|xīngqīliù|Saturday / ， / 大明|Dàmíng|Daming / 想|xiǎng|wants / 去|qù|to go / 爬山|pá shān|climb a mountain / 。 = On Saturday, Daming wants to go hiking.",
+"星期六|xīngqīliù|Saturday / ， / 大明|Dàmíng|Daming / 想|xiǎng|wants / 去|qù|to go / 爬山|páshān|climb a mountain / 。 = On Saturday, Daming wants to go hiking.",
 "因为|yīnwèi|because / 下雨|xià yǔ|it rains / ， / 所以|suǒyǐ|so / 他们|tāmen|they / 没有|méiyǒu|did not / 去|qù|go / 。 = Because it rained, they did not go.",
 "虽然|suīrán|although / 下雨|xià yǔ|it rains / ， / 但是|dànshì|but / 他们|tāmen|they / 很|hěn|very / 高兴|gāoxìng|happy / 。 = Although it rained, they were happy.",
 "他们|tāmen|they / 在|zài|at / 家|jiā|home / 看|kàn|watch / 电影|diànyǐng|film / 。 = They watch a film at home.",
@@ -1175,7 +1175,7 @@ const SENT_ZH=[
   "你|nǐ|you / 看见|kànjiàn|see / 我|wǒ|I / 的|de|’s / 猫|māo|cat / 了|le|(completed) / 吗|ma|(question) / ？ = Have you seen my cat?"],
  ["这|zhè|this / 是|shì|is / 我|wǒ|I / 的|de|’s / 桌子|zhuōzi|table / 。 = This is my table.",
   "那|nà|that / 是|shì|is / 你|nǐ|you / 的|de|’s / 椅子|yǐzi|chair / 吗|ma|(question) / ？ = Is that your chair?",
-  "我|wǒ|I / 的|de|’s / 电脑|diànnǎo|computer / 在|zài|is at / 家|jiā|home / 里|lǐ|inside / 。 = My computer is at home.",
+  "我|wǒ|I / 的|de|’s / 电脑|diànnǎo|computer / 在|zài|is at / 家|jiā|home / 里|li|inside / 。 = My computer is at home.",
   "我们|wǒmen|we / 住|zhù|live / 在|zài|is at / 中国|Zhōngguó|China / 。 = We live in China.",
   "我|wǒ|I / 想|xiǎng|want to / 打电话|dǎ diànhuà|make a phone call / 。 = I want to make a phone call.",
   "那|nà|that / 个|ge|(measure word) / 学校|xuéxiào|school / 在|zài|is at / 哪儿|nǎr|where / ？ = Where is that school?"],
@@ -1264,7 +1264,7 @@ const SENT_ZH=[
   "秋天|qiūtiān|autumn / 的|de|’s / 北京|Běijīng|Beijing / 很|hěn|very / 漂亮|piàoliang|pretty / 。 = Beijing in autumn is very pretty.",
   "下雨|xià yǔ|to rain / 了|le|(completed) / ， / 你|nǐ|you / 带|dài|takes / 雨伞|yǔsǎn|umbrella / 吗|ma|(yes/no question) / ？ = It is raining. Are you taking an umbrella?"],
  ["我|wǒ|I, me / 爸爸|bàba|dad / 在|zài|to be at, in / 公司|gōngsī|company / 上班|shàngbān|to go to work / 。 = My dad works at a company.",
-  "学生|xuésheng|student / 在|zài|to be at, in / 教室|jiàoshì|classroom / 里|lǐ|inside / 。 = The students are in the classroom.",
+  "学生|xuésheng|student / 在|zài|to be at, in / 教室|jiàoshì|classroom / 里|li|inside / 。 = The students are in the classroom.",
   "我|wǒ|I, me / 的|de|’s / 课|kè|class, lesson / 九|jiǔ|nine / 点|diǎn|o’clock / 开始|kāishǐ|to start / 。 = My class starts at nine o’clock.",
   "我|wǒ|I, me / 正在|zhèngzài|in the middle of (doing) / 准备|zhǔnbèi|to prepare / 考试|kǎoshì|exam / 。 = I am preparing for the exam now.",
   "这|zhè|this / 个|ge|(general measure word) / 题|tí|question (in an exam) / 很|hěn|very / 难|nán|difficult / 。 = This question is very difficult.",
@@ -1289,9 +1289,9 @@ const SENT_ZH=[
   "我|wǒ|I, me / 哥哥|gēge|older brother / 跑|pǎo|run / 得|de|(links a verb to how it is done) / 很|hěn|very / 快|kuài|fast / 。 = My older brother runs fast."],
  ["请问|qǐngwèn|excuse me / ， / 洗手间|xǐshǒujiān|toilet, restroom / 在|zài|to be at, in / 哪儿|nǎr|where / ？ = Excuse me, where is the toilet?",
   "房间|fángjiān|room / 在|zài|to be at, in / 三|sān|three / 楼|lóu|floor, building / ， / 电梯|diàntī|lift, elevator / 在|zài|to be at, in / 左边|zuǒbian|left side / 。 = The room is on the third floor, and the lift is on the left side.",
-  "房间|fángjiān|room / 里|lǐ|inside / 有|yǒu|to have / 空调|kōngtiáo|air conditioner / ， / 没有|méiyǒu|did not / 冰箱|bīngxiāng|fridge / 。 = The room has an air conditioner but no fridge.",
+  "房间|fángjiān|room / 里|li|inside / 有|yǒu|to have / 空调|kōngtiáo|air conditioner / ， / 没有|méiyǒu|did not / 冰箱|bīngxiāng|fridge / 。 = The room has an air conditioner but no fridge.",
   "灯|dēng|light, lamp / 在|zài|to be at, in / 桌子|zhuōzi|table / 上|shàng|on, above / ， / 它|tā|it / 很|hěn|very / 新|xīn|new / 。 = The lamp is on the table, and it is new.",
-  "我|wǒ|I, me / 的|de|’s / 包|bāo|bag / 里|lǐ|inside / 有|yǒu|to have / 一|yì|one / 张|zhāng|(measure word for tables) / 地图|dìtú|map / 。 = There is a map in my bag.",
+  "我|wǒ|I, me / 的|de|’s / 包|bāo|bag / 里|li|inside / 有|yǒu|to have / 一|yì|one / 张|zhāng|(measure word for tables) / 地图|dìtú|map / 。 = There is a map in my bag.",
   "我|wǒ|I, me / 用|yòng|use / 手机|shǒujī|mobile phone / 拍|pāi|took / 了|le|(completed) / 很多|hěn duō|many / 照片|zhàopiàn|photo / 。 = I took many photos with my mobile phone."]
 ];
 SENT_JA.forEach((s,i)=>{JA[i][2]=s;});SENT_ZH.forEach((s,i)=>{ZH[i][2]=s;});
@@ -2472,7 +2472,7 @@ const ZH4A=[
 [
  "我|wǒ|I, me / 每|měi|every / 天|tiān|day / 经过|jīngguò|to pass by / 学校|xuéxiào|school / 。 = I pass the school every day.",
  "我们|wǒmen|we, us / 九|jiǔ|nine / 点|diǎn|o’clock / 到|dào|to arrive, to reach / 医院|yīyuàn|hospital / 。 = We arrive at the hospital at nine.",
- "请|qǐng|please / 跟|gēn|to follow, with / 我|wǒ|I, me / 来|lái|to come / 。 = Please follow me.",
+ "请|qǐng|please / 跟|gēn|to follow, with / 我|wǒ|I, me / 去|qù|to go / 学校|xuéxiào|school / 。 = Please go to school with me.",
  "他|tā|he / 从|cóng|from / 北京|Běijīng|Beijing / 来|lái|to come / 。 = He comes from Beijing.",
  "今天|jīntiān|today / 老师|lǎoshī|teacher / 迟到|chídào|to be late / 了|le|(completed) / 。 = The teacher was late today.",
  "我|wǒ|I, me / 想|xiǎng|to want to, to think / 去|qù|to go / 爬山|páshān|to climb a mountain / 。 = I want to go hiking."]],
@@ -2545,7 +2545,7 @@ const ZH4A=[
  "我|wǒ|I, me / 先|xiān|first / 喝|hē|to drink / 水|shuǐ|water / ， / 然后|ránhòu|then / 吃饭|chī fàn|eat / 。 = I drink water first, then I eat.",
  "后来|hòulái|later, afterwards / 他|tā|he / 去|qù|to go / 了|le|(completed) / 医院|yīyuàn|hospital / 。 = Later he went to the hospital.",
  "以前|yǐqián|before, in the past / 我|wǒ|I, me / 不|bù|not / 懂|dǒng|to understand / 中文|Zhōngwén|Chinese (language) / 。 = I did not understand Chinese before.",
- "最后|zuìhòu|finally, last / 我们|wǒmen|we, us / 回|huí|to return / 家|jiā|home, family / 了|le|(completed) / 。 = Finally we went home.",
+ "最后|zuìhòu|finally, last / 老师|lǎoshī|teacher / 来|lái|to come / 了|le|(completed) / 。 = Finally the teacher came.",
  "刚才|gāngcái|just now / 谁|shéi|who / 来|lái|to come / 了|le|(completed) / ？ = Who came just now?",
  "请|qǐng|please / 等|děng|to wait / 一会儿|yíhuìr|a little while / ， / 我|wǒ|I, me / 马上|mǎshàng|at once / 来|lái|to come / 。 = Please wait a moment. I am coming right away."]],
 ["Describing 3",[
@@ -2563,7 +2563,7 @@ const ZH4A=[
  "这|zhè|this / 个|ge|(general measure word) / 苹果|píngguǒ|apple / 又|yòu|again, also / 大|dà|big / 又|yòu|again, also / 甜|tián|sweet / 。 = This apple is big and sweet.",
  "她|tā|she / 的|de|’s / 狗|gǒu|dog / 很|hěn|very / 聪明|cōngming|clever / 。 = Her dog is clever.",
  "那|nà|that / 只|zhī|(measure word for animals) / 猫|māo|cat / 很|hěn|very / 可爱|kě’ài|cute / 。 = That cat is cute.",
- "我|wǒ|I, me / 的|de|’s / 老师|lǎoshī|teacher / 很|hěn|very / 年轻|niánqīng|young / 。 = My teacher is young.",
+ "她|tā|she / 很|hěn|very / 年轻|niánqīng|young / ， / 也|yě|also / 很|hěn|very / 聪明|cōngming|clever / 。 = She is young and also clever.",
  "教室|jiàoshì|classroom / 里|li|inside / 很|hěn|very / 安静|ānjìng|quiet / 。 = It is quiet in the classroom.",
  "这|zhè|this / 件|jiàn|(measure word for clothes) / 衣服|yīfu|clothes / 又|yòu|again, also / 旧|jiù|old (of things) / 又|yòu|again, also / 小|xiǎo|small / 。 = This piece of clothing is old and small."]],
 ["School life",[
@@ -2597,7 +2597,7 @@ const ZH4A=[
  ["校长","xiàozhǎng","head teacher","校长是李老师的朋友。","Xiàozhǎng shì Lǐ lǎoshī de péngyou.","The head teacher is Teacher Li’s friend."]],
 [
  "奶奶|nǎinai|grandmother (father’s mother) / 住|zhù|to live (somewhere) / 在|zài|to be at, in / 我|wǒ|I, me / 家|jiā|home, family / 。 = My grandmother lives in my home.",
- "爷爷|yéye|grandfather (father’s father) / 喜欢|xǐhuan|to like / 喝|hē|to drink / 茶|chá|tea / 。 = My grandfather likes drinking tea.",
+ "爷爷|yéye|grandfather (father’s father) / 在|zài|to be at, in / 家|jiā|home, family / 喝|hē|to drink / 茶|chá|tea / 。 = My grandfather drinks tea at home.",
  "我|wǒ|I, me / 的|de|’s / 叔叔|shūshu|uncle (father’s younger brother) / 在|zài|to be at, in / 医院|yīyuàn|hospital / 工作|gōngzuò|to work, job / 。 = My uncle works at the hospital.",
  "邻居|línjū|neighbour / 是|shì|to be / 我|wǒ|I, me / 的|de|’s / 朋友|péngyou|friend / 。 = The neighbour is my friend.",
  "客人|kèrén|guest / 想|xiǎng|to want to, to think / 喝|hē|to drink / 水|shuǐ|water / 。 = The guest wants to drink water.",
@@ -2637,7 +2637,7 @@ const ZH4A=[
  "他|tā|he / 想|xiǎng|to want to, to think / 买|mǎi|to buy / 一|yì|one / 条|tiáo|(measure word for long things) / 黑|hēi|black / 裤子|kùzi|trousers / 。 = He wants to buy a pair of black trousers.",
  "爸爸|bàba|dad / 有|yǒu|to have / 一|yì|one / 双|shuāng|pair (measure word) / 新|xīn|new / 皮鞋|píxié|leather shoes / 。 = Dad has a new pair of leather shoes.",
  "你|nǐ|you / 的|de|’s / 帽子|màozi|hat / 很|hěn|very / 漂亮|piàoliang|pretty / 。 = Your hat is pretty.",
- "这|zhè|this / 条|tiáo|(measure word for long things) / 裙子|qúnzi|skirt / 太|tài|too (much) / 短|duǎn|short (in length) / 了|le|(emphasis) / 。 = This skirt is too short."]],
+ "这|zhè|this / 条|tiáo|(measure word for long things) / 裤子|kùzi|trousers / 太|tài|too (much) / 短|duǎn|short (in length) / 了|le|(emphasis) / 。 = This pair of trousers is too short."]],
 ["City places",[
  ["超市","chāoshì","supermarket","我去超市买水果。","Wǒ qù chāoshì mǎi shuǐguǒ.","I go to the supermarket to buy fruit."],
  ["银行","yínháng","bank","银行在医院旁边。","Yínháng zài yīyuàn pángbiān.","The bank is beside the hospital."],
@@ -2669,7 +2669,7 @@ const ZH4A=[
  ["国家","guójiā","country","中国是一个大国家。","Zhōngguó shì yí ge dà guójiā.","China is a big country."]],
 [
  "我们|wǒmen|we, us / 去|qù|to go / 看|kàn|to look / 熊猫|xióngmāo|panda / 吧|ba|(suggestion) / 。 = Let’s go and see the pandas.",
- "树|shù|tree / 上|shang|on, above / 有|yǒu|to have / 一|yì|one / 只|zhī|(measure word for animals) / 鸟|niǎo|bird / 。 = There is a bird in the tree.",
+ "树|shù|tree / 上|shang|on, above / 有|yǒu|to have / 很多|hěn duō|many / 鸟|niǎo|bird / 。 = There are many birds in the tree.",
  "公园|gōngyuán|park / 里|li|inside / 的|de|’s / 花|huā|flower / 很|hěn|very / 漂亮|piàoliang|pretty / 。 = The flowers in the park are pretty.",
  "今天|jīntiān|today / 太阳|tàiyáng|sun / 很|hěn|very / 大|dà|big / 。 = The sun is strong today.",
  "世界|shìjiè|world / 上|shang|on, above / 有|yǒu|to have / 很多|hěn duō|many / 国家|guójiā|country / 。 = There are many countries in the world.",
@@ -2880,12 +2880,12 @@ const ZH4B=[
  ["秋","qiū","autumn","秋来了，天气很好。","Qiū lái le, tiānqì hěn hǎo.","Autumn has come and the weather is good."],
  ["冬","dōng","winter","冬来了，下雪了。","Dōng lái le, xià xuě le.","Winter has come and it is snowing."]],
 [
- "我|wǒ|I, me / 最|zuì|most / 喜欢|xǐhuan|to like / 的|de|(links description) / 季节|jìjié|season / 是|shì|to be / 春|chūn|spring / 。 = My favourite season is spring.",
+ "我|wǒ|I, me / 最|zuì|most / 喜欢|xǐhuan|to like / 的|de|(links description) / 季节|jìjié|season / 是|shì|to be / 春天|chūntiān|spring / 。 = My favourite season is spring.",
  "周末|zhōumò|weekend / 我们|wǒmen|we, us / 去|qù|to go / 爬山|páshān|to climb a mountain / 。 = At the weekend we go hiking.",
  "我们|wǒmen|we, us / 终于|zhōngyú|finally / 到|dào|to arrive, to reach / 北京|Běijīng|Beijing / 了|le|(completed) / 。 = We have finally arrived in Beijing.",
  "天|tiān|day, sky / 突然|tūrán|suddenly / 冷|lěng|cold / 了|le|(completed) / 。 = The weather suddenly became cold.",
  "现在|xiànzài|now / 是|shì|to be / 八|bā|eight / 点|diǎn|o’clock / 一|yí|one / 刻|kè|quarter of an hour / 。 = It is a quarter past eight now.",
- "夏|xià|summer / 来|lái|to come / 了|le|(completed) / ， / 我|wǒ|I, me / 想|xiǎng|to want to, to think / 吃|chī|to eat / 西瓜|xīguā|watermelon / 。 = Summer has come. I want to eat watermelon."]],
+ "夏天|xiàtiān|summer / 终于|zhōngyú|finally / 来|lái|to come / 了|le|(completed) / ， / 我|wǒ|I, me / 想|xiǎng|to want to, to think / 吃|chī|to eat / 西瓜|xīguā|watermelon / 。 = Summer has finally come. I want to eat watermelon."]],
 ["Travel 3",[
  ["护照","hùzhào","passport","请给我看你的护照。","Qǐng gěi wǒ kàn nǐ de hùzhào.","Please show me your passport."],
  ["行李箱","xínglixiāng","suitcase","我的行李箱是黑的。","Wǒ de xínglixiāng shì hēi de.","My suitcase is black."],
@@ -2956,7 +2956,7 @@ const ZH4B=[
  "这|zhè|this / 个|ge|(general measure word) / 比|bǐ|than / 那|nà|that / 个|ge|(general measure word) / 重|zhòng|heavy / 得|de|(links a verb to how it is done) / 多|duō|many, much / 。 = This one is much heavier than that one.",
  "他|tā|he / 比|bǐ|than / 我|wǒ|I, me / 重|zhòng|heavy / 得|de|(links a verb to how it is done) / 多|duō|many, much / 。 = He is much heavier than me.",
  "我|wǒ|I, me / 买|mǎi|to buy / 了|le|(completed) / 两|liǎng|two / 公斤|gōngjīn|kilogram / 水果|shuǐguǒ|fruit / 。 = I bought two kilograms of fruit.",
- "这|zhè|this / 个|ge|(general measure word) / 楼|lóu|floor, building / 有|yǒu|to have / 十|shí|ten / 层|céng|floor, layer / 。 = This building has ten floors.",
+ "那|nà|that / 个|ge|(general measure word) / 楼|lóu|floor, building / 有|yǒu|to have / 五|wǔ|five / 层|céng|floor, layer / 。 = That building has five floors.",
  "多么|duōme|how (in exclamations) / 漂亮|piàoliang|pretty / 的|de|(links description) / 花|huā|flower / ！ = What a pretty flower!"]],
 ["Health and life",[
  ["健康","jiànkāng","health, healthy","身体健康很重要。","Shēntǐ jiànkāng hěn zhòngyào.","Good health is important."],
@@ -3083,7 +3083,7 @@ const ZH4B=[
  "我|wǒ|I, me / 爱|ài|to love / 我|wǒ|I, me / 的|de|’s / 家|jiā|home, family / 。 = I love my home.",
  "我|wǒ|I, me / 邀请|yāoqǐng|to invite, an invitation / 朋友|péngyou|friend / 来|lái|to come / 我|wǒ|I, me / 家|jiā|home, family / 。 = I invite my friends to my home.",
  "她|tā|she / 的|de|’s / 头发|tóufa|hair / 很|hěn|very / 长|cháng|long / 。 = Her hair is long.",
- "我|wǒ|I, me / 接受|jiēshòu|to accept / 你|nǐ|you / 的|de|’s / 邀请|yāoqǐng|to invite, an invitation / 。 = I accept your invitation."]],
+ "他|tā|he / 接受|jiēshòu|to accept / 了|le|(completed) / 我|wǒ|I, me / 的|de|’s / 礼物|lǐwù|gift / 。 = He accepted my gift."]],
 ["Shopping 3",[
  ["价格","jiàgé","price","这个价格很好。","Zhè ge jiàgé hěn hǎo.","This price is good."],
  ["打折","dǎzhé","to give a discount","今天打折。","Jīntiān dǎzhé.","There is a discount today."],
@@ -3139,9 +3139,9 @@ q:[[0,"How many students are in the class?",["Thirty","Ten","Twenty"],0,"Line 1:
  "大明|Dàmíng|Daming (name) / 一|yì|one / 回|huí|to return / 家|jiā|home, family / ， / 就|jiù|then, right away / 做|zuò|to do, to make / 作业|zuòyè|homework / 。 = As soon as Daming gets home, he does his homework.",
  "小文|Xiǎo Wén|Xiao Wen (name) / ： / 你|nǐ|you / 喜欢|xǐhuan|to like / 什么|shénme|what / 季节|jìjié|season / ？ = Xiao Wen: Which season do you like?",
  "大明|Dàmíng|Daming (name) / ： / 我|wǒ|I, me / 喜欢|xǐhuan|to like / 秋|qiū|autumn / ， / 天气|tiānqì|weather / 很|hěn|very / 好|hǎo|good / 。 = Daming: I like autumn. The weather is good.",
- "小文|Xiǎo Wén|Xiao Wen (name) / ： / 我|wǒ|I, me / 喜欢|xǐhuan|to like / 春|chūn|spring / ， / 因为|yīnwèi|because / 花|huā|flower / 开|kāi|to bloom / 了|le|(completed) / 。 = Xiao Wen: I like spring because the flowers have opened.",
+ "小文|Xiǎo Wén|Xiao Wen (name) / ： / 我|wǒ|I, me / 喜欢|xǐhuan|to like / 春天|chūntiān|spring / ， / 因为|yīnwèi|because / 花|huā|flower / 开|kāi|to bloom / 了|le|(completed) / 。 = Xiao Wen: I like spring because the flowers have opened.",
  "突然|tūrán|suddenly / 下雨|xià yǔ|to rain / 了|le|(completed) / 。 = Suddenly it rained.",
- "他们|tāmen|they / 马上|mǎshàng|at once / 回|huí|to return / 家|jiā|home, family / 了|le|(completed) / 。 = They went home right away."],
+ "他们|tāmen|they / 马上|mǎshàng|at once / 回|huí|to return / 家|jiā|home, family / ， / 终于|zhōngyú|finally / 到|dào|to arrive, to reach / 家|jiā|home, family / 了|le|(completed) / 。 = They went home right away. They finally arrived home."],
 q:[[3,"Which season does Daming like?",["Autumn","Spring","Winter"],0,"Line 4: 我喜欢秋 means “I like autumn”."],[5,"What happened suddenly?",["It rained","It snowed","The sun came out"],0,"Line 6: 突然下雨了 means “suddenly it rained”."]]},
 {t:"A trip to Shanghai",l:[
  "小文|Xiǎo Wén|Xiao Wen (name) / 想|xiǎng|to want to, to think / 从|cóng|from / 北京|Běijīng|Beijing / 去|qù|to go / 上海|Shànghǎi|Shanghai / 旅行|lǚxíng|to travel, a trip / 。 = Xiao Wen wants to travel from Beijing to Shanghai.",
