@@ -61,6 +61,11 @@ async function solveAll(W, click) { for (let k = 0; k < 60 && !W.eval("view.fini
   // the next lesson stays first even when a review is due; the review is a row below it
   W.eval("themes('ja').slice(0,2).flatMap(t=>t.words).slice(0,8).forEach(w=>{S.ja.srs[w.w]={b:1,d:0,u:Date.now()};});render()");
   check(W.eval("dueList('ja').length>=5") && !!d.querySelector("#main .path > .card.hero") && d.querySelector("#main .path").firstElementChild.classList.contains("hero") && M().includes("Review:"), "next lesson is first and a due review is a row below it");
+  // Level 2 view while Level 1 is not finished: it shows its own next theme, not an empty page
+  W.eval("view.lvl=2;render()");
+  check(!!d.querySelector("#main .path > .card.hero") && M().includes("NEXT LESSON") && d.querySelectorAll("#main .path .pitem").length >= 1 && M().includes("NEXT THEME"), "Level 2 view shows the next lesson and the next theme");
+  check(d.querySelectorAll("#main .btn.pri").length === 1, "Level 2 view has one primary button");
+  W.eval("view.lvl=null;render()");
   check(d.querySelectorAll("#main .btn.pri").length <= 1, "Learn tab still has one primary button");
   // theme page lists the theme's practice sentences
   W.eval("openTheme(0)"); check(M().includes("Play all sentences") && d.querySelectorAll("#main .line").length >= 6, "theme page shows the 6 practice sentences");
