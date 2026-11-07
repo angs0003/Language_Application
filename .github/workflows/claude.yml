@@ -4,7 +4,7 @@ name: Claude
 # Flow on an issue: "@claude ..." -> the planner posts a plan -> owner replies "@claude approved" ->
 # Claude builds on a branch and opens a pull request -> the test check runs -> owner merges -> Deploy publishes.
 # Login: the owner's Claude subscription token (secret CLAUDE_CODE_OAUTH_TOKEN, from `claude setup-token`).
-# Pull requests: opened with the owner's fine-grained token (secret CLAUDE_PR_TOKEN, Pull requests: write only).
+# Pull requests: opened with the owner's fine-grained token (secret CLAUDE_PR_TOKEN, this repository only: Pull requests: write, Contents: read; it cannot push or merge).
 # This workflow never receives the Supabase secrets.
 on:
   issues:
@@ -49,7 +49,7 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - uses: anthropics/claude-code-action@v1
         env:
-          # Fine-grained token of the owner (this repository only, Pull requests: write).
+          # Fine-grained token of the owner (this repository only: Pull requests: write, Contents: read).
           # Used only by "gh pr create", so the pull request is opened by the owner and the test and Review workflows start.
           GH_TOKEN: ${{ secrets.CLAUDE_PR_TOKEN }}
         with:
