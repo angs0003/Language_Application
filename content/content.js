@@ -3227,7 +3227,7 @@ q:[[2,"When does the meeting start?",["At three","At five","At nine"],0,"Line 3:
  "小文|Xiǎo Wén|Xiao Wen (name) / ： / 我|wǒ|I, me / 想|xiǎng|to want to, to think / 去|qù|to go / 看|kàn|to look / 一|yí|one / 看|kàn|to look / 。 = Xiao Wen: I want to go and have a look."],
 q:[[2,"Where is Beijing?",["In the north of China","In the south of China","In the west of China"],0,"Line 3: 在中国的北方 means “in the north of China”."],[4,"What does Daming say about the Yellow River?",["It is also in the north of China","It is in the south of China","It is in Beijing"],0,"Line 5: 也在中国的北方 means “is also in the north of China”."]]},
 {t:"A concert",l:[
- "星期六|xīngqīliù|Saturday / 晚上|wǎnshang|evening / ， / 电影院|diànyǐngyuàn|cinema / 里|li|inside / 有|yǒu|to have / 一|yí|one / 个|ge|(general measure word) / 音乐会|yīnyuèhuì|concert / 。 = On Saturday evening there is a concert in the cinema.",
+ "星期六|xīngqīliù|Saturday / 晚上|wǎnshang|evening / ， / 学校|xuéxiào|school / 里|li|inside / 有|yǒu|to have / 一|yí|one / 个|ge|(general measure word) / 音乐会|yīnyuèhuì|concert / 。 = On Saturday evening there is a concert at school.",
  "小文|Xiǎo Wén|Xiao Wen (name) / 和|hé|and / 大明|Dàmíng|Daming (name) / 骑|qí|to ride (a bicycle or horse) / 自行车|zìxíngchē|bicycle / 去|qù|to go / 。 = Xiao Wen and Daming go by bicycle.",
  "他们|tāmen|they / 一边|yìbiān|at the same time / 骑|qí|to ride (a bicycle or horse) / ， / 一边|yìbiān|at the same time / 聊天|liáotiān|to chat / 。 = They chat while they ride.",
  "大明|Dàmíng|Daming (name) / ： / 你|nǐ|you / 家|jiā|home, family / 有|yǒu|to have / 几|jǐ|how many / 口|kǒu|(measure word for family members) / 人|rén|people / ？ = Daming: How many people are in your family?",
