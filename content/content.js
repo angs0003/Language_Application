@@ -208,7 +208,7 @@ const STORY_JA=[
 {t:"Good morning, Ken",l:[
 "けん|Ken|Ken (name) / ： / おはよう|ohayou|good morning / ！ = Ken: Good morning!",
 "ゆい|Yui|Yui (name) / ： / おはよう|ohayou|good morning / ！ = Yui: Good morning!",
-"けん|Ken|Ken (name) / ： / ごめん|gomen|sorry / ！ = Ken: Sorry!",
+"けん|Ken|Ken (name) / ： / すみません|sumimasen|excuse me / ！ = Ken: Excuse me!",
 "ゆい|Yui|Yui (name) / ： / 大丈夫|daijoubu|all right / 。 = Yui: It is all right.",
 "けん|Ken|Ken (name) / ： / ありがとう|arigatou|thank you / ！ = Ken: Thank you!",
 "ゆい|Yui|Yui (name) / ： / じゃあね|jaa ne|see you / ！ = Yui: See you!"],
@@ -258,7 +258,7 @@ q:[[0,"What does Yui like?",["Japan","Tea","School"],0,"Line 1: 日本が好き�
 "今日|kyou|today / は|wa|(topic) / 学校|gakkou|school / に|ni|to / 行きます|ikimasu|goes / 。 = Today she goes to school.",
 "ゆい|Yui|Yui (name) / ： / 今|ima|now / 、 / 何時|nanji|what time / ？ = Yui: What time is it now?",
 "けん|Ken|Ken (name) / ： / 八|hachi|eight / 時|ji|o’clock / だ|da|is / よ|yo|(friendly ending) / 。 = Ken: It is eight o’clock.",
-"ゆい|Yui|Yui (name) / ： / 九|ku|nine / 時|ji|o’clock / に|ni|at / 学校|gakkou|school / に|ni|to / 行きます|ikimasu|go / 。 = Yui: I go to school at nine o’clock.",
+"ゆい|Yui|Yui (name) / ： / く|ku|nine / 時|ji|o’clock / に|ni|at / 学校|gakkou|school / に|ni|to / 行きます|ikimasu|go / 。 = Yui: I go to school at nine o’clock.",
 "明日|ashita|tomorrow / は|wa|(topic) / 店|mise|shop / に|ni|to / 行きます|ikimasu|goes / 。 = Tomorrow she goes to the shop."],
 q:[[0,"Where was Yui yesterday?",["At home","At school","At the shop"],0,"Line 1: 家にいました means “was at home”."],[3,"What time is it now?",["Eight o’clock","Nine o’clock","Three o’clock"],0,"Line 4: 八時だよ means “it is eight o’clock”."]]},
 {t:"Where is the station?",l:[
@@ -278,13 +278,13 @@ q:[[1,"Who answers Yui?",["Yamada-san","Ken","Tanaka sensei"],0,"Line 2: Yamada-
 "十一|juuichi|eleven / 時|ji|o’clock / に|ni|at / 寝ます|nemasu|sleeps / 。 = She sleeps at eleven o’clock."],
 q:[[0,"When does Yui get up?",["Seven o’clock","Eleven o’clock","Noon"],0,"Line 1: 七時に起きます means “gets up at seven o’clock”."],[3,"What does Yui do at night?",["She reads a book","She goes to school","She eats a meal"],0,"Line 4: 本を読みます means “reads a book”."]]},
 {t:"A rainy day",l:[
-"今日|kyou|today / は|wa|(topic) / 雨|ame|rain / です|desu|is / 。 = It is raining today.",
+"今日|kyou|today / の|no|’s / 天気|tenki|weather / は|wa|(topic) / 雨|ame|rain / です|desu|is / 。 = The weather today is rain.",
 "とても|totemo|very / 寒い|samui|cold / です|desu|is / 。 = It is very cold.",
-"けん|Ken|Ken (name) / ： / 冬|fuyu|winter / は|wa|(topic) / 寒い|samui|cold / ね|ne|(isn’t it) / 。 = Ken: Winter is cold, isn’t it.",
-"ゆい|Yui|Yui (name) / ： / 夏|natsu|summer / が|ga|(subject) / 好き|suki|liked / 。 = Yui: I like summer.",
+"けん|Ken|Ken (name) / ： / 冬|fuyu|winter / は|wa|(topic) / 寒い|samui|cold / ね|ne|(isn’t it) / 。 / 雪|yuki|snow / も|mo|also / 好き|suki|liked / だ|da|is / よ|yo|(friendly ending) / 。 = Ken: Winter is cold, isn’t it. I like snow too.",
+"ゆい|Yui|Yui (name) / ： / 夏|natsu|summer / は|wa|(topic) / 暑い|atsui|hot / けど|kedo|but / 好き|suki|liked / 。 = Yui: Summer is hot, but I like it.",
 "けん|Ken|Ken (name) / ： / 明日|ashita|tomorrow / は|wa|(topic) / 晴れ|hare|sunny / だ|da|is / よ|yo|(friendly ending) / 。 = Ken: Tomorrow will be sunny.",
 "ゆい|Yui|Yui (name) / ： / よかった|yokatta|good / ！ = Yui: Good!"],
-q:[[1,"What is the weather like today?",["Rainy and cold","Sunny","Hot"],0,"Lines 1 and 2: 雨 (rain) and 寒い (cold)."],[3,"Which season does Yui like?",["Summer","Winter","Autumn"],0,"Line 4: 夏が好き means “I like summer”."]]},
+q:[[1,"What is the weather like today?",["Rainy and cold","Sunny","Hot"],0,"Lines 1 and 2: 雨 (rain) and 寒い (cold)."],[3,"Which season does Yui like?",["Summer","Winter","Autumn"],0,"Line 4: 夏は暑いけど、好き means “summer is hot, but I like it”."]]},
 {t:"A red umbrella",l:[
 "ゆい|Yui|Yui (name) / は|wa|(topic) / 傘|kasa|umbrella / を|o|(object) / 買いたい|kaitai|want to buy / です|desu|(polite) / 。 = Yui wants to buy an umbrella.",
 "店|mise|shop / に|ni|at / 赤い|akai|red / 傘|kasa|umbrella / が|ga|(subject) / あります|arimasu|there is / 。 = There is a red umbrella at the shop.",
@@ -303,10 +303,12 @@ q:[[3,"How much is the umbrella?",["1,000 yen","100 yen","10 yen"],0,"Line 4: �
 q:[[0,"How does Yui go to school?",["By train","By bus","By car"],0,"Line 1: 電車で means “by train”."],[5,"How does Ken come to school?",["By bicycle","By train","On foot"],0,"Line 6: 自転車で means “by bicycle”."]]},
 {t:"Kanji class",l:[
 "田中|Tanaka|Tanaka (family name) / 先生|sensei|teacher / は|wa|(topic) / 日本語|nihongo|Japanese / を|o|(object) / 教えます|oshiemasu|teaches / 。 = Tanaka sensei teaches Japanese.",
-"今日|kyou|today / は|wa|(topic) / 漢字|kanji|kanji / を|o|(object) / 勉強します|benkyou shimasu|study / 。 = Today they study kanji.",
+"今日|kyou|today / は|wa|(topic) / 漢字|kanji|kanji / を|o|(object) / 勉強|benkyou|study / します|shimasu|do / 。 = Today they study kanji.",
 "ゆい|Yui|Yui (name) / は|wa|(topic) / 漢字|kanji|kanji / を|o|(object) / 書きます|kakimasu|writes / 。 = Yui writes kanji.",
 "ゆい|Yui|Yui (name) / ： / 漢字|kanji|kanji / は|wa|(topic) / 難しい|muzukashii|difficult / です|desu|is / 。 = Yui: Kanji are difficult.",
 "先生|sensei|teacher / ： / 毎日|mainichi|every day / 書いて|kaite|write / ください|kudasai|please / 。 = Teacher: Please write every day.",
+"ゆい|Yui|Yui (name) / ： / 先生|sensei|teacher / 、 / この|kono|this / 漢字|kanji|kanji / が|ga|(subject) / 分かりません|wakarimasen|do not understand / 。 = Yui: Teacher, I do not understand this kanji.",
+"先生|sensei|teacher / ： / この|kono|this / 本|hon|book / を|o|(object) / 見て|mite|look at / ください|kudasai|please / 。 = Teacher: Please look at this book.",
 "今日|kyou|today / は|wa|(topic) / 宿題|shukudai|homework / が|ga|(subject) / あります|arimasu|there is / 。 = Today there is homework."],
 q:[[1,"What do they study today?",["Kanji","Music","English"],0,"Line 2: 漢字を勉強します means “study kanji”."],[4,"What does the teacher say?",["Please write every day","Please go home","Please sleep"],0,"Line 5: 毎日書いてください means “please write every day”."]]},
 {t:"A film and a cat",l:[
@@ -345,18 +347,19 @@ q:[[2,"What is wrong with Ken?",["His head hurts","His hand hurts","Nothing"],0,
 "ゆい|Yui|Yui (name) / の|no|’s / 母|haha|mother / が|ga|(subject) / 東京|Toukyou|Tokyo / に|ni|to / 来ました|kimashita|came / 。 = Yui’s mother came to Tokyo.",
 "母|haha|mother / ： / 病院|byouin|hospital / は|wa|(topic) / どこ|doko|where / ？ = Mother: Where is the hospital?",
 "ゆい|Yui|Yui (name) / ： / 遠くない|tooku nai|not far / よ|yo|(friendly ending) / 。 / 近く|chikaku|nearby / だ|da|is / よ|yo|(friendly ending) / 。 = Yui: It is not far. It is nearby.",
-"この|kono|this / 道|michi|road / を|o|(object) / まっすぐ|massugu|straight / 行って|itte|go and / 、 / 右|migi|right / だ|da|is / よ|yo|(friendly ending) / 。 = Go straight along this road, and it is on the right.",
+"この|kono|this / 道|michi|road / を|o|(object) / まっすぐ|massugu|straight / 行って|itte|go and / 、 / 右|migi|right / だ|da|is / よ|yo|(friendly ending) / 。 / 左|hidari|left / じゃ|ja|(is) not / ない|nai|not / よ|yo|(friendly ending) / 。 = Go straight along this road, and it is on the right. It is not on the left.",
 "病院|byouin|hospital / の|no|’s / 横|yoko|side / に|ni|at / 山田|Yamada|Yamada / さん|san|(polite title) / の|no|’s / 店|mise|café / が|ga|(subject) / あります|arimasu|there is / 。 = Yamada-san’s café is beside the hospital.",
 "母|haha|mother / ： / ありがとう|arigatou|thank you / 。 = Mother: Thank you."],
 q:[[2,"Is the hospital far?",["No, it is nearby","Yes, it is far","Yui does not know"],0,"Line 3: 遠くないよ means “it is not far”."],[4,"What is beside the hospital?",["Yamada-san’s café","The school","The station"],0,"Line 5: 病院の横に山田さんの店があります."]]},
 {t:"A phone call",l:[
-"けん|Ken|Ken (name) / ： / もしもし|moshimoshi|hello (phone) / 、 / ゆい|Yui|Yui (name) / ？ = Ken: Hello, Yui?",
-"けん|Ken|Ken (name) / ： / 今|ima|now / 、 / 何|nani|what / してる|shiteru|are doing / ？ = Ken: What are you doing now?",
+"ゆい|Yui|Yui (name) / ： / もしもし|moshimoshi|hello (phone) / 。 / 誰|dare|who / ？ = Yui: Hello. Who is it?",
+"けん|Ken|Ken (name) / ： / けん|Ken|Ken (name) / だ|da|is / よ|yo|(friendly ending) / 。 / 今|ima|now / 、 / 何|nani|what / してる|shiteru|are doing / ？ = Ken: It is Ken. What are you doing now?",
 "ゆい|Yui|Yui (name) / ： / 本|hon|book / を|o|(object) / 読んでる|yonderu|am reading / よ|yo|(friendly ending) / 。 = Yui: I am reading a book.",
-"けん|Ken|Ken (name) / ： / 明日|ashita|tomorrow / 、 / 一緒に|issho ni|together / 映画|eiga|film / を|o|(object) / 見ない|minai|not watch / ？ = Ken: Would you like to watch a film together tomorrow?",
-"ゆい|Yui|Yui (name) / ： / いい|ii|good / ね|ne|(isn’t it) / 。 / 何時|nanji|what time / ？ = Yui: That sounds good. What time?",
-"けん|Ken|Ken (name) / ： / 三|san|three / 時|ji|o’clock / 。 / 山田|Yamada|Yamada / さん|san|(polite title) / の|no|’s / 店|mise|café / の|no|’s / 前|mae|front / で|de|at / 会おう|aou|let’s meet / 。 = Ken: At three o’clock. Let’s meet in front of Yamada-san’s café.",
-"ゆい|Yui|Yui (name) / ： / わかった|wakatta|understood / 。 / ありがとう|arigatou|thank you / ！ = Yui: Understood. Thank you!"],
+"けん|Ken|Ken (name) / ： / なぜ|naze|why / か|ka|(somehow) / 、 / 映画|eiga|film / が|ga|(subject) / 見たい|mitai|want to watch / 。 / 一緒に|issho ni|together / 見ない|minai|not watch / ？ = Ken: For some reason I want to watch a film. Would you like to watch it together?",
+"ゆい|Yui|Yui (name) / ： / いい|ii|good / ね|ne|(isn’t it) / 。 / いつ|itsu|when / ？ = Yui: That sounds good. When?",
+"けん|Ken|Ken (name) / ： / 明日|ashita|tomorrow / の|no|’s / 三|san|three / 時|ji|o’clock / 。 / 山田|Yamada|Yamada / さん|san|(polite title) / の|no|’s / 店|mise|café / の|no|’s / 前|mae|front / で|de|at / 会おう|aou|let’s meet / 。 = Ken: Tomorrow at three o’clock. Let’s meet in front of Yamada-san’s café.",
+"ゆい|Yui|Yui (name) / ： / わかった|wakatta|understood / 。 / どれ|dore|which one / を|o|(object) / 見る|miru|watch / ？ = Yui: Understood. Which one do we watch?",
+"けん|Ken|Ken (name) / ： / これ|kore|this / 。 / どう|dou|how / ？ = Ken: This one. How about it?"],
 q:[[2,"What is Yui doing?",["Reading a book","Watching TV","Sleeping"],0,"Line 3: 本を読んでる means “I am reading a book”."],[5,"Where will they meet?",["In front of Yamada-san’s café","At the station","At school"],0,"Line 6: 山田さんの店の前 means “in front of Yamada-san’s café”."]]}
 ];
 const JA3=[
@@ -394,16 +397,20 @@ const STORY_JA2=[
 "けん|Ken|Ken (name) / ： / ごめん|gomen|sorry / 、 / 待った|matta|waited / ？ = Ken: Sorry, did you wait?",
 "ゆい|Yui|Yui (name) / ： / ううん|uun|no (casual) / 、 / 大丈夫|daijoubu|all right / 。 = Yui: No, it is all right.",
 "二人|futari|the two people / は|wa|(topic) / 喫茶店|kissaten|café / に|ni|into / 入ります|hairimasu|enter / 。 = The two of them go into a café.",
-"けん|Ken|Ken (name) / は|wa|(topic) / 日本語|nihongo|Japanese / で|de|in / ゆっくり|yukkuri|slowly / 話します|hanashimasu|speaks / 。 = Ken speaks slowly in Japanese.",
-"ゆい|Yui|Yui (name) / ： / ありがとう|arigatou|thank you / 。 / よく|yoku|well / 分かる|wakaru|understand / よ|yo|(friendly ending) / 。 = Yui: Thank you. I understand well."],
-q:[[0,"Where is Yui waiting?",["At the station","At school","At home"],0,"Line 1: 駅で means “at the station”."],[4,"How does Ken speak?",["Slowly, in Japanese","Fast, in English","He does not speak"],0,"Line 5: 日本語でゆっくり話します."]]},
+"けん|Ken|Ken (name) / は|wa|(topic) / 日本語|nihongo|Japanese / を|o|(object) / 使って|tsukatte|use / ゆっくり|yukkuri|slowly / 話します|hanashimasu|speaks / 。 = Ken uses Japanese and speaks slowly.",
+"ゆい|Yui|Yui (name) / ： / ありがとう|arigatou|thank you / 。 / よく|yoku|well / 分かる|wakaru|understand / よ|yo|(friendly ending) / 。 = Yui: Thank you. I understand well.",
+"けん|Ken|Ken (name) / ： / あと|ato|after / で|de|at / 、 / うち|uchi|home / で|de|at / 一緒に|issho ni|together / ご飯|gohan|meal / を|o|(object) / 作る|tsukuru|make / ？ = Ken: Later, shall we make a meal together at home?",
+"ゆい|Yui|Yui (name) / ： / うん|un|yes / 。 / 手|te|hands / を|o|(object) / 洗って|aratte|wash / 、 / 作ろう|tsukurou|let’s make / 。 = Yui: Yes. Let’s wash our hands and make it."],
+q:[[0,"Where is Yui waiting?",["At the station","At school","At home"],0,"Line 1: 駅で means “at the station”."],[4,"How does Ken speak?",["Slowly, in Japanese","Fast, in English","He does not speak"],0,"Line 5: 日本語を使ってゆっくり話します means “uses Japanese and speaks slowly”."]]},
 {t:"A heavy bag",l:[
 "ゆい|Yui|Yui (name) / の|no|’s / かばん|kaban|bag / は|wa|(topic) / 重い|omoi|heavy / です|desu|is / 。 = Yui’s bag is heavy.",
 "本|hon|books / が|ga|(subject) / たくさん|takusan|a lot / あります|arimasu|there are / 。 = There are a lot of books.",
 "けん|Ken|Ken (name) / の|no|’s / かばん|kaban|bag / は|wa|(topic) / 軽い|karui|light / です|desu|is / 。 = Ken’s bag is light.",
 "けん|Ken|Ken (name) / ： / 今日|kyou|today / は|wa|(topic) / 忙しい|isogashii|busy / ？ = Ken: Are you busy today?",
 "ゆい|Yui|Yui (name) / ： / うん|un|yes / 。 / 宿題|shukudai|homework / が|ga|(subject) / 難しい|muzukashii|difficult / よ|yo|(friendly ending) / 。 = Yui: Yes. The homework is difficult.",
-"けん|Ken|Ken (name) / ： / 一緒に|issho ni|together / 勉強|benkyou|study / しよう|shiyou|let’s do / 。 = Ken: Let’s study together."],
+"けん|Ken|Ken (name) / ： / 一緒に|issho ni|together / 勉強|benkyou|study / しよう|shiyou|let’s do / 。 = Ken: Let’s study together.",
+"ゆい|Yui|Yui (name) / ： / うん|un|yes / 。 / 学校|gakkou|school / は|wa|(topic) / 広い|hiroi|spacious / よ|yo|(friendly ending) / 。 / 明るい|akarui|bright / よ|yo|(friendly ending) / 。 = Yui: Yes. The school is spacious. It is bright.",
+"けん|Ken|Ken (name) / ： / 宿題|shukudai|homework / は|wa|(topic) / 長い|nagai|long / ？ / 短い|mijikai|short / ？ = Ken: Is the homework long? Is it short?"],
 q:[[2,"Whose bag is light?",["Ken’s bag","Yui’s bag","The teacher’s bag"],0,"Line 3: けんのかばんは軽いです."],[5,"What does Ken suggest?",["Studying together","Going home","Buying a bag"],0,"Line 6: 一緒に勉強しよう means “let’s study together”."]]},
 {t:"Breakfast at the café",l:[
 "朝|asa|morning / 、 / ゆい|Yui|Yui (name) / は|wa|(topic) / 山田|Yamada|Yamada / さん|san|(polite title) / の|no|’s / 店|mise|café / に|ni|to / 行きます|ikimasu|goes / 。 = In the morning, Yui goes to Yamada-san’s café.",
@@ -417,9 +424,11 @@ q:[[2,"What is in the breakfast?",["Bread and an egg","Fish and rice","Fruit"],0
 "ゆい|Yui|Yui (name) / は|wa|(topic) / 店|mise|shop / で|de|at / りんご|ringo|apples / を|o|(object) / 買います|kaimasu|buys / 。 = Yui buys apples at a shop.",
 "店|mise|shop / の|no|’s / 人|hito|person / ： / いくつ|ikutsu|how many / です|desu|is / か|ka|(question) / 。 = Shop assistant: How many?",
 "ゆい|Yui|Yui (name) / ： / 三つ|mittsu|three / ください|kudasai|please give / 。 = Yui: Three, please.",
-"店|mise|shop / の|no|’s / 人|hito|person / ： / 三百|sanbyaku|300 / 円|en|yen / です|desu|is / 。 = Shop assistant: It is 300 yen.",
+"店|mise|shop / の|no|’s / 人|hito|person / ： / 三|san|three / 百|byaku|hundred / 円|en|yen / です|desu|is / 。 = Shop assistant: It is 300 yen.",
 "ゆい|Yui|Yui (name) / は|wa|(topic) / 千|sen|1,000 / 円|en|yen / を|o|(object) / 出します|dashimasu|hands over / 。 = Yui hands over 1,000 yen.",
-"けん|Ken|Ken (name) / と|to|with / 二人|futari|two people / で|de|(as) / 食べます|tabemasu|eat / 。 = She eats them with Ken, the two of them."],
+"けん|Ken|Ken (name) / と|to|with / 二人|futari|two people / で|de|(as) / 食べます|tabemasu|eat / 。 = She eats them with Ken, the two of them.",
+"けん|Ken|Ken (name) / ： / 一つ|hitotsu|one / 、 / いい|ii|okay / ？ = Ken: Is one okay?",
+"ゆい|Yui|Yui (name) / ： / うん|un|yes / 。 / 二つ|futatsu|two / 、 / 食べて|tabete|eat / 。 = Yui: Yes. Eat two."],
 q:[[2,"How many apples does Yui buy?",["Three","Two","One"],0,"Line 3: 三つ means “three things”."],[3,"How much are the apples?",["300 yen","1,000 yen","100 yen"],0,"Line 4: 三百円 means “300 yen”."]]},
 {t:"Plans for next week",l:[
 "先週|senshuu|last week / 、 / ゆい|Yui|Yui (name) / は|wa|(topic) / 忙しかったです|isogashikatta desu|was busy / 。 = Last week Yui was busy.",
@@ -442,8 +451,10 @@ q:[[1,"What does Ken do on Wednesday afternoon?",["He works","He runs","He sleep
 "けん|Ken|Ken (name) / の|no|’s / 妹|imouto|younger sister / も|mo|also / 来ました|kimashita|came / 。 = Ken’s younger sister came too.",
 "妹|imouto|younger sister / は|wa|(topic) / 子供|kodomo|child / です|desu|is / 。 / 十|juu|ten / 歳|sai|years old / です|desu|is / 。 = His younger sister is a child. She is ten years old.",
 "けん|Ken|Ken (name) / ： / みんな|minna|everyone / 、 / こちら|kochira|this person / は|wa|(topic) / ゆい|Yui|Yui (name) / さん|san|(polite title) / 。 = Ken: Everyone, this is Yui.",
-"ゆい|Yui|Yui (name) / ： / はじめまして|hajimemashite|nice to meet you / 。 = Yui: Nice to meet you.",
-"けん|Ken|Ken (name) / の|no|’s / 母|haha|mother / ： / 日本語|nihongo|Japanese / 、 / 上手|jouzu|good / ね|ne|(isn’t it) / 。 = Ken’s mother: Your Japanese is good."],
+"ゆい|Yui|Yui (name) / ： / 皆さん|minasan|everyone / 、 / はじめまして|hajimemashite|nice to meet you / 。 = Yui: Everyone, nice to meet you.",
+"けん|Ken|Ken (name) / の|no|’s / 母|haha|mother / ： / 日本語|nihongo|Japanese / 、 / 上手|jouzu|good / ね|ne|(isn’t it) / 。 = Ken’s mother: Your Japanese is good.",
+"ゆい|Yui|Yui (name) / ： / あの|ano|that / 男|otoko|man / の|no|(of) / 人|hito|person / は|wa|(topic) / けん|Ken|Ken (name) / の|no|’s / お父さん|otousan|father / ？ = Yui: Is that man Ken’s father?",
+"けん|Ken|Ken (name) / ： / うん|un|yes / 。 / あの|ano|that / 女|onna|woman / の|no|(of) / 人|hito|person / は|wa|(topic) / 母|haha|mother / だ|da|is / よ|yo|(friendly ending) / 。 = Ken: Yes. That woman is my mother."],
 q:[[1,"Who else came with Ken’s parents?",["His younger sister","His older brother","His teacher"],0,"Line 2: けんの妹も来ました."],[2,"How old is Ken’s younger sister?",["Ten","Seven","Twenty"],0,"Line 3: 十歳 means “ten years old”."]]},
 {t:"Errands in town",l:[
 "ゆい|Yui|Yui (name) / は|wa|(topic) / 町|machi|town / に|ni|to / 出かけます|dekakemasu|goes out / 。 = Yui goes out into town.",
@@ -451,7 +462,9 @@ q:[[1,"Who else came with Ken’s parents?",["His younger sister","His older bro
 "次|tsugi|next / に|ni|(time) / 、 / 郵便局|yuubinkyoku|post office / で|de|at / 手紙|tegami|letter / を|o|(object) / 出します|dashimasu|sends / 。 = Next, she sends a letter at the post office.",
 "郵便局|yuubinkyoku|post office / は|wa|(topic) / 銀行|ginkou|bank / の|no|’s / 隣|tonari|next to / です|desu|is / 。 = The post office is next to the bank.",
 "午後|gogo|afternoon / 、 / 図書館|toshokan|library / で|de|at / 本|hon|book / を|o|(object) / 読みます|yomimasu|reads / 。 = In the afternoon, she reads a book at the library.",
-"図書館|toshokan|library / は|wa|(topic) / 静か|shizuka|quiet / です|desu|is / 。 = The library is quiet."],
+"図書館|toshokan|library / は|wa|(topic) / 静か|shizuka|quiet / です|desu|is / 。 = The library is quiet.",
+"夕方|yuugata|evening / 、 / 喫茶店|kissaten|café / で|de|at / コーヒー|koohii|coffee / を|o|(object) / 飲みます|nomimasu|drinks / 。 = In the evening, she drinks coffee at a café.",
+"喫茶店|kissaten|café / は|wa|(topic) / 公園|kouen|park / の|no|’s / 隣|tonari|next to / です|desu|is / 。 = The café is next to the park."],
 q:[[3,"Where is the post office?",["Next to the bank","Next to the library","In the park"],0,"Line 4: 銀行の隣 means “next to the bank”."],[4,"What does Yui do at the library?",["Reads a book","Sends a letter","Drinks coffee"],0,"Line 5: 本を読みます."]]},
 {t:"A day at the sea",l:[
 "今日|kyou|today / は|wa|(topic) / 暖かい|atatakai|warm / です|desu|is / 。 = Today is warm.",
@@ -459,7 +472,9 @@ q:[[3,"Where is the post office?",["Next to the bank","Next to the library","In 
 "空|sora|sky / が|ga|(subject) / 青い|aoi|blue / です|desu|is / 。 = The sky is blue.",
 "山|yama|mountains / も|mo|also / 見えます|miemasu|can be seen / 。 = The mountains can also be seen.",
 "夕方|yuugata|evening / 、 / 風|kaze|wind / が|ga|(subject) / 強く|tsuyoku|strong / なりました|narimashita|became / 。 = In the evening the wind became strong.",
-"ゆい|Yui|Yui (name) / ： / 少し|sukoshi|a little / 寒い|samui|cold / ね|ne|(isn’t it) / 。 = Yui: It is a little cold, isn’t it."],
+"ゆい|Yui|Yui (name) / ： / 少し|sukoshi|a little / 寒い|samui|cold / ね|ne|(isn’t it) / 。 = Yui: It is a little cold, isn’t it.",
+"川|kawa|river / の|no|’s / 近く|chikaku|near / に|ni|at / 、 / 木|ki|trees / が|ga|(subject) / あります|arimasu|there are / 。 / 花|hana|flowers / も|mo|also / 見えます|miemasu|can be seen / 。 = Near the river there are trees. Flowers can also be seen.",
+"けん|Ken|Ken (name) / ： / 涼しい|suzushii|cool / ね|ne|(isn’t it) / 。 / でも|demo|but / 、 / いい|ii|good / 天気|tenki|weather / だ|da|is / よ|yo|(friendly ending) / 。 = Ken: It is cool, isn’t it. But the weather is good."],
 q:[[1,"Where did Yui and Ken go?",["To the sea","To the mountains","To the river"],0,"Line 2: 海に行きました."],[4,"What happened in the evening?",["The wind became strong","It snowed","It became hot"],0,"Line 5: 風が強くなりました."]]},
 {t:"Where is my key?",l:[
 "ゆい|Yui|Yui (name) / ： / あれ|are|huh / ？ / 鍵|kagi|key / が|ga|(subject) / ない|nai|there isn’t / ！ = Yui: Huh? My key is not there.",
@@ -470,7 +485,7 @@ q:[[1,"Where did Yui and Ken go?",["To the sea","To the mountains","To the river
 "ゆい|Yui|Yui (name) / ： / あ|a|oh / 、 / あった|atta|there it is / ！ = Yui: Oh, there it is!"],
 q:[[2,"What is in Yui’s bag?",["Her wallet and phone","Her key","Her glasses"],0,"Line 3: 財布と携帯があります."],[5,"Where was the key?",["In her trouser pocket","In her bag","At home"],0,"Lines 5 and 6: Ken asks about the trouser pocket, and Yui finds it."]]},
 {t:"A busy morning",l:[
-"ゆい|Yui|Yui (name) / は|wa|(topic) / 六時|rokuji|six o’clock / に|ni|at / 起きます|okimasu|gets up / 。 = Yui gets up at six.",
+"ゆい|Yui|Yui (name) / は|wa|(topic) / ろく|roku|six / 時|ji|o’clock / に|ni|at / 起きます|okimasu|gets up / 。 = Yui gets up at six.",
 "シャワー|shawaa|shower / を|o|(object) / 浴びて|abite|takes and / 、 / 歯|ha|teeth / を|o|(object) / 磨きます|migakimasu|brushes / 。 = She takes a shower and brushes her teeth.",
 "白い|shiroi|white / シャツ|shatsu|shirt / を|o|(object) / 着ます|kimasu|puts on / 。 = She puts on a white shirt.",
 "玄関|genkan|entrance / で|de|at / 靴|kutsu|shoes / を|o|(object) / 履きます|hakimasu|puts on / 。 = She puts on her shoes at the entrance.",
@@ -2236,12 +2251,12 @@ const STORY_JA5B=[
 {t:"The post office and the library",l:[
 "月曜日|getsuyoubi|Monday / 、 / ゆい|Yui|Yui (name) / は|wa|(topic) / 友達|tomodachi|friend / に|ni|to / 手紙|tegami|letter / を|o|(object) / 書きました|kakimashita|wrote / 。 = On Monday Yui wrote a letter to a friend.",
 "ゆい|Yui|Yui (name) / は|wa|(topic) / 封筒|fuutou|envelope / に|ni|in / 手紙|tegami|letter / を|o|(object) / 入れました|iremashita|put / 。 = She put the letter in an envelope.",
-"郵便局|yuubinkyoku|post office / に|ni|to / 行く|iku|go / 前に|mae ni|before / 、 / 銀行|ginkou|bank / で|de|at / 通帳|tsuuchou|bankbook / を|o|(object) / 使って|tsukatte|use (て-form) / お金|okane|money / を|o|(object) / 出しました|dashimashita|took out / 。 = Before going to the post office, she used her bankbook at the bank and took out money.",
+"郵便局|yuubinkyoku|post office / に|ni|to / 行く|iku|go / 前に|mae ni|before / 、 / 銀行|ginkou|bank / で|de|at / 口座|kouza|account / の|no|’s / 通帳|tsuuchou|bankbook / を|o|(object) / 使って|tsukatte|use (て-form) / お金|okane|money / を|o|(object) / 出しました|dashimashita|took out / 。 = Before going to the post office, she used the bankbook of her account at the bank and took out money.",
 "郵便局|yuubinkyoku|post office / で|de|at / 切手|kitte|stamp / を|o|(object) / 買いました|kaimashita|bought / 。 / 封筒|fuutou|envelope / に|ni|on / 切手|kitte|stamp / を|o|(object) / つけました|tsukemashita|put on / 。 = She bought a stamp at the post office. She put the stamp on the envelope.",
 "ポスト|posuto|mailbox / は|wa|(topic) / 郵便局|yuubinkyoku|post office / の|no|’s / 前|mae|front / に|ni|at / あります|arimasu|is / 。 / ゆい|Yui|Yui (name) / は|wa|(topic) / 手紙|tegami|letter / を|o|(object) / ポスト|posuto|mailbox / に|ni|in / 入れました|iremashita|put / 。 = The mailbox is in front of the post office. Yui put the letter in the mailbox.",
 "図書館|toshokan|library / で|de|at / 漫画|manga|manga / と|to|and / 小説|shousetsu|novel / を|o|(object) / 読みました|yomimashita|read / 。 = She read a manga and a novel at the library.",
 "図書館|toshokan|library / の|no|’s / カード|kaado|card / を|o|(object) / 使って|tsukatte|use (て-form) / 、 / 本|hon|book / を|o|(object) / 借りました|karimashita|borrowed / 。 = She used the library card and borrowed a book.",
-"カード|kaado|card / の|no|’s / 番号|bangou|number / を|o|(object) / ノート|nooto|notebook / に|ni|in / 書きました|kakimashita|wrote / 。 / 小包|kodzutsumi|parcel / は|wa|(topic) / 来週|raishuu|next week / 送ります|okurimasu|will send / 。 = She wrote the card number in her notebook. She will send the parcel next week."
+"カード|kaado|card / の|no|’s / 番号|bangou|number / を|o|(object) / ノート|nooto|notebook / に|ni|in / 書きました|kakimashita|wrote / 。 / 小包|kodzutsumi|parcel / は|wa|(topic) / 来週|raishuu|next week / 速達|sokutatsu|express mail / で|de|by / 送ります|okurimasu|will send / 。 = She wrote the card number in her notebook. She will send the parcel by express mail next week."
 ],q:[[2,"What did Yui do before going to the post office?",["She took out money at the bank","She read a manga","She bought a book"],0,"Line 3: 郵便局に行く前に、銀行でお金を出しました."],[6,"What did Yui borrow at the library?",["A book","A letter","A newspaper"],0,"Line 7: 本を借りました means “borrowed a book”."]]}
 ];
 const JA6C=[
@@ -2351,10 +2366,10 @@ const GR_JA5C=[
 const STORY_JA5C=[
 {t:"Asking for help",l:[
 "今日|kyou|today / 、 / ゆい|Yui|Yui (name) / は|wa|(topic) / 日本語|nihongo|Japanese language / の|no|’s / 授業|jugyou|class, lesson / に|ni|to / 行きます|ikimasu|goes / 。 = Today Yui goes to Japanese class.",
-"田中|Tanaka|Tanaka (family name) / 先生|sensei|teacher / は|wa|(topic) / 問題|mondai|problem / を|o|(object) / 説明します|setsumei shimasu|explains / 。 = Tanaka sensei explains the problem.",
-"ゆい|Yui|Yui (name) / は|wa|(topic) / 分かりません|wakarimasen|does not understand / 。 / 先生|sensei|teacher / に|ni|to / 相談します|soudan shimasu|consults / 。 = Yui does not understand. She consults the teacher.",
+"田中|Tanaka|Tanaka (family name) / 先生|sensei|teacher / は|wa|(topic) / 問題|mondai|problem / を|o|(object) / 説明|setsumei|explanation / します|shimasu|does / 。 = Tanaka sensei explains the problem.",
+"ゆい|Yui|Yui (name) / は|wa|(topic) / 分かりません|wakarimasen|does not understand / 。 / 先生|sensei|teacher / に|ni|to / 相談|soudan|consultation / します|shimasu|does / 。 = Yui does not understand. She consults the teacher.",
 "ゆい|Yui|Yui (name) / は|wa|(topic) / 先生|sensei|teacher / に|ni|to / 意味|imi|meaning / を|o|(object) / 尋ねます|tazunemasu|asks / 。 = Yui asks the teacher about the meaning.",
-"先生|sensei|teacher / は|wa|(topic) / 英語|eigo|English / で|de|in / 説明します|setsumei shimasu|explains / 。 = The teacher explains in English.",
+"先生|sensei|teacher / は|wa|(topic) / 英語|eigo|English / で|de|in / 説明|setsumei|explanation / します|shimasu|does / 。 = The teacher explains in English.",
 "ゆい|Yui|Yui (name) / は|wa|(topic) / 辞書|jisho|dictionary / で|de|with / 言葉|kotoba|word / を|o|(object) / 調べます|shirabemasu|looks up / 。 / ゆい|Yui|Yui (name) / は|wa|(topic) / 分かりました|wakarimashita|understood / 。 = Yui looks up the word in a dictionary. Yui understood.",
 "ゆい|Yui|Yui (name) / は|wa|(topic) / けん|Ken|Ken (name) / に|ni|to / 電話します|denwa shimasu|calls / 。 / 明日|ashita|tomorrow / の|no|’s / 授業|jugyou|class, lesson / を|o|(object) / 伝えます|tsutaemasu|tells / 。 = Yui calls Ken. She tells him about tomorrow’s class.",
 "けん|Ken|Ken (name) / は|wa|(topic) / ゆい|Yui|Yui (name) / に|ni|to / 頼みます|tanomimasu|asks a favour / 。 / 明日|ashita|tomorrow / 、 / 本|hon|book / を|o|(object) / 持って|motte|carry / 来て|kite|come / ください|kudasai|please / 。 = Ken asks Yui a favour. Tomorrow, please bring a book."
@@ -2381,19 +2396,19 @@ const STORY_JA5C=[
 {t:"Words for a shop",l:[
 "ゆい|Yui|Yui (name) / と|to|and / けん|Ken|Ken (name) / は|wa|(topic) / 店|mise|shop / に|ni|into / 入ります|hairimasu|enter / 。 = Yui and Ken enter a shop.",
 "店員|ten’in|shop clerk / ： / いらっしゃいませ|irasshaimase|welcome / 。 = Shop clerk: Welcome.",
-"ゆい|Yui|Yui (name) / は|wa|(topic) / ノート|nooto|notebook / を|o|(object) / 買います|kaimasu|buys / 。 = Yui buys a notebook.",
-"けん|Ken|Ken (name) / は|wa|(topic) / ゆい|Yui|Yui (name) / に|ni|to / 鉛筆|enpitsu|pencil / を|o|(object) / あげます|agemasu|gives / 。 = Ken gives Yui a pencil.",
+"ゆい|Yui|Yui (name) / は|wa|(topic) / ノート|nooto|notebook / を|o|(object) / 買います|kaimasu|buys / 。 / けん|Ken|Ken (name) / は|wa|(topic) / ゆい|Yui|Yui (name) / に|ni|to / 鉛筆|enpitsu|pencil / を|o|(object) / あげます|agemasu|gives / 。 = Yui buys a notebook. Ken gives Yui a pencil.",
 "ゆい|Yui|Yui (name) / ： / ありがとう|arigatou|thank you / 。 = Yui: Thank you.","けん|Ken|Ken (name) / ： / どういたしまして|dou itashimashite|you are welcome / 。 = Ken: You are welcome.",
 "ゆい|Yui|Yui (name) / は|wa|(topic) / 先生|sensei|teacher / の|no|’s / 部屋|heya|room / に|ni|to / 行きます|ikimasu|goes / 。 / ゆい|Yui|Yui (name) / ： / 失礼します|shitsurei shimasu|excuse me / 。 = Yui goes to the teacher’s room. Yui: Excuse me.",
-"田中|Tanaka|Tanaka (family name) / 先生|sensei|teacher / ： / お待たせしました|omatase shimashita|sorry to keep you waiting / 。 = Tanaka sensei: Sorry to keep you waiting."
-],q:[[3,"What does Ken give Yui?",["A pencil","A notebook","An umbrella"],0,"Line 4: 鉛筆をあげます means “gives a pencil”."],[7,"What does Tanaka sensei say?",["Sorry to keep you waiting","Welcome","Good night"],0,"Line 8: お待たせしました."]]},
+"田中|Tanaka|Tanaka (family name) / 先生|sensei|teacher / ： / お待たせしました|omatase shimashita|sorry to keep you waiting / 。 = Tanaka sensei: Sorry to keep you waiting.",
+"ゆい|Yui|Yui (name) / は|wa|(topic) / 家|ie|home / に|ni|to / 帰ります|kaerimasu|returns / 。 / ゆい|Yui|Yui (name) / ： / ただいま|tadaima|I am home / 。 / 母|haha|mother / ： / お帰りなさい|okaerinasai|welcome home / 。 = Yui returns home. Yui: I am home. Mother: Welcome home."
+],q:[[2,"What does Ken give Yui?",["A pencil","A notebook","An umbrella"],0,"Line 3: 鉛筆をあげます means “gives a pencil”."],[6,"What does Tanaka sensei say?",["Sorry to keep you waiting","Welcome","Good night"],0,"Line 7: お待たせしました."]]},
 {t:"Shoes and numbers",l:[
 "今日|kyou|today / 、 / ゆい|Yui|Yui (name) / は|wa|(topic) / 新しい|atarashii|new / 携帯|keitai|mobile phone / を|o|(object) / 買いました|kaimashita|bought / 。 = Today Yui bought a new mobile phone.",
 "けん|Ken|Ken (name) / は|wa|(topic) / 番号|bangou|number / を|o|(object) / 聞きます|kikimasu|asks / 。 / 何番|nanban|which number / です|desu|is / か|ka|(question) / ？ = Ken asks for the number. Which number is it?",
 "ゆい|Yui|Yui (name) / ： / 零|rei|zero / 、 / 一|ichi|one / 、 / 二|ni|two / 、 / 三|san|three / 。 = Yui: Zero, one, two, three.",
 "ゆい|Yui|Yui (name) / は|wa|(topic) / 一番目|ichibanme|first / の|no|’s / 店|mise|shop / で|de|at / 靴|kutsu|shoes / を|o|(object) / 見ました|mimashita|saw / 。 = Yui looked at shoes in the first shop.",
 "ゆい|Yui|Yui (name) / は|wa|(topic) / 一番|ichiban|the most / 安い|yasui|cheap / 靴|kutsu|shoes / を|o|(object) / 一足|issoku|one pair / 買いました|kaimashita|bought / 。 = Yui bought one pair of the cheapest shoes.",
-"けん|Ken|Ken (name) / の|no|’s / 靴|kutsu|shoes / は|wa|(topic) / ゆい|Yui|Yui (name) / の|no|’s / 靴|kutsu|shoes / の|no|of / 二倍|nibai|two times / 高い|takai|expensive / です|desu|is / 。 = Ken’s shoes are twice as expensive as Yui’s shoes.",
+"けん|Ken|Ken (name) / の|no|’s / 靴|kutsu|shoes / は|wa|(topic) / ゆい|Yui|Yui (name) / の|no|’s / 靴|kutsu|shoes / の|no|of / 二|ni|two / 倍|bai|times / 高い|takai|expensive / です|desu|is / 。 = Ken’s shoes are twice as expensive as Yui’s shoes.",
 "ゆい|Yui|Yui (name) / は|wa|(topic) / 明日|ashita|tomorrow / 、 / けん|Ken|Ken (name) / と|to|with / 約束|yakusoku|appointment / が|ga|(subject) / あります|arimasu|has / 。 = Tomorrow Yui has an appointment with Ken.",
 "ゆい|Yui|Yui (name) / は|wa|(topic) / 一度|ichido|once / けん|Ken|Ken (name) / の|no|’s / 家|ie|home / に|ni|to / 行きました|ikimashita|went / 。 = Yui went to Ken’s home once."
 ],q:[[4,"How many pairs of shoes did Yui buy?",["One pair","Two pairs","Three pairs"],0,"Line 5: 一足買いました means “bought one pair”."],[6,"When does Yui have an appointment with Ken?",["Tomorrow","Today","Last week"],0,"Line 7: 明日、けんと約束があります."]]}
