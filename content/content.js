@@ -4068,7 +4068,7 @@ const JA_P6A=[
   ["パーティー","パーティー","paatii","party","土曜日にパーティーがあります。","Doyoubi ni paatii ga arimasu.","There is a party on Saturday."],
   ["乾杯","かんぱい","kanpai","toast (to drink together)","皆さんで乾杯します。","Minasan de kanpai shimasu.","Everyone drinks a toast."],
   ["会場","かいじょう","kaijou","venue","会場は駅の近くです。","Kaijou wa eki no chikaku desu.","The venue is near the station."],
-  ["会費","かひ","kahi","fee for a party","会費は千円です。","Kahi wa sen en desu.","The fee is 1,000 yen."],
+  ["会費","かいひ","kaihi","fee for a party","会費は千円です。","Kaihi wa sen en desu.","The fee is 1,000 yen."],
   ["揃える","そろえる","soroeru","to get ready, to gather a full set","お皿を十枚揃えます。","Osara o juu mai soroemasu.","I get ten plates ready."]],
   [
    "パーティー|paatii|party / の|no|’s / 支度|shitaku|getting ready / を|o|(object) / します|shimasu|do / 。 = I get ready for the party.",
@@ -4134,7 +4134,7 @@ const STORY_P6A=[
   "けん|Ken|Ken (name) / は|wa|(topic) / 飲み物|nomimono|drinks / を|o|(object) / 用意して|youi shite|get ready (て-form) / おきます|okimasu|does in advance / 。 = Ken gets the drinks ready in advance.",
   "ゆい|Yui|Yui (name) / は|wa|(topic) / 店|mise|café / を|o|(object) / 花|hana|flowers / で|de|with / 飾ります|kazarimasu|decorates / 。 = Yui decorates the café with flowers.",
   "けん|Ken|Ken (name) / は|wa|(topic) / テーブル|teeburu|tables / に|ni|on / お皿|osara|plates / を|o|(object) / 並べます|narabemasu|arranges / 。 = Ken arranges plates on the tables.",
-  "会費|kahi|fee / は|wa|(topic) / 千|sen|thousand / 円|en|yen / です|desu|is / 。 = The fee is 1,000 yen.",
+  "会費|kaihi|fee / は|wa|(topic) / 千|sen|thousand / 円|en|yen / です|desu|is / 。 = The fee is 1,000 yen.",
   "皆さん|minasan|everyone / で|de|together / 乾杯|kanpai|toast / します|shimasu|do / 。 = Everyone drinks a toast."
  ],"q":[[1,"Where is the party?",["At Yamada-san’s café","At school","At Ken’s home"],0,"Line 2: 会場は山田さんの店です."],[6,"How much is the fee?",["1,000 yen","100 yen","10,000 yen"],0,"Line 7: 会費は千円です."]]}
 ];
