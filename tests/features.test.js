@@ -128,6 +128,39 @@ const check = (ok, msg) => { if (!ok) failures.push(msg); else console.log("ok:"
   W.eval("__p.t=10"); click("Set start here"); W.eval("__p.t=20"); click("Set end here"); click("Loop: off");
   W.eval("__p.t=21"); await wait(400); check(W.eval("__p.t") === 10, "section loop jumps back to the start point");
   click("Mark as watched"); check(W.eval("S.ja.videosWatched.BBBBBBBBBBB") === true, "watched state is saved");
+  // --- Real-situation log ---
+  const noEmoji = n => { if (/\p{Extended_Pictographic}/u.test(d.getElementById("main").textContent)) failures.push(n + ": emoji found"); };
+  const prim = () => d.querySelectorAll("#main .btn.pri").length;
+  for (const lg of ["ja", "zh"]) {
+    W.eval("libSec=null;view={s:'home'};if(S.lang!==\""+lg+"\")setLang(\""+lg+"\");render()"); tab("Travel");
+    check(M().includes("Used in real life: 0 phrases") && M().includes("No phrases to review"), lg + ": Travel shows an empty real-situation log");
+    check(prim() <= 1, lg + ": Travel tab has at most one primary button"); noEmoji(lg + " Travel");
+    W.eval("openTrip(0)"); click("You say");
+    const ph = W.eval("sentText(trip(S.lang,0)._p.say[0].p)"), ph2 = W.eval("sentText(trip(S.lang,0)._p.say[1].p)");
+    check(!!d.querySelector(".realb"), lg + ": each phrase has a real-life control");
+    click("I used this in real life");
+    check([...d.querySelectorAll("#main .btn.sec")].map(b => b.textContent).join("|") === "Understood|Asked me to repeat|Answered in English", lg + ": three literal result buttons are offered");
+    check(prim() === 0 && d.querySelectorAll("#nextbtn").length === 1, lg + ": situation screen keeps one primary action (bottom bar)"); noEmoji(lg + " say tab");
+    click("Asked me to repeat");
+    check(W.eval(`S.${lg}.real[${JSON.stringify(ph)}].r`) === "repeat" && M().includes("Real life: Asked me to repeat"), lg + ": a result is recorded and shown");
+    W.eval("view.rl=sentText(trip(S.lang,0)._p.say[1].p);render()"); click("Answered in English");
+    check(W.eval(`S.${lg}.real[${JSON.stringify(ph2)}].r`) === "english", lg + ": a second phrase is recorded");
+    W.eval("goHome()"); tab("Travel");
+    check(M().includes("Used in real life: 2 phrases. Understood: 0.") && M().includes("2 phrases did not work yet"), lg + ": Travel shows counts");
+    click("Phrases to review");
+    check(W.eval("view.s") === "lib" && M().includes(ph) && M().includes(ph2) && M().includes("Asked me to repeat, ") && M().includes("Answered in English, "), lg + ": the review list shows both phrases with result and date");
+    check(prim() === 0, lg + ": review screen has no primary button in the main area"); noEmoji(lg + " review");
+    W.eval("window.__sy=[];speechSynthesis.speak=u=>{__sy.push(u.text);};");
+    click(ph); check(W.eval("__sy[0]") === ph && !!d.querySelector(".realit .stack2"), lg + ": tapping a phrase plays it and offers the three results");
+    click("Understood");
+    check(!M().includes(ph) && M().includes(ph2) && M().includes("Understood: 1."), lg + ": an understood phrase leaves the review list");
+    W.eval(`view.rl=${JSON.stringify(ph2)};render()`); click("Understood");
+    check(M().includes("No phrases to review") && M().includes("Understood: 2."), lg + ": the list is empty when all phrases were understood");
+    W.eval(`S.${lg}.real[${JSON.stringify(ph)}]={r:"ok",t:Date.now()-1000};openTrip(0);view.tt="say";view.rl=${JSON.stringify(ph)};render()`); click("Answered in English");
+    check(W.eval(`S.${lg}.real[${JSON.stringify(ph)}].r`) === "english" && W.eval(`realReview(S.lang).some(x=>x.key===${JSON.stringify(ph)})`), lg + ": the latest result wins and the phrase returns to the list");
+    W.eval("goHome()");
+  }
+  check(W.eval("normalize({v:1,ja:{real:null}}).ja.real") !== null && Object.keys(W.eval("normalize({v:1}).zh.real")).length === 0, "old saved state without real loads with an empty log");
   failures.forEach(f => console.log("FAIL:", f));
   console.log(failures.length ? failures.length + " failure(s)." : "Feature test OK.");
   process.exit(failures.length ? 1 : 0);

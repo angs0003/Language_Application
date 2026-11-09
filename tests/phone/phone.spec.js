@@ -57,6 +57,25 @@ for (const lang of ["ja", "zh"]) {
       expect(errors, "script errors").toEqual([]);
     });
   }
+  test(`${lang} Travel: Phrases to review and You say`, async ({ page }) => {
+    const errors = await openApp(page, lang);
+    await page.evaluate(() => realSet(S.lang, sentText(trip(S.lang, 0)._p.say[0].p), "repeat"));
+    await page.locator(".tabb", { hasText: "Travel" }).click();
+    await page.locator(".lrow", { hasText: "Phrases to review" }).click();
+    await expect(page.locator("#main")).toContainText("Used in real life");
+    await page.locator(".realit .lrow").first().click();
+    await expect(page.locator(".realit .btn.sec")).toHaveCount(3);
+    await checkScreen(page, `${lang} Phrases to review`);
+    await page.evaluate(() => { openTrip(0); view.tt = "say"; render(); });
+    await page.locator(".realb .btn.link").first().click();
+    // The word tokens (button.tk) on this screen were already below 44 px before this feature: only the new controls are measured.
+    const sizes = await page.evaluate(() => [...document.querySelectorAll(".realb button")].map(b => { const r = b.getBoundingClientRect(); return [r.width, r.height]; }));
+    expect(sizes.length).toBeGreaterThanOrEqual(3);
+    for (const [w, h] of sizes) { expect(w).toBeGreaterThanOrEqual(44); expect(h).toBeGreaterThanOrEqual(44); }
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(1);
+    expect(await page.evaluate(() => [...document.querySelectorAll(".btn.pri")].length), "primary buttons").toBeLessThanOrEqual(1);
+    expect(errors, "script errors").toEqual([]);
+  });
   test(`${lang} first lesson screen`, async ({ page }) => {
     const errors = await openApp(page, lang);
     await page.locator(".tabb", { hasText: "Learn" }).click();
