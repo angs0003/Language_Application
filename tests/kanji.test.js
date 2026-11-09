@@ -63,10 +63,22 @@ async function solveAll(W, click) { for (let k = 0; k < 60 && !W.eval("view.fini
   check(W.eval("dueList('ja').length>=5") && !!d.querySelector("#main .path > .card.hero") && d.querySelector("#main .path").firstElementChild.classList.contains("hero") && M().includes("Review:"), "next lesson is first and a due review is a row below it");
   // Level 2 view while Level 1 is not finished: it shows its own next theme, not an empty page
   W.eval("view.lvl=2;render()");
-  check(!!d.querySelector("#main .path > .card.hero") && M().includes("NEXT LESSON") && d.querySelectorAll("#main .path .pitem").length >= 1 && M().includes("NEXT THEME"), "Level 2 view shows the next lesson and the next theme");
+  check(!!d.querySelector("#main .path > .card.hero") && M().includes("NEXT THEME") && M().includes("Next story:") && M().includes("Next podcast:"), "Level 2 view shows the next theme, the next story and the next podcast");
   check(d.querySelectorAll("#main .btn.pri").length === 1, "Level 2 view has one primary button");
   W.eval("view.lvl=null;render()");
   check(d.querySelectorAll("#main .btn.pri").length <= 1, "Learn tab still has one primary button");
+  // Learn shows three next items: the next theme (primary button), the next story and the next podcast
+  check(d.querySelectorAll("#main .btn.pri").length === 1 && M().includes("NEXT THEME") && M().includes("Next story:") && M().includes("Next podcast:"), "Learn shows the next theme, the next story and the next podcast with one primary button");
+  W.eval("themes('ja')[0].words.forEach(w=>{S.ja.srs[w.w]={b:3,d:Date.now()+1e9,u:Date.now()};});render()");
+  check(M().includes("NEXT THEME") && !M().includes("NEXT STORY") && M().includes(W.eval("themes('ja')[1].title")) && M().includes("Read and listen to the whole chapter"), "after a theme is learned the next theme stays first and the story is a row below it");
+  // the level chosen on one tab stays on the other tabs
+  const sel = () => d.getElementById("lvl");
+  sel().value = "2"; sel().dispatchEvent(new W.Event("change", { bubbles: true }));
+  check(W.eval("viewLevel('ja')") === 2 && sel().value === "2", "choosing Level 2 on Learn changes the level");
+  tab("Listen"); check(!!sel() && sel().value === "2" && M().includes("For Level 2"), "Listen shows the same level selector and Level 2 content");
+  sel().value = "1"; sel().dispatchEvent(new W.Event("change", { bubbles: true }));
+  tab("Learn"); check(sel().value === "1" && W.eval("viewLevel('ja')") === 1, "a level chosen on Listen is kept when going back to Learn");
+  W.eval("LVSEL.ja=0;render()");
   // theme page lists the theme's practice sentences
   W.eval("openTheme(0)"); check(M().includes("Play all sentences") && d.querySelectorAll("#main .line").length >= 6, "theme page shows the 6 practice sentences");
   // kanji card: Next kanji button

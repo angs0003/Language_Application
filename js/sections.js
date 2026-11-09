@@ -23,9 +23,13 @@ function genCard(){if(view.gen==="loading")return `<div class="card"><p><strong>
 
 /* ---------- Home ---------- */
 function secsHTML(tab){return `<div class="secs" role="tablist">${SECS.filter(([k])=>k!=="kanji"||S.lang==="ja").map(([k,e,t])=>`<button class="sec" role="tab" aria-selected="${tab===k}" data-a="${A(()=>{S.tab=k;save();view={s:"home"};render();window.scrollTo(0,0);if(k==="stories")pregen(S.lang);})}"><span class="e" aria-hidden="true">${e}</span>${t}</button>`).join("")}</div>`;}
+/* The level chosen in the level selector. It is kept for the whole session and is shared by the Learn and Listen tabs (view.lvl is only used by tests). */
+const LVSEL={};
+function viewLevel(l){return view.lvl||LVSEL[l]||curLevel(l);}
+function lvPick(l,lv){const x=LEVELS[l][lv-1]||["Level "+lv,""];return `<label for="lvl" class="lvsel"><span><strong>${esc(x[0])}</strong> · ${esc(x[1])}</span><select id="lvl">${LEVELS[l].map((y,i)=>`<option value="${i+1}" ${lv===i+1?"selected":""}>${esc(y[0])}: ${esc(y[1])}${y[2]?"":" (not built yet)"}</option>`).join("")}</select></label>`;}
 function curLevel(l){const nw=nextWords(l,1).words[0];return nw?lvOfTheme(l,themeIdxOf(l,nw)):LEVELS[l].filter(x=>x[2]).length;}
 function homePath(l,r){
-  const ths=themes(l),lv=view.lvl||curLevel(l);let h="";
+  const ths=themes(l),lv=viewLevel(l);let h="";
   const idx=ths.map((t,i)=>i).filter(i=>lvOfTheme(l,i)===lv),words=idx.flatMap(i=>ths[i].words||[]),nL=words.filter(w=>isL(l,w)).length;
   h+=`<div class="card"><label class="small muted" for="lvl">Level</label><select id="lvl">${LEVELS[l].map((x,i)=>`<option value="${i+1}" ${lv===i+1?"selected":""}>${x[0]}: ${x[1]}${x[2]?"":" (not built yet)"}</option>`).join("")}</select>${idx.length?`<p style="margin:8px 0 0">Words learned in this level: ${nL} of ${words.length}</p><div class="bar"><i style="width:${words.length?Math.round(nL/words.length*100):0}%"></i></div>`:""}</div>`;
   if(!idx.length){const x=LEVELS[l][lv-1];h+=`<div class="card"><h2>⭕ ${x[0]}: ${x[1]}</h2><p>This level is not built yet.</p><p>${esc(x[3])}</p><p class="small muted" style="margin:0">It will include the same parts as Level 1: themes with lessons, grammar points, story chapters and podcast episodes.</p></div>`;r.main=h;return;}
