@@ -8,7 +8,7 @@
   function loadScript(src) { return new Promise((res, rej) => { const s = document.createElement("script"); s.src = src; s.onload = res; s.onerror = () => rej(new Error("Could not load " + src)); document.body.appendChild(s); }); }
   const APP_FILES = ["js/core.js", "js/exercises.js", "js/lessons.js", "js/sections.js", "js/exercise-types.js", "js/path.js", "js/listen.js", "js/kanji.js", "js/sync.js", "js/ui.js"];
   async function loadApp() { for (const f of APP_FILES) await loadScript(f); }
-  function apply(G) { for (const k of ["ZH", "JA", "GR", "STORY_ZH", "STORY_JA", "STORY", "TRIP_ZH", "TRIP_JA", "PARTS", "LEVELS", "VIDS", "KANJI_JA", "KANA", "TVREC"]) window[k] = G[k]; window.LS_CONTENT_VERSION = G.version; }
+  function apply(G) { for (const k of ["ZH", "JA", "GR", "STORY_ZH", "STORY_JA", "STORY", "TRIP_ZH", "TRIP_JA", "PARTS", "LEVELS", "VIDS", "KANJI_JA", "KANA", "TVREC", "CASUAL"]) window[k] = G[k]; window.LS_CONTENT_VERSION = G.version; }
   function screen(html) { const m = main(); if (m) m.innerHTML = html; const b = document.getElementById("bbar"); if (b) b.innerHTML = ""; }
   function signIn(db, msg) {
     screen(`<div class="card tint"><h2>🈶 Language Steps</h2><p>Sign in to start. Your progress is saved to your account, so it is the same on every device.</p>

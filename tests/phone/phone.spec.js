@@ -76,6 +76,25 @@ for (const lang of ["ja", "zh"]) {
     expect(await page.evaluate(() => [...document.querySelectorAll(".btn.pri")].length), "primary buttons").toBeLessThanOrEqual(1);
     expect(errors, "script errors").toEqual([]);
   });
+  test(`${lang} Practise: Casual speech list, lesson and quiz`, async ({ page }) => {
+    const errors = await openApp(page, lang);
+    await page.evaluate(() => { CASUAL[S.lang].length = 0; CASUAL[S.lang].push({ t: "Fixture lesson", e: "Explanation.", p: [["私|watashi|I / 。 = I.", "俺|ore|I / 。 = I.", "a friend"], ["私|watashi|I / 。 = I.", "僕|boku|I / 。 = I.", "a friend"]] }); });
+    await page.locator(".tabb", { hasText: "Practise" }).click();
+    await page.locator(".lrow", { hasText: "Casual speech" }).click();
+    await checkScreen(page, `${lang} Casual speech list`);
+    await page.locator(".lrow", { hasText: "Fixture lesson" }).click();
+    await expect(page.locator("#main")).toContainText("Casual (a friend)");
+    // Word tokens (button.tk) are already below 44 px on other screens (see touch-baseline.json): only the new controls are measured.
+    const sizes = await page.evaluate(() => [...document.querySelectorAll("#main button:not(.tk), #bbar button")].map(b => { const r = b.getBoundingClientRect(); return [r.width, r.height]; }));
+    expect(sizes.length).toBeGreaterThanOrEqual(5);
+    for (const [w, h] of sizes) { expect(w).toBeGreaterThanOrEqual(44); expect(h).toBeGreaterThanOrEqual(44); }
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(1);
+    expect(await page.evaluate(() => document.querySelectorAll(".btn.pri").length), "primary buttons").toBeLessThanOrEqual(1);
+    await page.locator("#nextbtn").click();
+    await expect(page.locator("#hd")).toContainText("Question 1 of 4");
+    await checkScreen(page, `${lang} Casual speech quiz`);
+    expect(errors, "script errors").toEqual([]);
+  });
   test(`${lang} first lesson screen`, async ({ page }) => {
     const errors = await openApp(page, lang);
     await page.locator(".tabb", { hasText: "Learn" }).click();

@@ -85,6 +85,7 @@ names defined in earlier files (inside functions, any file's names can be used).
 | `tests/features.test.js` | Player, My words (filters, search, 4 practice modes), Mistakes practice and video player (speed, section loop, synced subtitles). |
 | `tests/smoke.js` design checks | On each tab screen: no emoji, at most one primary button, no icon button without a label. |
 | `tests/kanji.test.js` | Kana lessons, kanji lessons and stroke steps, fading furigana, TV list, kanji/kana sync. |
+| `tests/casual.test.js` | Casual speech: row hidden when empty, list, lesson, quiz paths, done mark, sync to a second device, design checks. |
 | `tests/phone/phone.spec.js` | Real browser (Chromium) at 360x740 and 412x915: each tab in both languages and the first lesson. No script errors, no sideways scrolling, at most one primary button, touch targets of at least 44 x 44 px (`npm run test:phone`; runs in the `test` check). |
 | `tests/helpers.js` | Shared jsdom setup, a simulated Supabase client, and an answer "solver" for tests. |
 
@@ -100,7 +101,7 @@ names defined in earlier files (inside functions, any file's names can be used).
 
 ### Database tables (supabase.sql)
 - `content(key, lang, kind, ord, level, part, data)`: kinds `theme`, `chapter`, `grammar`, `trip`, `meta`
-  (`meta:parts`, `meta:levels`, `meta:vids`, `meta:version`). Readable by signed-in users; written only by the upload tool.
+  (`meta:parts`, `meta:levels`, `meta:vids`, `meta:casual`, `meta:version`). Readable by signed-in users; written only by the upload tool.
 - `word_progress(user_id, lang, word, box, due, saved, reading, meaning, sentence, source, saved_box, saved_due, saved_at, updated_at)`.
 - `activity(user_id, lang, kind, key, done_at)`: kinds `chapter`, `trip`, `trip_open`, `podcast`, `grammar`.
 - `user_settings(user_id, data, updated_at)`: settings plus per-language details (placed, gi, lc, lst, hist, lastLesson, videos).
@@ -119,7 +120,7 @@ names defined in earlier files (inside functions, any file's names can be used).
   gi, grDone[], lc, lst, chRead[], tripDone{}, tripOpen{}, podDone{}, hist[], lastLesson[], saved[], videos[], mis[]`.
   Always load through `normalize()`. Call `save()` after any change.
 - `render()` (js/ui.js) calls one `screenX()` per view (`view.s`): `home, lesson, place, review, test, settings, theme, gram, story,
-  trip, pod, cards`. Each returns `{row, title, prog, main, back:{label,fn,dis}, next:{label,fn,dis}, exit}`.
+  trip, pod, cards, casual`. Each returns `{row, title, prog, main, back:{label,fn,dis}, next:{label,fn,dis}, exit}`.
 - Buttons use `data-a="${A(fn)}"`; one delegated listener calls the function.
 - Tab screens (js/ui.js): `homeLearn` (language switch, level, path built from themes and chapters; the next step comes
   from `planSteps()`), `homePractise` (one mixed session `startMixed()`, then My words, Kanji, Kana, Grammar),
@@ -156,6 +157,12 @@ names defined in earlier files (inside functions, any file's names can be used).
   (the rebuilt question has `again=true`, so it is not queued a second time). If the repeat is wrong too, the session can still finish and the item stays in
   Mistakes for a later session. A correct answer removes the item. `mis` is synced inside `user_settings.data.per[lang]` (not as separate rows); on a conflict
   the newer side wins as a whole list (last-write-wins).
+- **Casual speech** (Practise tab; `CASUAL[lang]`, `openSub("casual")`, `view.s="casual"`, `casualList`, `casualLesson`, `casualMark`, `screenCasual`, `startCasualQuiz` in js/sections.js): 12 lessons per language on how people really speak
+  (Japanese: plain-form questions, dropped particles, てる, ちゃった, じゃん, short replies, fillers, ね/よ, かな/でしょ, inviting, reactions, who gets which form; Chinese: 吧, 啊, 呢, 嘛, 儿化, dropped subject,
+  short replies, fillers, ordering, agreeing and refusing, reactions, 你 and 您). A lesson shows each pair as a Polite and a Casual line (audio, word taps, furigana), then a quiz ("Which would you say to ...?" and
+  "Which version is polite?") that reuses the grammar-choice engine; wrong answers are not added to Mistakes. The row is hidden when `CASUAL[lang]` is empty or missing (old cached content). Progress is
+  `S[lang].casualDone` = `{lessonIndex: timestamp}`, synced inside `user_settings.data.per[lang]` like `real` (last-write-wins for the whole object, no SQL change). Because the key is the lesson's position,
+  **only append new lessons to `CASUAL`; never insert or reorder them.**
 - **Real-situation log** (Travel tab; `S[lang].real`, `homeReal` and `realBlock` in js/sections.js): under each phrase in a situation's "You say" tab, "I used this in real life" opens 3 results
   (`ok` Understood, `repeat` Asked me to repeat, `english` Answered in English). `S[lang].real` is `{ "<phrase text>": {r, t} }`, the latest result per phrase wins, and a phrase that
   no longer exists in the content is skipped. The Travel tab shows counts and the row "Phrases to review" (sub-screen `openSub("real")`: phrases whose latest result is
@@ -198,6 +205,8 @@ names defined in earlier files (inside functions, any file's names can be used).
 - **Catalogue video (in `VIDS`):** `{id:"11-character YouTube id", title, ch:"channel", lvn:level number, len:"5 minutes", has:"what it uses",
   transcript:[{t:startSeconds, line:"sentence string as above"}]}`. Add a transcript only for videos the owner chooses,
   and only with text the owner provides or approves. Times must increase.
+- **Casual lesson (in `CASUAL`, `{ja:[...], zh:[...]}`):** `{t:"Title", e:"Literal explanation.", p:[[politeSentence, casualSentence, "who you say the casual one to"], ...4 to 6 pairs]}`, sentence strings as above;
+  the two sentences of a pair must differ. Append only.
 - **Travel situation:** `{e, t, intro, facts[], hear[sentences], say[[polite, casual|null]], local[[word,reading,meaning,note]], etiq[], drill[[hearIdx, sayIdx]], role["h0","s0",...]}`.
 - Characters: Japanese story follows ゆい (Yui) in Tokyo with けん, 田中先生, 山田さん;
   Chinese story follows 小文 (Xiǎo Wén) in Beijing with 大明, 李老师, 王阿姨. Keep facts consistent
@@ -289,7 +298,7 @@ Add TV titles to `TVREC` only with a rating that has a named source.
 Feature ideas discussed but not built: kana lessons (Japanese) and pinyin/tone lessons (Chinese);
 typed AI role-play through a server function; calm motivation (daily goal, progress calendar);
 mistakes review for sentences and grammar; Chinese character (hanzi) lessons like the kanji section.
-Next planned (needs a plan first): a casual-speech grammar block for both languages (contractions, fillers, short replies, sentence endings), because the stories now use them but no lesson explains them.
+Done (November 2026): Casual speech section (12 lessons per language) in the Practise tab. Next planned: none agreed.
 
 ## 11. Known limitations
 

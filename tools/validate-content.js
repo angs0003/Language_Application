@@ -3,8 +3,8 @@
 const fs = require("fs"), vm = require("vm"), path = require("path");
 const src = fs.readFileSync(path.join(__dirname, "..", "content", "content.js"), "utf8");
 const ctx = {}; vm.createContext(ctx);
-vm.runInContext(src + "\n;this.__={ZH,JA,GR,STORY_ZH,STORY_JA,TRIP_JA,TRIP_ZH,VIDS};", ctx);
-const { ZH, JA, GR, STORY_ZH, STORY_JA, TRIP_JA, TRIP_ZH, VIDS } = ctx.__;
+vm.runInContext(src + "\n;this.__={ZH,JA,GR,STORY_ZH,STORY_JA,TRIP_JA,TRIP_ZH,VIDS,CASUAL};", ctx);
+const { ZH, JA, GR, STORY_ZH, STORY_JA, TRIP_JA, TRIP_ZH, VIDS, CASUAL } = ctx.__;
 const { formMatcher } = require("./lib-known");
 const PUN = /^[\s。、，,.!?！？：:；;「」『』“”"'（）()…·\-]+$/;
 let errors = 0; const err = (...m) => { errors++; console.log("ERROR:", ...m); };
@@ -57,6 +57,11 @@ for (const [name, themes, width] of [["zh", ZH, 6], ["ja", JA, 7]]) {
     if (x.id && !/^[A-Za-z0-9_-]{11}$/.test(x.id)) err(name, "video", i + 1, "bad YouTube id");
     (x.transcript || []).forEach((ln, j) => { if (typeof ln.t !== "number") err(name, "video", i + 1, "transcript line", j + 1, "needs a start time t in seconds"); checkLine(`${name} video ${i + 1} transcript ${j + 1}`, ln.line); });
   });
+  (CASUAL[name] || []).forEach((c, i) => {
+    const w = `${name} casual lesson ${i + 1}`;
+    if (!c || typeof c.t !== "string" || !c.t || typeof c.e !== "string" || !c.e || !Array.isArray(c.p) || c.p.length < 4 || c.p.length > 6) return err(w, "needs t, e and 4 to 6 pairs in p");
+    c.p.forEach((x, j) => { if (!Array.isArray(x) || x.length !== 3 || typeof x[2] !== "string" || !x[2]) return err(w, "pair", j + 1, "must be [polite, casual, who]"); checkLine(`${w} polite ${j + 1}`, x[0]); checkLine(`${w} casual ${j + 1}`, x[1]); if (x[0] === x[1]) err(w, "pair", j + 1, "polite and casual are the same"); });
+  });
   console.log(`${name}: ${themes.length} themes, ${seen.size} words, ${story.length} chapters, ${GR[name].length} grammar points, ${trip.length} travel situations`);
 }
 {
@@ -78,7 +83,7 @@ if (errors) { console.log(`${errors} error(s).`); process.exit(1); } else consol
 {
   const loadContent = require("./load-content"), { buildRows, buildContent } = require("../js/content-rows");
   const G = loadContent(), back = buildContent(buildRows(G, "test"));
-  for (const k of ["ZH", "JA", "GR", "STORY_ZH", "STORY_JA", "TRIP_ZH", "TRIP_JA", "PARTS", "LEVELS", "VIDS", "KANJI_JA", "KANA", "TVREC"])
+  for (const k of ["ZH", "JA", "GR", "STORY_ZH", "STORY_JA", "TRIP_ZH", "TRIP_JA", "PARTS", "LEVELS", "VIDS", "KANJI_JA", "KANA", "TVREC", "CASUAL"])
     if (JSON.stringify(G[k]) !== JSON.stringify(back[k])) { console.log("ERROR: database round trip changed", k); process.exitCode = 1; }
   if (!process.exitCode) console.log("Database round trip OK.");
 }

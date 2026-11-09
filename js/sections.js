@@ -373,3 +373,46 @@ function screenTrip(){
   return r;
 }
 
+/* ---------- Casual speech (Practise tab) ----------
+   CASUAL[l] = [{t, e, p:[[politeString, casualString, who], ...]}]. Progress: S[l].casualDone = {lessonIndex: timestamp}
+   (saved inside user_settings.data.per[l], last-write-wins, like S[l].real). Wrong answers are not added to Mistakes. */
+function casualList(l){return (typeof CASUAL!=="undefined"&&CASUAL&&Array.isArray(CASUAL[l]))?CASUAL[l]:[];}
+function casualLesson(l,i){const d=casualList(l)[i];if(!d)return null;if(!d._p)d._p={t:d.t,e:d.e,p:d.p.map(x=>({p:parseLine(x[0]),c:parseLine(x[1]),who:String(x[2]||"a friend")}))};return d._p;}
+function casualDoneObj(l){const s=S[l];if(!s.casualDone||typeof s.casualDone!=="object"||Array.isArray(s.casualDone))s.casualDone={};return s.casualDone;}
+function casualCount(l){const o=casualDoneObj(l);return casualList(l).filter((c,i)=>o[i]).length;}
+function casualMark(l,i){casualDoneObj(l)[i]=Date.now();save();}
+function openCasual(i){view={s:"casual",i,mode:"read"};render();window.scrollTo(0,0);}
+function homeCasual(l,r){
+  const list=casualList(l),o=casualDoneObj(l),n=casualCount(l);
+  r.main=uiCard(`<p style="margin:0">${n} of ${list.length} done. Each lesson shows how people say the same thing politely and casually.</p>`)
+    +uiCard(list.map((c,i)=>uiRow(uiTileIcon("speaker"),esc(c.t),esc(o[i]?"Done":"Not done")+" · "+c.p.length+(c.p.length===1?" pair":" pairs"),()=>openCasual(i),o[i]?STATUS.ok:STATUS.todo)).join(""),"list");
+}
+function startCasualQuiz(v){
+  const l=S.lang,c=casualLesson(l,v.i),fw=[],rv=[];
+  c.p.forEach(x=>{const pt=sentText(x.p),ct=sentText(x.c);if(pt===ct)return;
+    fw.push(mkGramQ({question:`Which would you say to ${x.who}?`,options:[optOf(x.c),optOf(x.p)],answer:0,why:`This is the casual version. People say it to ${x.who}. The other version is polite.`},l,false));
+    rv.push(mkGramQ({question:"Which version is polite?",options:[optOf(x.p),optOf(x.c)],answer:0,why:`This is the polite version. The other version is casual, for ${x.who}.`},l,false));});
+  v.items=shuffle(fw).concat(shuffle(rv));v.k=0;v.mode="quiz";render();window.scrollTo(0,0);
+}
+function screenCasual(){
+  const v=view,l=S.lang,c=casualLesson(l,v.i);
+  if(!c){libSec="casual";return {row:"title",title:"Casual speech",prog:"",back:{label:"Back",fn:()=>openSub("casual")},main:uiCard(`<p style="margin:0">This lesson is not available.</p>`),next:null};}
+  const r={row:"title",title:c.t,prog:"",back:{label:"Back",fn:()=>openSub("casual")},main:""};
+  if(v.mode==="quiz"){
+    const n=v.items.length;
+    if(v.k>=n){r.prog=`<div class="ptext">Practice finished</div><div class="bar"><i style="width:100%"></i></div>`;r.back={label:"Back",dis:true};
+      r.main=uiCard(`<h2>Practice finished</h2><p>Correct: ${v.items.filter(q=>q.correct).length} of ${n}.</p><p class="muted" style="margin:0">This lesson is marked as done.</p>`,"tint");
+      r.next={label:"Back to the list",fn:()=>openSub("casual")};return r;}
+    const q=v.items[v.k];view.q=q;r.exit=true;
+    r.prog=`<div class="ptext">Question ${v.k+1} of ${n}</div><div class="bar"><i style="width:${Math.round(v.k/n*100)}%"></i></div>`;
+    r.main=uiCard(qHTML(q,{noAI:true}));
+    r.back={label:"Back",fn:()=>{if(v.k>0)v.k--;else v.mode="read";render();window.scrollTo(0,0);}};
+    r.next=!q.answered?{label:"Check answer",fn:()=>{checkQ(q);render();},dis:!canCheck(q)}:{label:"Continue",fn:()=>{if(v.k>=n-1)casualMark(l,v.i);v.k++;render();window.scrollTo(0,0);}};
+    return r;
+  }
+  const done=!!casualDoneObj(l)[v.i];
+  r.prog=`<div class="psub">${done?"Done":"Not done"} · lesson ${v.i+1} of ${casualList(l).length}</div>`;
+  r.main=uiCard(`<p style="margin:0">${esc(c.e)}</p>`)+c.p.map(x=>`<div class="card list">${tripLine(l,x.p,"Polite")+tripLine(l,x.c,"Casual ("+esc(x.who)+")")}</div>`).join("");
+  r.next={label:"Practise this lesson",fn:()=>startCasualQuiz(v),dis:!c.p.length};
+  return r;
+}

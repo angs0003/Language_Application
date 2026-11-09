@@ -20,11 +20,12 @@
     add("meta:parts", "*", "meta", 0, G.PARTS);
     add("meta:levels", "*", "meta", 1, G.LEVELS);
     add("meta:vids", "*", "meta", 2, G.VIDS);
+    add("meta:casual", "*", "meta", 6, G.CASUAL || { ja: [], zh: [] });
     add("meta:version", "*", "meta", 3, { version: version || "local" });
     return rows;
   }
   function buildContent(rows) {
-    const G = { KANJI_JA: [], KANA: null, TVREC: null, ZH: [], JA: [], GR: { zh: [], ja: [] }, STORY_ZH: [], STORY_JA: [], TRIP_ZH: [], TRIP_JA: [], PARTS: null, LEVELS: null, VIDS: null, version: null };
+    const G = { KANJI_JA: [], KANA: null, TVREC: null, ZH: [], JA: [], GR: { zh: [], ja: [] }, STORY_ZH: [], STORY_JA: [], TRIP_ZH: [], TRIP_JA: [], PARTS: null, LEVELS: null, VIDS: null, CASUAL: null, version: null };
     const sorted = rows.slice().sort((a, b) => a.ord - b.ord);
     for (const r of sorted) {
       if (r.kind === "theme") G[TH[r.lang]].push(r.data);
@@ -37,6 +38,7 @@
       else if (r.key === "meta:parts") G.PARTS = r.data;
       else if (r.key === "meta:levels") G.LEVELS = r.data;
       else if (r.key === "meta:vids") G.VIDS = r.data;
+      else if (r.key === "meta:casual") G.CASUAL = r.data;
       else if (r.key === "meta:version") G.version = r.data.version;
     }
     G.STORY = { zh: G.STORY_ZH, ja: G.STORY_JA };
