@@ -35,7 +35,7 @@ function misRebuild(x,l){
     if(x.k==="blank"){if(!x.sent||!x.opts||!x.word)return null;const opts=shuffle(x.opts.map(o=>Object.assign({},o)));return {type:"blank",lang:l,sent:x.sent,idx:x.idx,opts,ans:opts.findIndex(o=>o.text===x.word.w),word:x.word,answered:false,correct:false,sel:null,input:"",mid:x.id};}
   }catch(e){/* an item that cannot be rebuilt is dropped by the caller */}
   return null;}
-function misTrack(q){if(view.s==="place"||view.s==="test")return;if(!misKind(q))return;
+function misTrack(q){if(view.s==="place"||view.s==="test"||view.s==="casual")return;if(!misKind(q))return;
   if(q.correct){if(view.mis)misRemove(q.lang,q.mid||misId(q));}else misAdd(q);}
 function onAnswer(q){buzz(q.correct?30:[40,60,40]);misTrack(q);if(q.kk){kSet(q.kk.store,q.kk.key,q.correct);save();}else if(q.vitem){const x=q.vitem;x.u=Date.now();x.b=q.correct?Math.min(5,(x.b||0)+1):1;x.d=Date.now()+(q.correct?INTERVAL[x.b]*DAY:0);save();}else if(view.s==="review"&&!view.mis&&q.word){srsSet(q.lang,q.word.w,q.correct);save();}if(view.s==="place"){view.streak=q.correct?0:view.streak+1;}}
 

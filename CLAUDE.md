@@ -85,6 +85,7 @@ names defined in earlier files (inside functions, any file's names can be used).
 | `tests/features.test.js` | Player, My words (filters, search, 4 practice modes), Mistakes practice and video player (speed, section loop, synced subtitles). |
 | `tests/smoke.js` design checks | On each tab screen: no emoji, at most one primary button, no icon button without a label. |
 | `tests/kanji.test.js` | Kana lessons, kanji lessons and stroke steps, fading furigana, TV list, kanji/kana sync. |
+| `tests/casual.test.js` | Casual speech: row hidden when empty, list, lesson, quiz paths, done mark, sync to a second device, design checks. |
 | `tests/phone/phone.spec.js` | Real browser (Chromium) at 360x740 and 412x915: each tab in both languages and the first lesson. No script errors, no sideways scrolling, at most one primary button, touch targets of at least 44 x 44 px (`npm run test:phone`; runs in the `test` check). |
 | `tests/helpers.js` | Shared jsdom setup, a simulated Supabase client, and an answer "solver" for tests. |
 

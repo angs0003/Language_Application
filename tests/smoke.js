@@ -46,6 +46,15 @@ const failures = [];
     const primaries = d.querySelectorAll("#main .btn.pri").length; if (primaries > 1) failures.push(label + ": " + primaries + " primary buttons");
     const unlabeled = [...d.querySelectorAll("button")].filter(b => !b.textContent.trim() && !b.getAttribute("aria-label")).length; if (unlabeled) failures.push(label + ": " + unlabeled + " icon buttons without a label");
   }
+  // casual speech screens (list, lesson, quiz) with a fixture lesson
+  W.eval("CASUAL.ja.length=0;CASUAL.ja.push({t:'Fixture',e:'Explanation.',p:[['私|watashi|I / 。 = I.','俺|ore|I / 。 = I.','a friend'],['私|watashi|I / 。 = I.','僕|boku|I / 。 = I.','a friend']]});S.lang='ja';libSec=null;view={s:'home'};render()"); tab("Practise"); click("Casual speech");
+  for (const [label, setup] of [["Casual speech list", () => {}], ["Casual speech lesson", () => { W.eval("openCasual(0)"); }], ["Casual speech quiz", () => { click("Practise this lesson"); }]]) {
+    setup();
+    if (/\p{Extended_Pictographic}/u.test(d.getElementById("main").textContent + d.getElementById("hd").textContent)) failures.push(label + ": emoji found in the interface");
+    const primaries = d.querySelectorAll("#main .btn.pri").length + d.querySelectorAll("#bbar .btn.pri").length; if (primaries > 1) failures.push(label + ": " + primaries + " primary buttons");
+    const unlabeled = [...d.querySelectorAll("button")].filter(b => !b.textContent.trim() && !b.getAttribute("aria-label")).length; if (unlabeled) failures.push(label + ": " + unlabeled + " icon buttons without a label");
+  }
+  W.eval("CASUAL.ja.length=0");
   failures.forEach(f => console.log("FAIL:", f));
   console.log(failures.length ? failures.length + " failure(s)." : "Smoke test OK.");
   process.exit(failures.length ? 1 : 0);

@@ -38,7 +38,7 @@ function deEmoji(html){
 const TABS=[["learn","path","Learn"],["practise","practise","Practise"],["listen","listen","Listen"],["travel","travel","Travel"]];
 const OLD_TAB={path:"learn",stories:"learn",trip:"travel",pod:"listen",watch:"listen",kanji:"practise",grammar:"practise",review:"practise",talk:"listen"};
 function curTab(){let t=S.tab||"learn";if(OLD_TAB[t])t=OLD_TAB[t];if(!TABS.some(x=>x[0]===t))t="learn";return t;}
-function secOf(){const m={home:curTab(),lesson:"learn",place:"learn",test:"learn",story:"learn",theme:"learn",gram:"practise",review:"practise",cards:"practise",vocab:"practise",kanji:"practise",klearn:"practise",kana:"practise",pod:"listen",player:"listen",video:"listen",trip:"travel",settings:"learn",talk:"listen"};if(view.s==="lib")return LIB_SEC[view.sec]||curTab();return m[view.s]||"learn";}
+function secOf(){const m={home:curTab(),lesson:"learn",place:"learn",test:"learn",story:"learn",theme:"learn",gram:"practise",review:"practise",cards:"practise",vocab:"practise",kanji:"practise",klearn:"practise",kana:"practise",pod:"listen",player:"listen",video:"listen",trip:"travel",casual:"practise",settings:"learn",talk:"listen"};if(view.s==="lib")return LIB_SEC[view.sec]||curTab();return m[view.s]||"learn";}
 function setTab(k){S.tab=k;libSec=null;save();view={s:"home"};render();window.scrollTo(0,0);}
 function uiCard(inner,cls=""){return `<div class="card ${cls}">${inner}</div>`;}
 function uiLabel(t){return `<span class="lbl">${esc(t)}</span>`;}
@@ -49,13 +49,13 @@ function uiTileIcon(n){return `<span class="ti">${ico(n,24)}</span>`;}
 function uiTileChar(c,big){return `<span class="tc${big?" big":""}" lang="${L[S.lang].hl}" aria-hidden="true">${esc(c)}</span>`;}
 function uiBar(p){return `<div class="bar"><i style="width:${Math.max(0,Math.min(100,Math.round(p)))}%"></i></div>`;}
 /* ---------- Tab home screens ---------- */
-const LIB_SEC={themes:"learn",kanji:"practise",kana:"practise",grammar:"practise",watchadd:"listen",real:"travel"};
+const LIB_SEC={themes:"learn",kanji:"practise",kana:"practise",grammar:"practise",watchadd:"listen",real:"travel",casual:"practise"};
 function openSub(k){libSec=k;view={s:"lib",sec:k};render();window.scrollTo(0,0);}
 function screenLib(){
   const l=S.lang,k=view.sec;
-  const titles={themes:"All themes",kanji:"Kanji",kana:"Kana",grammar:"Grammar guide",watchadd:"Your videos",real:"Phrases to review"};
+  const titles={themes:"All themes",kanji:"Kanji",kana:"Kana",grammar:"Grammar guide",watchadd:"Your videos",real:"Phrases to review",casual:"Casual speech"};
   const r={row:"title",title:titles[k]||"",prog:"",back:{label:"Back",fn:()=>{libSec=null;view={s:"home"};render();window.scrollTo(0,0);}},main:""};
-  const fns={themes:homePath,kanji:(l,r)=>homeKanji(l,r,"kanji"),kana:(l,r)=>homeKanji(l,r,"kana"),grammar:homeGrammar,watchadd:homeWatch,real:homeReal};
+  const fns={themes:homePath,kanji:(l,r)=>homeKanji(l,r,"kanji"),kana:(l,r)=>homeKanji(l,r,"kana"),grammar:homeGrammar,watchadd:homeWatch,real:homeReal,casual:homeCasual};
   (fns[k]||homePath)(l,r);r.main=genCard()+r.main;r.next=null;
   return r;
 }
@@ -156,6 +156,7 @@ function homePractise(l,r){
   const mn=misList(l).length;rows+=uiRow(uiTileIcon("review"),"Mistakes",mn?`${mn} to repeat`:"None to repeat",startMistakes);
   if(l==="ja")rows+=uiRow(uiTileChar("私"),"Kanji",`${kl} of ${kn.length} learned`,()=>openSub("kanji"))+uiRow(uiTileChar("あ"),"Kana",`${kanaN} of 142 learned`,()=>openSub("kana"));
   rows+=uiRow(uiTileIcon("grammar"),"Grammar",`${gd} of ${GR[l].length} points`,()=>openSub("grammar"));
+  if(casualList(l).length)rows+=uiRow(uiTileIcon("speaker"),"Casual speech",`${casualCount(l)} of ${casualList(l).length} lessons done`,()=>openSub("casual"));
   h+=uiCard(rows,"list");
   r.main=h;
 }
@@ -210,7 +211,7 @@ function render(){
   acts={};A.n=0;
   document.body.dataset.lang=S.lang;document.body.dataset.sec=secOf();
   let r;const v=view.s;
-  const map={place:screenPlace,lesson:screenLesson,review:screenReview,test:screenTest,theme:screenTheme,gram:screenGram,story:screenStory,talk:screenTalk,trip:screenTrip,lib:screenLib,pod:screenPod,cards:screenCards,player:screenPlayer,vocab:screenVocab,video:screenVideo,kana:screenKana,kanji:screenKanjiCard,klearn:screenKanjiLearn,settings:screenSettings};
+  const map={place:screenPlace,lesson:screenLesson,review:screenReview,test:screenTest,theme:screenTheme,gram:screenGram,story:screenStory,talk:screenTalk,trip:screenTrip,casual:screenCasual,lib:screenLib,pod:screenPod,cards:screenCards,player:screenPlayer,vocab:screenVocab,video:screenVideo,kana:screenKana,kanji:screenKanjiCard,klearn:screenKanjiLearn,settings:screenSettings};
   r=(map[v]||screenHome)();
   const hd=document.getElementById("hd");
   if(r.tab){
