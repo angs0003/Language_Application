@@ -124,9 +124,10 @@ Everything in this repository is public, including Claude's comments and the Act
 | Nothing (1st of every month) | **Monthly** opens 2 issues: maintenance report and content gaps report. Comment `@claude do items 1 and 3` to act |
 | Merge a pull request with a green `test` check | **Deploy** publishes it |
 
-If Claude replies with a link named "Create PR" instead of opening the pull request, tap the link, then tap **Create pull request**.
+Claude opens the pull request itself with your token `CLAUDE_PR_TOKEN`, so it appears as opened by you and the `test` and Review checks start.
+If the token is missing or expired, Claude posts a "Create PR" link instead: tap it, then tap **Create pull request**.
 
-Limits per run: 40 turns and 30 minutes for `@claude` work, 25 turns and 20 minutes for reviews (Sonnet). Only one Claude run at a time.
+Limits per run: 60 turns and 45 minutes for `@claude` work (Claude runs `npm test`, lint and the phone tests before opening a pull request), 25 turns and 20 minutes for reviews (Sonnet). Only one Claude run at a time.
 Each run uses your seat's usage limit. If the limit is reached, the run fails; run it again later from Actions or comment again.
 
 ### One-time setup
@@ -135,4 +136,9 @@ Each run uses your seat's usage limit. If the limit is reached, the run fails; r
 2. GitHub → Settings → Secrets and variables → Actions → **New repository secret**: name `CLAUDE_CODE_OAUTH_TOKEN`, paste the token.
 3. Check that the Claude GitHub App is installed on this repository (it is needed for `@claude`).
 4. The labels `content-error`, `feature`, `maintenance` and `content-gaps` already exist (Issues → Labels).
-5. Test it: create a **Content error** issue for a real or invented small problem and comment `@claude fix this`.
+5. Pull request token: GitHub → your profile picture → Settings → Developer settings → Personal access tokens →
+   **Fine-grained tokens** → Generate new token. Name `Language Steps PR`, expiration 1 year, Repository access: **Only select
+   repositories** → `Language_Application`. Permissions → Repository permissions → **Pull requests: Read and write** and **Contents: Read-only**
+   (Metadata: Read-only is added automatically). The token cannot push code or change settings. Generate, copy, then add it as the repository secret `CLAUDE_PR_TOKEN`.
+   Renew it before it expires; GitHub emails you a week before.
+6. Test it: create a **Content error** issue for a real or invented small problem and comment `@claude fix this`.

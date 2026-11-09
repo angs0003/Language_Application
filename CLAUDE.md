@@ -316,10 +316,12 @@ The repository is public: every Actions log, comment and pull request is public.
 
 1. **Triggers:** `claude.yml` (the owner writes `@claude` in an issue or comment), `review.yml` (every non-draft pull request),
    `monthly.yml` (1st of every month: `/maintain` and `/content-gaps`, each opens an issue). Login: the owner's
-   Claude subscription token (`CLAUDE_CODE_OAUTH_TOKEN`). These workflows never receive the Supabase secrets.
+   Claude subscription token (`CLAUDE_CODE_OAUTH_TOKEN`). In `claude.yml`, Claude opens pull requests with `gh pr create`
+   using the owner's fine-grained token `CLAUDE_PR_TOKEN` (pull requests only). These workflows never receive the Supabase secrets.
 2. **Plan first:** for anything that is not a small fix (under 30 changed lines, one file, no behaviour change), use the
    `planner` subagent, post the plan as a comment and stop. Build only after the owner comments `@claude approved`.
-3. **One issue, one branch, one pull request.** Branch names: `content/...`, `feature/...`, `fix/...`, `chore/...`.
+3. **Before opening a pull request:** `npm test`, `npm run lint` and `npm run test:phone` pass.
+   **One issue, one branch, one pull request.** Branch names: `content/...`, `feature/...`, `fix/...`, `chore/...`.
    The pull request description lists the changes in numbered points and contains `Closes #N`.
 4. **Never:** push to `main`, run `npm run upload`, change `CACHE`, edit `.github/workflows/` or `.claude/settings.json`
    unless the issue names the file, read the database, or print environment variables.
