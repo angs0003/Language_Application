@@ -156,6 +156,11 @@ names defined in earlier files (inside functions, any file's names can be used).
   (the rebuilt question has `again=true`, so it is not queued a second time). If the repeat is wrong too, the session can still finish and the item stays in
   Mistakes for a later session. A correct answer removes the item. `mis` is synced inside `user_settings.data.per[lang]` (not as separate rows); on a conflict
   the newer side wins as a whole list (last-write-wins).
+- **Real-situation log** (Travel tab; `S[lang].real`, `homeReal` and `realBlock` in js/sections.js): under each phrase in a situation's "You say" tab, "I used this in real life" opens 3 results
+  (`ok` Understood, `repeat` Asked me to repeat, `english` Answered in English). `S[lang].real` is `{ "<phrase text>": {r, t} }`, the latest result per phrase wins, and a phrase that
+  no longer exists in the content is skipped. The Travel tab shows counts and the row "Phrases to review" (sub-screen `openSub("real")`: phrases whose latest result is
+  `repeat` or `english`; tapping plays the phrase; "Understood" removes it). Synced inside `user_settings.data.per[lang]` like `mis` (last-write-wins for the whole object, no SQL change).
+  Because the key is the phrase text, replacing a phrase in the content resets its result.
 - **Spoken-word highlight** (`hlTrack`, `hlClear` in js/lessons.js): the word being spoken gets `.tk.spoken` in the Player, "Play all sentences",
   the story reader and the podcast list. It uses the voice's word boundary events when sent, otherwise a timing estimate (`HL.msPerChar`).
   Setting `S.settings.hlWord` (default on). After the last line the item is marked done (`plMarkDone`: `chRead`, `podDone`, `tripDone`),
@@ -198,6 +203,13 @@ names defined in earlier files (inside functions, any file's names can be used).
   Chinese story follows 小文 (Xiǎo Wén) in Beijing with 大明, 李老师, 王阿姨. Keep facts consistent
   with earlier chapters (for example, Daming's father is a teacher).
 - Language rules for all content: literal, no idioms, no metaphors, no sarcasm.
+- **Spoken register** (stories, practice sentences, examples, travel phrases): write how people really speak, not textbook text.
+  1. Friends and family use plain form (Japanese: 待った？ not 待ちましたか; Chinese: short sentences, 吧, 啊, 呢, 嘛, 儿化 where natural in Beijing).
+  2. Staff, teachers, 山田さん and strangers stay polite. Keigo only in the right direction (尊敬語 for others, 謙譲語 for the speaker; teachers say います to students).
+  3. Drop the subject when clear (no 私は or あなた in every sentence); use short replies (うん, ううん, いいよ; 嗯, 好的, 行).
+  4. Use spoken words in speech, not written or news words (今 not 現在; 降りる not 下車; 可是 not 然而; 所以 not 因此). Written words only in reading text.
+  5. Use real measure words and real situations (一份饺子, 这个故事; a bank scene stays at a bank).
+  6. Travel `say` lists hold the phrase a traveller really uses first; keep an older or more formal phrase as the second form. New phrases are appended so existing indexes stay valid.
 - **No duplicate words** within a language across all themes.
 
 ## 7. How to add a content part (150 words)
@@ -250,9 +262,9 @@ Guide for the owner: `docs/claude-code-team.md`. Keep these files consistent wit
 
 Content batches (each about 150 words, 10 grammar points, 15 chapters):
 1. Done and released: Japanese Level 2 (rest of JLPT N5), Parts 1 to 4 (600 words). Some words are usually taught at JLPT N4; the Level 2 label says so.
-2. Chinese Level 3 (HSK 3): about 2 parts.
+2. Done and released: Chinese Level 3 (HSK 3), Parts 1 and 2 (300 words).
 3. Done and released: Japanese Level 3 (JLPT N4), Parts 1 to 5 (750 words).
-4. Chinese Level 4 (HSK 4): about 4 parts.
+4. Done and released: Chinese Level 4 (HSK 4), Parts 1 to 4 (600 words). Chinese now has 124 themes, 1200 words, 80 grammar points.
 5. Japanese Level 4 (JLPT N3): Parts 1 to 5 done and released (750 words, about half of the N3 vocabulary). More parts are possible. Japanese now has 229 themes, 2250 words, 150 grammar points.
 (JLPT has no official word lists, so part counts are estimates.)
 
@@ -265,6 +277,8 @@ Agreed feature batches (in this order):
    (Flashcards, Sentence order, Meaning quiz, Listen and choose).
 4. Done: 📺 Video library: catalogue cards by level; YouTube player inside the app with speed and 🔁 section loop;
    synced dual subtitles only for videos that have a transcript in the database (added one by one, chosen by the owner).
+5. Done: Real-situation log (Travel tab): the learner records the result of using a travel phrase in real life and reviews the phrases that did not work.
+6. Done (November 2026): spoken-register pass over all Japanese and Chinese content, 5 real-speech videos in `VIDS` (no transcripts), about 75 survival phrases added to the travel situations.
 
 Open content task: fill the `VIDS` catalogue with exact YouTube videos per level. Criteria (all required):
 under about 25 minutes or self-contained; slow or clear speech or a repeating structure; low sensory load
@@ -275,14 +289,17 @@ Add TV titles to `TVREC` only with a rating that has a named source.
 Feature ideas discussed but not built: kana lessons (Japanese) and pinyin/tone lessons (Chinese);
 typed AI role-play through a server function; calm motivation (daily goal, progress calendar);
 mistakes review for sentences and grammar; Chinese character (hanzi) lessons like the kanji section.
+Next planned (needs a plan first): a casual-speech grammar block for both languages (contractions, fillers, short replies, sentence endings), because the stories now use them but no lesson explains them.
 
 ## 11. Known limitations
 
 1. Audio uses the device's speech voices. Quality depends on the device.
 2. Speech recognition works in Chrome (Android and computers). On iPhone it depends on Safari settings.
 3. Vibration does not work on iPhone browsers.
-4. Content was written without a native-speaker review. If the owner reports an error,
-   fix it in `content.js` and re-run the checks.
+4. Content was written without a native-speaker review. In November 2026 agents audited it for naturalness and rewrote the lines that were too formal or
+   written-style; this is not a native review. Some written-style words remain in the word lists on purpose (changing a word list risks duplicate words and
+   lost review progress). If the owner reports an error, fix it in `content.js` and re-run the checks.
+5. `tools/check-chapters.js` reports "uses only 5 of the theme's 10 words" for Level 1 themes 1 to 8, because those themes have 5 words. Ignore that warning there.
 
 ## 12. Working unattended in GitHub (decision 0005)
 
