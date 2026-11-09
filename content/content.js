@@ -72,7 +72,7 @@ q:[[1,"Who is 他 (he)?",["Daming","Xiao Wen","Teacher Li"],0,"Line 2: 他是大
 "大明|Dàmíng|Daming (name) / ： / 我们|wǒmen|we / 三|sān|three / 个|ge|(measure word) / 人|rén|people / 。 = Daming: There are three of us.",
 "小文|Xiǎo Wén|Xiao Wen (name) / ： / 一|yī|one / ， / 二|èr|two / ， / 三|sān|three / 。 = Xiao Wen: One, two, three.",
 "李|Lǐ|Li (family name) / 老师|lǎoshī|teacher / ： / 好|hǎo|OK / ， / 三|sān|three / 个|ge|(measure word) / 人|rén|people / 。 = Teacher Li: OK, three people.",
-"大明|Dàmíng|Daming (name) / 有|yǒu|has / 十|shí|ten / 个|ge|(measure word) / 朋友|péngyou|friends / ！ = Daming has ten friends!","小文|Xiǎo Wén|Xiao Wen (name) / ： / 我|wǒ|I / 有|yǒu|have / 一|yī|one / 个|ge|(measure word) / 朋友|péngyou|friend / 。 = Xiao Wen: I have one friend."],
+"大明|Dàmíng|Daming (name) / 有|yǒu|has / 十|shí|ten / 个|ge|(measure word) / 朋友|péngyou|friends / ！ = Daming has ten friends!","小文|Xiǎo Wén|Xiao Wen (name) / ： / 我|wǒ|I / 有|yǒu|have / 一|yí|one / 个|ge|(measure word) / 朋友|péngyou|friend / 。 = Xiao Wen: I have one friend."],
 q:[[1,"How many people are there in the group?",["Three","Two","Ten"],0,"Line 2: 我们三个人 means “there are three of us”."],[4,"How many friends does Daming have?",["Ten","Three","One"],0,"Line 5: 十个朋友 means “ten friends”."]]},
 {t:"Daming’s family",l:[
 "大明|Dàmíng|Daming (name) / ： / 这|zhè|this / 是|shì|is / 我|wǒ|my / 家|jiā|home / 。 = Daming: This is my home.",
@@ -128,7 +128,7 @@ q:[[0,"When does Xiao Wen get up?",["Seven o’clock","Eleven o’clock","Noon"]
 "大明|Dàmíng|Daming (name) / ： / 今天|jīntiān|today / 太|tài|too / 冷|lěng|cold / 了|le|(emphasis) / ！ = Daming: It is too cold today!",
 "小文|Xiǎo Wén|Xiao Wen (name) / ： / 北京|Běijīng|Beijing / 一月|yīyuè|January / 有|yǒu|has / 雪|xuě|snow / 吗|ma|(question) / ？ = Xiao Wen: Is there snow in Beijing in January?",
 "大明|Dàmíng|Daming (name) / ： / 有|yǒu|yes, has / 。 / 一月|yīyuè|January / 很|hěn|very / 冷|lěng|cold / 。 = Daming: Yes. January is very cold.",
-"小文|Xiǎo Wén|Xiao Wen (name) / ： / 我|wǒ|I / 不|bù|do not / 喜欢|xǐhuan|like / 冷|lěng|cold / 天气|tiānqì|weather / 。 = Xiao Wen: I do not like cold weather.","小文|Xiǎo Wén|Xiao Wen (name) / ： / 今天|jīntiān|today / 几|jǐ|how many / 号|hào|day of the month / ？ = Xiao Wen: What day of the month is it today?","大明|Dàmíng|Daming (name) / ： / 一|yī|one / 月|yuè|month / 十|shí|ten / 号|hào|day of the month / ， / 星期|xīngqī|week / 六|liù|six / 。 = Daming: It is the 10th of January, Saturday."],
+"小文|Xiǎo Wén|Xiao Wen (name) / ： / 我|wǒ|I / 不|bù|do not / 喜欢|xǐhuan|like / 冷|lěng|cold / 天气|tiānqì|weather / 。 = Xiao Wen: I do not like cold weather.","小文|Xiǎo Wén|Xiao Wen (name) / ： / 今天|jīntiān|today / 几|jǐ|how many / 号|hào|day of the month / ？ = Xiao Wen: What day of the month is it today?","大明|Dàmíng|Daming (name) / ： / 一|yī|one / 月|yuè|month / 十|shí|ten / 号|hào|day of the month / ， / 星期|xīngqī|week / 一|yī|one / 。 = Daming: It is the 10th of January, Monday."],
 q:[[1,"What is the weather like today?",["Rainy and cold","Sunny and hot","Snowy"],0,"Line 2: 下雨，很冷 means “it is raining and it is cold”."],[5,"Does Xiao Wen like cold weather?",["No","Yes","She does not say"],0,"Line 6: 我不喜欢冷天气 means “I do not like cold weather”."]]},
 {t:"At Auntie Wang’s shop",l:[
 "小文|Xiǎo Wén|Xiao Wen (name) / 去|qù|goes to / 王阿姨|Wáng āyí|Auntie Wang / 的|de|’s / 商店|shāngdiàn|shop / 买|mǎi|to buy / 东西|dōngxi|things / 。 = Xiao Wen goes to Auntie Wang’s shop to buy things.",
@@ -258,7 +258,7 @@ q:[[0,"What does Yui like?",["Japan","Tea","School"],0,"Line 1: 日本が好き�
 "今日|kyou|today / は|wa|(topic) / 学校|gakkou|school / に|ni|to / 行きます|ikimasu|goes / 。 = Today she goes to school.",
 "ゆい|Yui|Yui (name) / ： / 今|ima|now / 、 / 何時|nanji|what time / ？ = Yui: What time is it now?",
 "けん|Ken|Ken (name) / ： / 八|hachi|eight / 時|ji|o’clock / だ|da|is / よ|yo|(friendly ending) / 。 = Ken: It is eight o’clock.",
-"ゆい|Yui|Yui (name) / ： / く|ku|nine / 時|ji|o’clock / に|ni|at / 学校|gakkou|school / に|ni|to / 行きます|ikimasu|go / 。 = Yui: I go to school at nine o’clock.",
+"ゆい|Yui|Yui (name) / ： / くじ|kuji|nine o’clock / に|ni|at / 学校|gakkou|school / に|ni|to / 行きます|ikimasu|go / 。 = Yui: I go to school at nine o’clock.",
 "明日|ashita|tomorrow / は|wa|(topic) / 店|mise|shop / に|ni|to / 行きます|ikimasu|goes / 。 = Tomorrow she goes to the shop."],
 q:[[0,"Where was Yui yesterday?",["At home","At school","At the shop"],0,"Line 1: 家にいました means “was at home”."],[3,"What time is it now?",["Eight o’clock","Nine o’clock","Three o’clock"],0,"Line 4: 八時だよ means “it is eight o’clock”."]]},
 {t:"Where is the station?",l:[
@@ -281,10 +281,10 @@ q:[[0,"When does Yui get up?",["Seven o’clock","Eleven o’clock","Noon"],0,"L
 "今日|kyou|today / の|no|’s / 天気|tenki|weather / は|wa|(topic) / 雨|ame|rain / です|desu|is / 。 = The weather today is rain.",
 "とても|totemo|very / 寒い|samui|cold / です|desu|is / 。 = It is very cold.",
 "けん|Ken|Ken (name) / ： / 冬|fuyu|winter / は|wa|(topic) / 寒い|samui|cold / ね|ne|(isn’t it) / 。 / 雪|yuki|snow / も|mo|also / 好き|suki|liked / だ|da|is / よ|yo|(friendly ending) / 。 = Ken: Winter is cold, isn’t it. I like snow too.",
-"ゆい|Yui|Yui (name) / ： / 夏|natsu|summer / は|wa|(topic) / 暑い|atsui|hot / けど|kedo|but / 好き|suki|liked / 。 = Yui: Summer is hot, but I like it.",
+"ゆい|Yui|Yui (name) / ： / 夏|natsu|summer / が|ga|(subject) / 好き|suki|liked / 。 / 暑い|atsui|hot / よ|yo|(friendly ending) / 。 = Yui: I like summer. It is hot.",
 "けん|Ken|Ken (name) / ： / 明日|ashita|tomorrow / は|wa|(topic) / 晴れ|hare|sunny / だ|da|is / よ|yo|(friendly ending) / 。 = Ken: Tomorrow will be sunny.",
 "ゆい|Yui|Yui (name) / ： / よかった|yokatta|good / ！ = Yui: Good!"],
-q:[[1,"What is the weather like today?",["Rainy and cold","Sunny","Hot"],0,"Lines 1 and 2: 雨 (rain) and 寒い (cold)."],[3,"Which season does Yui like?",["Summer","Winter","Autumn"],0,"Line 4: 夏は暑いけど、好き means “summer is hot, but I like it”."]]},
+q:[[1,"What is the weather like today?",["Rainy and cold","Sunny","Hot"],0,"Lines 1 and 2: 雨 (rain) and 寒い (cold)."],[3,"Which season does Yui like?",["Summer","Winter","Autumn"],0,"Line 4: 夏が好き means “I like summer”."]]},
 {t:"A red umbrella",l:[
 "ゆい|Yui|Yui (name) / は|wa|(topic) / 傘|kasa|umbrella / を|o|(object) / 買いたい|kaitai|want to buy / です|desu|(polite) / 。 = Yui wants to buy an umbrella.",
 "店|mise|shop / に|ni|at / 赤い|akai|red / 傘|kasa|umbrella / が|ga|(subject) / あります|arimasu|there is / 。 = There is a red umbrella at the shop.",
@@ -399,7 +399,7 @@ const STORY_JA2=[
 "二人|futari|the two people / は|wa|(topic) / 喫茶店|kissaten|café / に|ni|into / 入ります|hairimasu|enter / 。 = The two of them go into a café.",
 "けん|Ken|Ken (name) / は|wa|(topic) / 日本語|nihongo|Japanese / を|o|(object) / 使って|tsukatte|use / ゆっくり|yukkuri|slowly / 話します|hanashimasu|speaks / 。 = Ken uses Japanese and speaks slowly.",
 "ゆい|Yui|Yui (name) / ： / ありがとう|arigatou|thank you / 。 / よく|yoku|well / 分かる|wakaru|understand / よ|yo|(friendly ending) / 。 = Yui: Thank you. I understand well.",
-"けん|Ken|Ken (name) / ： / あと|ato|after / で|de|at / 、 / うち|uchi|home / で|de|at / 一緒に|issho ni|together / ご飯|gohan|meal / を|o|(object) / 作る|tsukuru|make / ？ = Ken: Later, shall we make a meal together at home?",
+"けん|Ken|Ken (name) / ： / 今日|kyou|today / 、 / 家|ie|home / で|de|at / 一緒に|issho ni|together / ご飯|gohan|meal / を|o|(object) / 作る|tsukuru|make / ？ = Ken: Today, shall we make a meal together at home?",
 "ゆい|Yui|Yui (name) / ： / うん|un|yes / 。 / 手|te|hands / を|o|(object) / 洗って|aratte|wash / 、 / 作ろう|tsukurou|let’s make / 。 = Yui: Yes. Let’s wash our hands and make it."],
 q:[[0,"Where is Yui waiting?",["At the station","At school","At home"],0,"Line 1: 駅で means “at the station”."],[4,"How does Ken speak?",["Slowly, in Japanese","Fast, in English","He does not speak"],0,"Line 5: 日本語を使ってゆっくり話します means “uses Japanese and speaks slowly”."]]},
 {t:"A heavy bag",l:[
@@ -452,9 +452,9 @@ q:[[1,"What does Ken do on Wednesday afternoon?",["He works","He runs","He sleep
 "妹|imouto|younger sister / は|wa|(topic) / 子供|kodomo|child / です|desu|is / 。 / 十|juu|ten / 歳|sai|years old / です|desu|is / 。 = His younger sister is a child. She is ten years old.",
 "けん|Ken|Ken (name) / ： / みんな|minna|everyone / 、 / こちら|kochira|this person / は|wa|(topic) / ゆい|Yui|Yui (name) / さん|san|(polite title) / 。 = Ken: Everyone, this is Yui.",
 "ゆい|Yui|Yui (name) / ： / 皆さん|minasan|everyone / 、 / はじめまして|hajimemashite|nice to meet you / 。 = Yui: Everyone, nice to meet you.",
-"けん|Ken|Ken (name) / の|no|’s / 母|haha|mother / ： / 日本語|nihongo|Japanese / 、 / 上手|jouzu|good / ね|ne|(isn’t it) / 。 = Ken’s mother: Your Japanese is good.",
-"ゆい|Yui|Yui (name) / ： / あの|ano|that / 男|otoko|man / の|no|(of) / 人|hito|person / は|wa|(topic) / けん|Ken|Ken (name) / の|no|’s / お父さん|otousan|father / ？ = Yui: Is that man Ken’s father?",
-"けん|Ken|Ken (name) / ： / うん|un|yes / 。 / あの|ano|that / 女|onna|woman / の|no|(of) / 人|hito|person / は|wa|(topic) / 母|haha|mother / だ|da|is / よ|yo|(friendly ending) / 。 = Ken: Yes. That woman is my mother."],
+"ゆい|Yui|Yui (name) / ： / あの|ano|that / 男|otoko|man / の|no|(of) / 人|hito|person / は|wa|(topic) / 誰|dare|who / ？ = Yui: Who is that man?",
+"けん|Ken|Ken (name) / ： / 父|chichi|father / だ|da|is / よ|yo|(friendly ending) / 。 / あの|ano|that / 女|onna|woman / の|no|(of) / 人|hito|person / は|wa|(topic) / 母|haha|mother / だ|da|is / よ|yo|(friendly ending) / 。 = Ken: That is my father. That woman is my mother.",
+"けん|Ken|Ken (name) / の|no|’s / 母|haha|mother / ： / 日本語|nihongo|Japanese / 、 / 上手|jouzu|good / ね|ne|(isn’t it) / 。 = Ken’s mother: Your Japanese is good."],
 q:[[1,"Who else came with Ken’s parents?",["His younger sister","His older brother","His teacher"],0,"Line 2: けんの妹も来ました."],[2,"How old is Ken’s younger sister?",["Ten","Seven","Twenty"],0,"Line 3: 十歳 means “ten years old”."]]},
 {t:"Errands in town",l:[
 "ゆい|Yui|Yui (name) / は|wa|(topic) / 町|machi|town / に|ni|to / 出かけます|dekakemasu|goes out / 。 = Yui goes out into town.",
@@ -463,7 +463,7 @@ q:[[1,"Who else came with Ken’s parents?",["His younger sister","His older bro
 "郵便局|yuubinkyoku|post office / は|wa|(topic) / 銀行|ginkou|bank / の|no|’s / 隣|tonari|next to / です|desu|is / 。 = The post office is next to the bank.",
 "午後|gogo|afternoon / 、 / 図書館|toshokan|library / で|de|at / 本|hon|book / を|o|(object) / 読みます|yomimasu|reads / 。 = In the afternoon, she reads a book at the library.",
 "図書館|toshokan|library / は|wa|(topic) / 静か|shizuka|quiet / です|desu|is / 。 = The library is quiet.",
-"夕方|yuugata|evening / 、 / 喫茶店|kissaten|café / で|de|at / コーヒー|koohii|coffee / を|o|(object) / 飲みます|nomimasu|drinks / 。 = In the evening, she drinks coffee at a café.",
+"夜|yoru|night / 、 / 喫茶店|kissaten|café / で|de|at / コーヒー|koohii|coffee / を|o|(object) / 飲みます|nomimasu|drinks / 。 = At night, she drinks coffee at a café.",
 "喫茶店|kissaten|café / は|wa|(topic) / 公園|kouen|park / の|no|’s / 隣|tonari|next to / です|desu|is / 。 = The café is next to the park."],
 q:[[3,"Where is the post office?",["Next to the bank","Next to the library","In the park"],0,"Line 4: 銀行の隣 means “next to the bank”."],[4,"What does Yui do at the library?",["Reads a book","Sends a letter","Drinks coffee"],0,"Line 5: 本を読みます."]]},
 {t:"A day at the sea",l:[
@@ -471,11 +471,11 @@ q:[[3,"Where is the post office?",["Next to the bank","Next to the library","In 
 "ゆい|Yui|Yui (name) / と|to|and / けん|Ken|Ken (name) / は|wa|(topic) / 海|umi|sea / に|ni|to / 行きました|ikimashita|went / 。 = Yui and Ken went to the sea.",
 "空|sora|sky / が|ga|(subject) / 青い|aoi|blue / です|desu|is / 。 = The sky is blue.",
 "山|yama|mountains / も|mo|also / 見えます|miemasu|can be seen / 。 = The mountains can also be seen.",
+"海|umi|sea / の|no|’s / 近く|chikaku|near / に|ni|at / 、 / 木|ki|trees / が|ga|(subject) / あります|arimasu|there are / 。 / 花|hana|flowers / も|mo|also / 見えます|miemasu|can be seen / 。 = Near the sea there are trees. Flowers can also be seen.",
 "夕方|yuugata|evening / 、 / 風|kaze|wind / が|ga|(subject) / 強く|tsuyoku|strong / なりました|narimashita|became / 。 = In the evening the wind became strong.",
 "ゆい|Yui|Yui (name) / ： / 少し|sukoshi|a little / 寒い|samui|cold / ね|ne|(isn’t it) / 。 = Yui: It is a little cold, isn’t it.",
-"川|kawa|river / の|no|’s / 近く|chikaku|near / に|ni|at / 、 / 木|ki|trees / が|ga|(subject) / あります|arimasu|there are / 。 / 花|hana|flowers / も|mo|also / 見えます|miemasu|can be seen / 。 = Near the river there are trees. Flowers can also be seen.",
-"けん|Ken|Ken (name) / ： / 涼しい|suzushii|cool / ね|ne|(isn’t it) / 。 / でも|demo|but / 、 / いい|ii|good / 天気|tenki|weather / だ|da|is / よ|yo|(friendly ending) / 。 = Ken: It is cool, isn’t it. But the weather is good."],
-q:[[1,"Where did Yui and Ken go?",["To the sea","To the mountains","To the river"],0,"Line 2: 海に行きました."],[4,"What happened in the evening?",["The wind became strong","It snowed","It became hot"],0,"Line 5: 風が強くなりました."]]},
+"けん|Ken|Ken (name) / ： / 涼しい|suzushii|cool / ね|ne|(isn’t it) / 。 / いい|ii|good / 天気|tenki|weather / だ|da|is / よ|yo|(friendly ending) / 。 = Ken: It is cool, isn’t it. The weather is good."],
+q:[[1,"Where did Yui and Ken go?",["To the sea","To the mountains","To the river"],0,"Line 2: 海に行きました."],[5,"What happened in the evening?",["The wind became strong","It snowed","It became hot"],0,"Line 6: 風が強くなりました."]]},
 {t:"Where is my key?",l:[
 "ゆい|Yui|Yui (name) / ： / あれ|are|huh / ？ / 鍵|kagi|key / が|ga|(subject) / ない|nai|there isn’t / ！ = Yui: Huh? My key is not there.",
 "かばん|kaban|bag / の|no|’s / 中|naka|inside / を|o|(object) / 見ます|mimasu|looks / 。 = She looks inside her bag.",
@@ -485,7 +485,7 @@ q:[[1,"Where did Yui and Ken go?",["To the sea","To the mountains","To the river
 "ゆい|Yui|Yui (name) / ： / あ|a|oh / 、 / あった|atta|there it is / ！ = Yui: Oh, there it is!"],
 q:[[2,"What is in Yui’s bag?",["Her wallet and phone","Her key","Her glasses"],0,"Line 3: 財布と携帯があります."],[5,"Where was the key?",["In her trouser pocket","In her bag","At home"],0,"Lines 5 and 6: Ken asks about the trouser pocket, and Yui finds it."]]},
 {t:"A busy morning",l:[
-"ゆい|Yui|Yui (name) / は|wa|(topic) / ろく|roku|six / 時|ji|o’clock / に|ni|at / 起きます|okimasu|gets up / 。 = Yui gets up at six.",
+"ゆい|Yui|Yui (name) / は|wa|(topic) / ろくじ|rokuji|six o’clock / に|ni|at / 起きます|okimasu|gets up / 。 = Yui gets up at six.",
 "シャワー|shawaa|shower / を|o|(object) / 浴びて|abite|takes and / 、 / 歯|ha|teeth / を|o|(object) / 磨きます|migakimasu|brushes / 。 = She takes a shower and brushes her teeth.",
 "白い|shiroi|white / シャツ|shatsu|shirt / を|o|(object) / 着ます|kimasu|puts on / 。 = She puts on a white shirt.",
 "玄関|genkan|entrance / で|de|at / 靴|kutsu|shoes / を|o|(object) / 履きます|hakimasu|puts on / 。 = She puts on her shoes at the entrance.",
@@ -573,7 +573,7 @@ q:[[0,"Who has an older sister and a younger brother?",["Teacher Li","Daming","X
 q:[[0,"What is Xiao Wen looking for?",["Her phone","Her key","Her bag"],0,"Line 1: 找手机 means “looking for the phone”."],[5,"Where was the phone?",["In her bag","On the table","Outside the door"],0,"Line 6: 在包里 means “in the bag”."]]},
 {t:"Do you understand?",l:[
 "李|Lǐ|Li (family name) / 老师|lǎoshī|teacher / ： / 你们|nǐmen|you (plural) / 有|yǒu|have / 问题|wèntí|questions / 吗|ma|(question) / ？ = Teacher Li: Do you have any questions?",
-"小文|Xiǎo Wén|Xiao Wen (name) / ： / 老师|lǎoshī|teacher / ， / 我|wǒ|I / 想|xiǎng|want to / 问|wèn|ask / 一下|yíxià|briefly / ， / 这个|zhège|this / 字|zì|character / 是|shì|is / 什么|shénme|what / 意思|yìsi|meaning / ？ = Xiao Wen: Teacher, I want to ask something. What does this character mean?",
+"小文|Xiǎo Wén|Xiao Wen (name) / ： / 老师|lǎoshī|teacher / ， / 我|wǒ|I / 有|yǒu|have / 一|yí|one / 个|ge|(measure word) / 问题|wèntí|question / ， / 这个|zhège|this / 字|zì|character / 是|shì|is / 什么|shénme|what / 意思|yìsi|meaning / ？ = Xiao Wen: Teacher, I have a question. What does this character mean?",
 "老师|lǎoshī|teacher / 回答|huídá|answers / 了|le|(completed) / 她|tā|her / 的|de|’s / 问题|wèntí|question / 。 = The teacher answered her question.",
 "老师|lǎoshī|teacher / ： / 你|nǐ|you / 懂|dǒng|understand / 了|le|(now) / 吗|ma|(question) / ？ = Teacher: Do you understand now?",
 "小文|Xiǎo Wén|Xiao Wen (name) / ： / 懂|dǒng|understand / 了|le|(now) / ， / 谢谢|xièxie|thank you / ！ = Xiao Wen: I understand now, thank you!",
@@ -601,7 +601,7 @@ q:[[2,"What does Daming order?",["Lamb noodles","Fish","Watermelon"],0,"Line 3: 
 "宾馆|bīnguǎn|hotel / 离|lí|from / 机场|jīchǎng|airport / 很|hěn|very / 远|yuǎn|far / 。 = The hotel is far from the airport.",
 "她们|tāmen|they / 坐|zuò|take / 公共汽车|gōnggòng qìchē|bus / 去|qù|go / 。 = They take the bus.",
 "妈妈|māma|Mum / ： / 我|wǒ|I / 是|shì|(emphasis) / 第一|dì yī|first / 次|cì|time / 来|lái|come to / 中国|Zhōngguó|China / 旅游|lǚyóu|to travel / 。 = Mum: This is my first time travelling in China.",
-"妈妈|māma|Mum / ： / 我|wǒ|I / 希望|xīwàng|hope / 明年|míngnián|next year / 再|zài|again / 来|lái|come / 。 = Mum: I hope to come again next year.","小文|Xiǎo Wén|Xiao Wen (name) / ： / 妈妈|māma|Mum / ， / 你|nǐ|you / 的|de|’s / 票|piào|ticket / 在|zài|is at / 哪儿|nǎr|where / ？ = Xiao Wen: Mum, where is your ticket?","妈妈|māma|Mum / ： / 在|zài|in / 我|wǒ|my / 的|de|’s / 包|bāo|bag / 里|li|inside / 。 / 再见|zàijiàn|goodbye / ， / 小文|Xiǎo Wén|Xiao Wen (name) / ！ = Mum: It is in my bag. Goodbye, Xiao Wen!"],
+"妈妈|māma|Mum / ： / 我|wǒ|I / 希望|xīwàng|hope / 明年|míngnián|next year / 再|zài|again / 来|lái|come / 。 = Mum: I hope to come again next year.","小文|Xiǎo Wén|Xiao Wen (name) / ： / 妈妈|māma|Mum / ， / 你|nǐ|you / 的|de|’s / 票|piào|ticket / 在|zài|is at / 哪儿|nǎr|where / ？ = Xiao Wen: Mum, where is your ticket?","妈妈|māma|Mum / ： / 在|zài|is in / 我|wǒ|my / 手|shǒu|hand / 里|li|inside / 。 / 再见|zàijiàn|goodbye / ， / 小文|Xiǎo Wén|Xiao Wen (name) / ！ = Mum: It is in my hand. Goodbye, Xiao Wen!"],
 q:[[2,"Is the hotel close to the airport?",["No, it is far","Yes, it is close","It is next to the airport"],0,"Line 3: 离机场很远 means “far from the airport”."],[5,"What does Mum hope?",["To come again next year","To stay in Beijing","To fly tomorrow"],0,"Line 6: 明年再来 means “come again next year”."]]},
 {t:"A football match",l:[
 "大明|Dàmíng|Daming (name) / 很|hěn|very / 喜欢|xǐhuan|likes / 运动|yùndòng|sport / 。 = Daming likes sport very much.",
@@ -609,7 +609,7 @@ q:[[2,"Is the hotel close to the airport?",["No, it is far","Yes, it is close","
 "今天|jīntiān|today / 有|yǒu|there is / 足球|zúqiú|football / 比赛|bǐsài|match / 。 = Today there is a football match.",
 "小文|Xiǎo Wén|Xiao Wen (name) / 不|bú|does not / 会|huì|know how to / 踢足球|tī zúqiú|play football / ， / 但是|dànshì|but / 她|tā|she / 会|huì|knows how to / 游泳|yóuyǒng|swim / 。 = Xiao Wen cannot play football, but she can swim.",
 "大明|Dàmíng|Daming (name) / 跑|pǎo|runs / 得|de|(in a way that is) / 很|hěn|very / 快|kuài|fast / 。 = Daming runs fast.",
-"他们|tāmen|they / 的|de|’s / 队|duì|team / 赢|yíng|won / 了|le|(completed) / ！ = Their team won!","小文|Xiǎo Wén|Xiao Wen (name) / ： / 我|wǒ|I / 喜欢|xǐhuan|like / 唱歌|chànggē|to sing / ， / 也|yě|also / 喜欢|xǐhuan|like / 跳舞|tiàowǔ|to dance / 。 = Xiao Wen: I like to sing, and I also like to dance.","他们|tāmen|they / 今天|jīntiān|today / 都|dōu|all / 很|hěn|very / 快乐|kuàilè|happy / 。 = They are all happy today."],
+"他们|tāmen|they / 的|de|’s / 队|duì|team / 赢|yíng|won / 了|le|(completed) / ！ = Their team won!","小文|Xiǎo Wén|Xiao Wen (name) / ： / 我|wǒ|I / 喜欢|xǐhuan|like / 唱歌|chànggē|to sing / ， / 也|yě|also / 喜欢|xǐhuan|like / 跳舞|tiàowǔ|to dance / 。 = Xiao Wen: I like to sing, and I also like to dance.","他们|tāmen|they / 今天|jīntiān|today / 很|hěn|very / 快乐|kuàilè|happy / 。 = They are happy today."],
 q:[[1,"How often does Daming play football?",["Twice a week","Every day","Once a month"],0,"Line 2: 每个星期…两次 means “twice a week”."],[3,"What can Xiao Wen do?",["Swim","Play football","Play basketball"],0,"Line 4: 她会游泳."]]},
 {t:"Too expensive",l:[
 "小文|Xiǎo Wén|Xiao Wen (name) / 想|xiǎng|wants to / 买|mǎi|buy / 一|yí|one / 块|kuài|(measure word) / 手表|shǒubiǎo|watch / 。 = Xiao Wen wants to buy a watch.",
@@ -650,7 +650,7 @@ q:[[2,"What time does the exam start?",["Eight o’clock","Nine o’clock","Ten 
 "医生|yīshēng|doctor / ： / 别|bié|do not / 担心|dānxīn|worry / ， / 你|nǐ|you / 要|yào|need to / 多|duō|more / 休息|xiūxi|rest / 。 = Doctor: Do not worry. You need to rest more.",
 "大明|Dàmíng|Daming (name) / 给|gěi|for / 她|tā|her / 送|sòng|brings / 了|le|(completed) / 水果|shuǐguǒ|fruit / 。 = Daming brought her fruit.",
 "三|sān|three / 天|tiān|days / 以后|yǐhòu|after / ， / 小文|Xiǎo Wén|Xiao Wen / 的|de|’s / 病|bìng|illness / 好|hǎo|better / 了|le|(change) / 。 = After three days, Xiao Wen was better."],
-q:[[1,"What is wrong with Xiao Wen?",["A fever and her nose","Her foot hurts","Nothing"],0,"Line 2: 发烧，鼻子也不舒服."],[4,"What did Daming bring?",["Fruit","Medicine","Noodles"],0,"Line 5: 送了水果."]]},
+q:[[1,"What is wrong with Xiao Wen?",["A fever and her nose","Her foot hurts","Nothing"],0,"Line 2: 发烧，鼻子和耳朵也不舒服."],[4,"What did Daming bring?",["Fruit","Medicine","Noodles"],0,"Line 5: 送了水果."]]},
 {t:"Because of the rain",l:[
 "星期六|xīngqīliù|Saturday / ， / 大明|Dàmíng|Daming / 想|xiǎng|wants / 去|qù|to go / 爬山|páshān|climb a mountain / 。 = On Saturday, Daming wants to go hiking.",
 "因为|yīnwèi|because / 下雨|xià yǔ|it rains / ， / 所以|suǒyǐ|so / 他们|tāmen|they / 没有|méiyǒu|did not / 去|qù|go / 。 = Because it rained, they did not go.",
