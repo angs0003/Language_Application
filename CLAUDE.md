@@ -144,7 +144,7 @@ names defined in earlier files (inside functions, any file's names can be used).
   video has a `transcript`. Watched state: `videos[].watched` and `S[lang].videosWatched` for catalogue videos.
 - **🈴 Kana and kanji** (Japanese tab only; `homeKanji`): hiragana and katakana rows (`KANA`, 71 + 71 characters)
   with a learn screen per character (`screenKana`) and practice (`kanaQuiz`: reading choice, listen and choose,
-  match pairs); kanji in order of first appearance in the vocabulary (`KANJI_JA`, 535 now), learned 5 at a time
+  match pairs); kanji in order of first appearance in the vocabulary (`KANJI_JA`, 1205 now), learned 5 at a time
   (`screenKanjiLearn`, ends with "Finish lesson": no quiz, the 5 kanji get review timing through `kSet`), each with a card (`kanjiCardHTML`: meanings, on/kun readings, stroke count, step-by-step
   stroke order, words from the lessons). Practice (`kanjiQuestions`): meaning, kanji from meaning, reading in a word,
   match pairs. Progress: `S.ja.kana` and `S.ja.kanji` (`{b,d,u}`), synced as `word_progress` rows with
@@ -249,11 +249,11 @@ Guide for the owner: `docs/claude-code-team.md`. Keep these files consistent wit
 ## 10. Roadmap (agreed order)
 
 Content batches (each about 150 words, 10 grammar points, 15 chapters):
-1. Done (not yet released): Japanese Level 2 (rest of JLPT N5), Parts 1 to 4 (Level 2 has 600 words; Japanese has 750 words, 79 themes, 50 grammar points). Some words are usually taught at JLPT N4; the Level 2 label says so.
+1. Done and released: Japanese Level 2 (rest of JLPT N5), Parts 1 to 4 (600 words). Some words are usually taught at JLPT N4; the Level 2 label says so.
 2. Chinese Level 3 (HSK 3): about 2 parts.
-3. Japanese Level 3 (JLPT N4): about 4 to 5 parts.
+3. Done and released: Japanese Level 3 (JLPT N4), Parts 1 to 5 (750 words).
 4. Chinese Level 4 (HSK 4): about 4 parts.
-5. Japanese Level 4 (JLPT N3): about 10 or more parts.
+5. Japanese Level 4 (JLPT N3): Parts 1 to 5 done and released (750 words, about half of the N3 vocabulary). More parts are possible. Japanese now has 229 themes, 2250 words, 150 grammar points.
 (JLPT has no official word lists, so part counts are estimates.)
 
 Agreed feature batches (in this order):
