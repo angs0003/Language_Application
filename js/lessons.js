@@ -6,7 +6,7 @@ let view={s:"home"};
 let acts={};
 function A(fn){const k="a"+(++A.n);acts[k]=fn;return k;}A.n=0;
 document.addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(!b||b.disabled)return;buzz(10);const f=acts[b.dataset.a];if(f)f(e);});
-document.addEventListener("change",e=>{if(e.target.id==="lvl"){view.lvl=+e.target.value;render();}});
+document.addEventListener("change",e=>{if(e.target.id==="lvl"){LVSEL[S.lang]=+e.target.value;view.lvl=null;render();}});
 document.addEventListener("input",e=>{if(e.target.id==="vsearch"){const q=e.target.value.trim().toLowerCase();document.querySelectorAll("#vlist li").forEach(li=>{li.style.display=!q||li.dataset.s.includes(q)?"":"none";});return;}if(e.target.id==="tin"&&view.q){view.q.input=e.target.value;const nb=document.getElementById("nextbtn");if(nb)nb.disabled=!canCheck(view.q);}});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&view.sheet){closeSheet();return;}if(e.key==="Enter"&&e.target.id==="tin"&&view.q&&canCheck(view.q)){checkQ(view.q);render();}});
 
