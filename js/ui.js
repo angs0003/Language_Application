@@ -49,13 +49,13 @@ function uiTileIcon(n){return `<span class="ti">${ico(n,24)}</span>`;}
 function uiTileChar(c,big){return `<span class="tc${big?" big":""}" lang="${L[S.lang].hl}" aria-hidden="true">${esc(c)}</span>`;}
 function uiBar(p){return `<div class="bar"><i style="width:${Math.max(0,Math.min(100,Math.round(p)))}%"></i></div>`;}
 /* ---------- Tab home screens ---------- */
-const LIB_SEC={themes:"learn",kanji:"practise",kana:"practise",grammar:"practise",watchadd:"listen"};
+const LIB_SEC={themes:"learn",kanji:"practise",kana:"practise",grammar:"practise",watchadd:"listen",real:"travel"};
 function openSub(k){libSec=k;view={s:"lib",sec:k};render();window.scrollTo(0,0);}
 function screenLib(){
   const l=S.lang,k=view.sec;
-  const titles={themes:"All themes",kanji:"Kanji",kana:"Kana",grammar:"Grammar guide",watchadd:"Your videos"};
+  const titles={themes:"All themes",kanji:"Kanji",kana:"Kana",grammar:"Grammar guide",watchadd:"Your videos",real:"Phrases to review"};
   const r={row:"title",title:titles[k]||"",prog:"",back:{label:"Back",fn:()=>{libSec=null;view={s:"home"};render();window.scrollTo(0,0);}},main:""};
-  const fns={themes:homePath,kanji:(l,r)=>homeKanji(l,r,"kanji"),kana:(l,r)=>homeKanji(l,r,"kana"),grammar:homeGrammar,watchadd:homeWatch};
+  const fns={themes:homePath,kanji:(l,r)=>homeKanji(l,r,"kanji"),kana:(l,r)=>homeKanji(l,r,"kana"),grammar:homeGrammar,watchadd:homeWatch,real:homeReal};
   (fns[k]||homePath)(l,r);r.main=genCard()+r.main;r.next=null;
   return r;
 }
@@ -188,6 +188,8 @@ function homeTravel(l,r){
   if(ni>=0){const d=list[ni];h+=uiCard(`${uiLabel("NEXT SITUATION")}<div class="nxt">${uiTileIcon("travel")}<span class="lrt"><span class="nxh">${esc(d.t)}</span><span class="lrs">${esc(d.intro)}</span></span></div>${uiBtn("Start",()=>openTrip(ni))}`,"hero");}
   else h+=uiCard(`<h2>All situations practised</h2><p class="muted" style="margin:0">Open any situation to practise it again.</p>`);
   h+=uiCard(list.map((d,i)=>uiRow(uiTileIcon("travel"),esc((i+1)+". "+d.t),esc(d.intro),()=>openTrip(i),done[i]?STATUS.ok:STATUS.todo)).join(""),"list");
+  const rc=realCounts(l),nrev=realReview(l).length;
+  h+=uiCard(`${uiLabel("REAL-SITUATION LOG")}<p style="margin:0 0 8px">${esc(realSummary(rc))}</p>`+uiRow(uiTileIcon("practise"),"Phrases to review",esc(nrev?nrev+(nrev===1?" phrase":" phrases")+" did not work yet":"No phrases to review"),()=>openSub("real")),"list");
   r.main=h;
 }
 /* Recommendations: one Next card plus up to 2 rows */

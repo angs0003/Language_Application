@@ -38,6 +38,14 @@ const failures = [];
     const primaries = d.querySelectorAll("#main .btn.pri").length; if (primaries > 1) failures.push(t + ": " + primaries + " primary buttons");
     const unlabeled = [...d.querySelectorAll("button")].filter(b => !b.textContent.trim() && !b.getAttribute("aria-label")).length; if (unlabeled) failures.push(t + ": " + unlabeled + " icon buttons without a label");
   }
+  // real-situation log screens (Phrases to review, and the "You say" tab of a situation)
+  W.eval("S.ja.real={};S.ja.real['x']=null;delete S.ja.real['x'];realSet('ja',sentText(trip('ja',0)._p.say[0].p),'repeat');libSec=null;view={s:'home'};render()"); tab("Travel"); click("Phrases to review");
+  for (const [label, setup] of [["Phrases to review", () => {}], ["You say", () => { W.eval("openTrip(0);view.tt='say';render()"); }]]) {
+    setup();
+    if (/\p{Extended_Pictographic}/u.test(d.getElementById("main").textContent + d.getElementById("hd").textContent)) failures.push(label + ": emoji found in the interface");
+    const primaries = d.querySelectorAll("#main .btn.pri").length; if (primaries > 1) failures.push(label + ": " + primaries + " primary buttons");
+    const unlabeled = [...d.querySelectorAll("button")].filter(b => !b.textContent.trim() && !b.getAttribute("aria-label")).length; if (unlabeled) failures.push(label + ": " + unlabeled + " icon buttons without a label");
+  }
   failures.forEach(f => console.log("FAIL:", f));
   console.log(failures.length ? failures.length + " failure(s)." : "Smoke test OK.");
   process.exit(failures.length ? 1 : 0);

@@ -48,6 +48,17 @@ const check = (ok, msg) => { if (!ok) failures.push(msg); else console.log("ok:"
   check(C.W.eval("S.ja.mis.length") === 1, "device C receives the Mistakes item");
   C.W.eval("S.ja.mis=[];save()"); await wait(2200);
   check(T.user_settings[0].data.per.ja.mis.length === 0, "removing the item on device C reaches the database");
+  // 6. Real-situation log: a result on device A reaches the database and device D; a later result on D wins.
+  const ph = A.W.eval("sentText(trip('ja',0)._p.say[0].p)");
+  A.W.eval("view={s:'home'}");
+  A.W.eval("libSec=null;view={s:'home'}");
+  A.W.eval(`realSet("ja",${JSON.stringify(ph)},"repeat")`); await wait(2200);
+  check(T.user_settings[0].data.per.ja.real[ph].r === "repeat", "a real-situation result is saved in the database");
+  const dd = makeDom({ db: mockDB(store, user), failures }); await ready(dd); await wait(300);
+  const D = tools(dd, failures);
+  check(D.W.eval(`S.ja.real[${JSON.stringify(ph)}].r`) === "repeat" && D.W.eval("realReview('ja').length") === 1, "device D receives the result and lists the phrase");
+  D.W.eval(`realSet("ja",${JSON.stringify(ph)},"ok")`); await wait(2200);
+  check(T.user_settings[0].data.per.ja.real[ph].r === "ok", "a changed result on device D reaches the database");
   failures.forEach(f => console.log("FAIL:", f));
   console.log(failures.length ? failures.length + " failure(s)." : "Sync test OK.");
   process.exit(failures.length ? 1 : 0);

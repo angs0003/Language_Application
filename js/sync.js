@@ -23,7 +23,7 @@ function stateRows(st,uid){
     Object.keys(s.podDone||{}).filter(k=>s.podDone[k]).forEach(k=>acts.push({user_id:uid,lang:l,kind:"podcast",key:String(k)}));
     (s.grDone||[]).forEach(g=>acts.push({user_id:uid,lang:l,kind:"grammar",key:String(g)}));
   }
-  const per={};for(const l of ["zh","ja"]){const s=st[l];per[l]={placed:s.placed,gi:s.gi,lc:s.lc,lst:s.lst,hist:s.hist,lastLesson:s.lastLesson,videos:s.videos,videosWatched:s.videosWatched,mis:s.mis};}
+  const per={};for(const l of ["zh","ja"]){const s=st[l];per[l]={placed:s.placed,gi:s.gi,lc:s.lc,lst:s.lst,hist:s.hist,lastLesson:s.lastLesson,videos:s.videos,videosWatched:s.videosWatched,mis:s.mis,real:s.real};}
   const settings={user_id:uid,data:{v:1,lang:st.lang,tab:st.tab,settings:st.settings,per,lastActive:st.lastActive},updated_at:iso(st.updatedAt||Date.now())};
   return {words,acts,settings};
 }

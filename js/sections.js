@@ -310,6 +310,26 @@ const TRIP={ja:TRIP_JA,zh:TRIP_ZH},COUNTRY={ja:"Japan",zh:"China"};
 function trip(l,i){const d=TRIP[l][i];if(!d._p)d._p={hear:d.hear.map(parseLine),say:d.say.map(x=>({p:parseLine(x[0]),c:x[1]?parseLine(x[1]):null}))};return d;}
 function sayAt(text,l,rate){if(!("speechSynthesis" in window)){note("This browser cannot play speech audio.");return;}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang=L[l].code;const v=voiceFor(l);if(v)u.voice=v;u.rate=rate*S.settings.speed;speechSynthesis.speak(u);}
 function tripLine(l,s,label){return `<div class="line"><div class="sent"><div class="sbody">${label?`<p class="spk">${label}</p>`:""}${glossHTML(l,s.tokens,[])}${S.settings.showEnglish&&s.english?`<p class="eng">${esc(s.english)}</p>`:""}</div><div class="stack2"><button class="play" aria-label="Play audio" title="Play audio" data-a="${A(()=>sayAt(sentText(s),l,1))}">${PLAY}</button></div></div></div>`;}
+/* Real-situation log: S[l].real = {phraseText:{r:"ok"|"repeat"|"english",t:timestamp}}; the latest result per phrase wins. */
+const REAL_R={ok:"Understood",repeat:"Asked me to repeat",english:"Answered in English"};
+const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+function realDate(t){const x=new Date(t);return x.getDate()+" "+MONTHS[x.getMonth()]+" "+x.getFullYear();}
+function realSet(l,key,res){const o=S[l].real||(S[l].real={});o[key]={r:res,t:Date.now()};view.rl=null;save();render();}
+function realCounts(l){const o=S[l].real||{},ks=Object.keys(o);return{used:ks.length,ok:ks.filter(k=>o[k].r==="ok").length};}
+function realSummary(c){return c.used?`Used in real life: ${c.used} ${c.used===1?"phrase":"phrases"}. Understood: ${c.ok}.`:"Used in real life: 0 phrases. Open a situation and tap “I used this in real life” under a phrase.";}
+function realPhrases(l){const m={};TRIP[l].forEach((x,i)=>{trip(l,i)._p.say.forEach(y=>{[y.p,y.c].forEach(s=>{if(s)m[sentText(s)]=s;});});});return m;}
+function realReview(l){const o=S[l].real||{},m=realPhrases(l);return Object.keys(o).filter(k=>o[k].r!=="ok"&&m[k]).sort((a,b)=>o[b].t-o[a].t).map(k=>({key:k,s:m[k],e:o[k]}));}
+function realBtns(l,key){return `<div class="stack2" role="group" aria-label="Result in real life">${Object.keys(REAL_R).map(k=>uiBtn(REAL_R[k],()=>realSet(l,key,k),"sec")).join("")}</div>`;}
+function realBlock(l,s){const key=sentText(s),e=(S[l].real||{})[key],open=view.rl===key;
+  return `<div class="realb">${e?`<p class="small muted" style="margin:4px 0">Real life: ${esc(REAL_R[e.r])}, ${esc(realDate(e.t))}</p>`:""}${open?realBtns(l,key):uiBtn(e?"Change the real-life result":"I used this in real life",()=>{view.rl=key;render();},"link")}</div>`;}
+function homeReal(l,r){
+  const list=realReview(l);
+  let h=uiCard(`<p style="margin:0">${esc(realSummary(realCounts(l)))}</p>`);
+  h+=list.length?uiCard(list.map(it=>{const rd=it.s.tokens.map(t=>t[1]).filter(Boolean).join(" "),open=view.rl===it.key;
+    return `<div class="realit">`+uiRow(uiTileIcon("listen"),`<span lang="${L[l].hl}">${esc(it.key)}</span>`,esc([rd,it.s.english].filter(Boolean).join(" · "))+`<br>${esc(REAL_R[it.e.r])}, ${esc(realDate(it.e.t))}`,()=>{sayAt(it.key,l,1);view.rl=it.key;render();})+(open?realBtns(l,it.key):"")+`</div>`;}).join(""),"list")
+    :uiCard(`<p style="margin:0" class="muted">No phrases to review. A phrase appears here when its latest result is “Asked me to repeat” or “Answered in English”.</p>`);
+  r.main=h;
+}
 function homeTrip(l,r){
   const st=S[l],done=st.tripDone||{},op=st.tripOpen||{};let first=-1;
   r.main=`<details class="card tint acc" data-k="in-trip" ${isOpen("in-trip",false)?"open":""}><summary>✈️ Travel in ${COUNTRY[l]} (about)</summary><p>Situations in trip order: what locals say, what you say, how to sound local, and etiquette. Built into the app.</p><p class="small muted" style="margin:0">Practical facts were checked on 2 November 2026. Rules and apps can change, so check official sources before you travel.</p></details><div class="card"><ul class="units">${TRIP[l].map((s,i)=>{const d=!!done[i],o=!!op[i];if(!d&&first<0)first=i;
@@ -347,7 +367,7 @@ function screenTrip(){
   r.prog=`<div class="psub">${esc(COUNTRY[l])} · situation ${v.i+1} of ${TRIP[l].length}${done?" · ✅ Practised":""}</div>`;
   r.main=uiSeg([["hear","You will hear"],["say","You say"],["tips","Tips"]],tt,k=>{v.tt=k;render();})+`${tt==="tips"?`<div class="card"><h2>Good to know</h2>${d.facts.map(f=>`<p>${esc(f)}</p>`).join("")}</div>`:""}
   ${tt==="hear"?`<div class="card list">${d._p.hear.map(s=>tripLine(l,s,"Staff or local")).join("")}</div><button class="btn sec full" data-a="${A(()=>openPlayer("trip",v.i))}">Play the conversation, one line at a time</button>`:""}
-  ${tt==="say"?`<div class="card list">${d._p.say.map(x=>tripLine(l,x.p,x.c?"Polite":"")+(x.c?tripLine(l,x.c,"Casual"):"")).join("")}</div>`:""}
+  ${tt==="say"?`<div class="card list">${d._p.say.map(x=>tripLine(l,x.p,x.c?"Polite":"")+realBlock(l,x.p)+(x.c?tripLine(l,x.c,"Casual")+realBlock(l,x.c):"")).join("")}</div>`:""}
   ${tt==="tips"?`<div class="card"><h2>Sound local</h2><ul class="units">${d.local.map(w=>`<li><span><span class="cjk2" lang="${L[l].hl}">${esc(w[0])}</span> <span class="muted">${esc(w[1])}</span><br><strong>${esc(w[2])}</strong><br><span class="small">${esc(w[3])}</span></span><button class="play" aria-label="Play audio" title="Play audio" data-a="${A(()=>sayAt(w[0].replace(/[〜~]/g,""),l,1))}">${PLAY}</button></li>`).join("")}</ul></div><div class="card"><h2>Etiquette</h2><ul class="small">${d.etiq.map(e=>`<li>${esc(e)}</li>`).join("")}</ul></div>`:""}`;
   r.next={label:"Practise this situation",fn:()=>startTripPractice(v)};
   return r;
