@@ -64,28 +64,35 @@ function exHTML(q,opts){
     if(q.answered)h+=`<div class="fb ${q.correct?"ok":"no"}" role="status"><strong>${q.correct?"✅ All pairs matched with no mistakes.":`🟡 All pairs matched. Mistakes: ${q.mistakes}.`}</strong></div>`;
     return h;
   }
+  if(q.type==="blank"||q.type==="build")return `<div class="qarea">${exHTML2(q,opts)}</div>`;
+  return exHTML2(q,opts);
+}
+function exHTML2(q,opts){
+  const l=q.lang;let h="";
   if(q.type==="blank"){
     const s=q.sent;
-    h=`<p class="q">✏️ Choose the missing word</p><p class="ex" lang="${L[l].hl}">${s.tokens.map((t,i)=>i===q.idx?`<span class="blank">${q.answered?esc(t[0]):"＿＿"}</span>`:esc(t[0])).join("")}</p>${S.settings.showReading?`<p class="muted" style="margin:0 0 4px">${esc(s.tokens.map((t,i)=>i===q.idx&&!q.answered?"___":t[1]).filter(Boolean).join(" "))}</p>`:""}${S.settings.showEnglish?`<p class="eng">${esc(s.english)}</p>`:""}<div class="opts">`;
+    h=`<p class="q">✏️ Choose the missing word</p><div class="bubblerow notail"><div class="bubble"><div class="bt"><p class="ex" lang="${L[l].hl}">${s.tokens.map((t,i)=>i===q.idx?`<span class="blank">${q.answered?esc(t[0]):"＿＿"}</span>`:esc(t[0])).join("")}</p></div></div></div>${S.settings.showReading?`<p class="muted" style="margin:0 0 4px">${esc(s.tokens.map((t,i)=>i===q.idx&&!q.answered?"___":t[1]).filter(Boolean).join(" "))}</p>`:""}${S.settings.showEnglish?`<p class="eng">${esc(s.english)}</p>`:""}<div class="opts">`;
     q.opts.forEach((o,i)=>{let cls="opt",tag="";if(q.answered){if(i===q.ans){cls+=" right";tag="Correct answer";}else if(i===q.sel){cls+=" wrong";tag="Your answer";}}else if(q.sel===i)cls+=" sel";
       h+=`<button class="${cls}" ${q.answered?"disabled":""} data-a="${A(()=>{q.sel=i;render();})}">${tag?`<span class="tag">${tag}</span>`:""}<span class="cjk2" lang="${L[l].hl}">${esc(o.text)}</span>${S.settings.showReading&&o.reading?`<span class="tr2">${esc(o.reading)}</span>`:""}</button>`;});
     if(!q.answered)h+=`<button class="opt dk" data-a="${A(()=>{dontKnow(q);render();})}">I do not know</button>`;
     h+=`</div>`;
-    if(q.answered)h+=`<div class="fb ${q.correct?"ok":"no"}" role="status"><strong>${q.correct?"✅ Correct.":"❌ Incorrect."}</strong>${q.correct?"":`<p>The missing word is ${cjk(l,q.sent.tokens[q.idx][0])} (${esc(q.sent.tokens[q.idx][1])}).</p>`}<div style="margin-top:6px">${sentHTML(l,q.sent,q.word?[q.word]:[])}</div></div>`;
+    if(q.answered)h+=`<div class="fb ${q.correct?"ok":"no"}" role="status"><strong>${q.correct?"✅ Correct.":"❌ Incorrect."}</strong>${q.correct?"":`<p>The missing word is ${cjk(l,q.sent.tokens[q.idx][0])} (${esc(q.sent.tokens[q.idx][1])}).</p>`}<div style="margin-top:6px">${sentMeaningHTML(l,q.sent,q.word?[q.word]:[])}</div></div>`;
     return h;
   }
-  /* build, listen-build, to English */
+  /* The sentence with its meaning after an answer (feedback of sentence questions). */
+function sentMeaningHTML(l,s,hw){return `<div class="sent"><div class="sbody">${glossHTML(l,s.tokens,hw||[])}<p class="eng">Meaning: ${esc(s.english)}</p></div><button class="play" data-a="${A(()=>say(spokenText(s),l))}" aria-label="Play audio" title="Play audio">${PLAY}</button></div>`;}
+/* build, listen-build, to English */
   const s=q.sent,text=sentText(s);
   if(q.mode==="build")h=`<p class="q">🔨 Build this sentence in ${L[l].name}</p><p class="meaning" style="text-align:left">${esc(s.english)}</p>`;
-  else if(q.mode==="listen")h=`<p class="q">👂 Listen, then build what you hear</p><div class="inline" style="justify-content:center;margin:6px 0"><button class="play" aria-label="Play audio" title="Play audio" data-a="${A(()=>sayAt(text,l,1))}">${PLAY}</button></div>`;
-  else h=`<p class="q">🔁 Build the English meaning</p><div class="sent"><div class="sbody"><p class="ex" lang="${L[l].hl}">${esc(text)}</p>${S.settings.showReading?`<p class="muted" style="margin:0">${esc(s.tokens.map(t=>t[1]).filter(Boolean).join(" "))}</p>`:""}</div><button class="play" aria-label="Play audio" title="Play audio" data-a="${A(()=>sayAt(text,l,1))}">${PLAY}</button></div>`;
+  else if(q.mode==="listen")h=`<p class="q">👂 Listen, then build what you hear</p><div class="bubblerow notail"><div class="bubble"><button class="play" aria-label="Play audio" title="Play audio" data-a="${A(()=>sayAt(text,l,1))}">${PLAY}</button><div class="bt"><p class="muted" style="margin:0">Listen, then tap the words in order.</p></div></div></div>`;
+  else h=`<p class="q">🔁 Build the English meaning</p><div class="bubblerow">${uiTileChar([...(contentToks(s)[0]||s.tokens[0])[0]][0],false)}<div class="bubble stack"><button class="play" aria-label="Play audio" title="Play audio" data-a="${A(()=>sayAt(text,l,1))}">${PLAY}</button><div class="bt"><p class="ex" lang="${L[l].hl}">${esc(text)}</p>${S.settings.showReading?`<p class="muted" style="margin:0">${esc(s.tokens.map(t=>t[1]).filter(Boolean).join(" "))}</p>`:""}</div></div></div>`;
   const placed=q.placed.map(id=>q.tiles.find(t=>t.id===id));
   h+=`<div class="ansrow">${placed.length?placed.map(t=>`<button class="tile" ${q.answered?"disabled":""} data-a="${A(()=>{q.placed=q.placed.filter(x=>x!==t.id);render();})}">${tileHTML(q,t)}</button>`).join(""):`<span class="small muted">Tap the words below in the correct order. Tap a word here to remove it.</span>`}</div>`;
   h+=`<div class="bank">${q.tiles.map(t=>q.placed.includes(t.id)?`<span class="tile ghost">${tileHTML(q,t)}</span>`:`<button class="tile" ${q.answered?"disabled":""} data-a="${A(()=>{q.placed.push(t.id);render();})}">${tileHTML(q,t)}</button>`).join("")}</div>`;
   if(!q.answered)h+=`<button class="opt dk" style="margin-top:10px" data-a="${A(()=>{dontKnow(q);render();})}">I do not know</button>`;
   else{
     const got=placed.map(t=>t.text).join(q.mode==="toEn"?" ":"");
-    h+=`<div class="fb ${q.correct?"ok":"no"}" role="status"><strong>${q.correct?"✅ Correct.":"❌ Incorrect."}</strong>${!q.correct&&!q.dk?`<p>Your answer: ${q.mode==="toEn"?esc(got):cjk(l,got)}</p>`:""}${!q.correct?`<p>The correct answer is:</p>`:""}<div style="margin-top:6px">${sentHTML(l,s,[])}</div></div>`;
+    h+=`<div class="fb ${q.correct?"ok":"no"}" role="status"><strong>${q.correct?"✅ Correct.":"❌ Incorrect."}</strong>${!q.correct&&!q.dk?`<p>Your answer: ${q.mode==="toEn"?esc(got):cjk(l,got)}</p>`:""}${!q.correct?`<p>The correct answer is:</p>`:""}<div style="margin-top:6px">${sentMeaningHTML(l,s,[])}</div></div>`;
   }
   return h;
 }

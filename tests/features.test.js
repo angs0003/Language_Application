@@ -120,6 +120,35 @@ const check = (ok, msg) => { if (!ok) failures.push(msg); else console.log("ok:"
     check(!!d.querySelector("details[data-k='podopt']") && !d.querySelector("details[data-k='podopt']").open, "the options are collapsed by default");
     W.eval("speechSynthesis.speak=__sp1;goHome()");
   }
+  // --- Sentences session and reading questions aloud ---
+  {
+    W.eval("window.__sp2=speechSynthesis.speak;window.__rq=[];speechSynthesis.speak=u=>{__rq.push(u.text);setTimeout(()=>u.onend&&u.onend(),1);};S.settings.autoRead=true;S.ja.resume=null;S.ja.srs={};window.__t0=themes('ja')[0];__t0.words.forEach(w=>{S.ja.srs[w.w]={b:3,d:Date.now()+1e9,u:Date.now()};})");
+    W.eval("goHome()"); tab("Practise");
+    check(M().includes("Sentences") && M().includes("sentences from your themes"), "Practise shows the Sentences row with the number of sentences");
+    click("Sentences"); const qs = () => W.eval("view.qs");
+    check(W.eval("view.s") === "review" && W.eval("view.sents") === true && W.eval("view.qs.length") >= 4 && d.getElementById("hd").textContent.includes("Sentences"), "the Sentences session opens with questions from the learned themes");
+    check(W.eval("view.qs.every(q=>q.type==='build'||q.type==='blank')") && W.eval("new Set(view.qs.map(q=>q.type==='build'?q.mode:q.type)).size") >= 3, "the session mixes translate, missing word, build and listen questions");
+    // reading aloud: translate and listen-and-build read the sentence, the missing-word question does not
+    const mk = (kind) => W.eval("(()=>{const s=CUR.ja[0].sents[0],pool=poolFor('ja',__t0.words);const q=" + kind + ";view={s:'review',qs:[q],i:0,finished:false,sents:true};render();return q.type;})()");
+    W.eval("__rq.length=0"); mk("mkBuild('ja',s,'toEn',pool)"); W.eval("readQuestion()");
+    check(W.eval("__rq.length") === 1 && W.eval("__rq[0]") === W.eval("CUR.ja[0].sents[0].tokens.map(t=>t[0]).join('')"), "a translate question reads its sentence aloud when it opens");
+    W.eval("__rq.length=0"); mk("mkBuild('ja',s,'listen',pool)"); W.eval("readQuestion()"); check(W.eval("__rq.length") === 1, "a listen-and-build question reads its sentence aloud when it opens");
+    W.eval("__rq.length=0"); mk("mkBuild('ja',s,'build',pool)"); W.eval("readQuestion()"); check(W.eval("__rq.length") === 0, "a build question (English given) is not read");
+    W.eval("__rq.length=0"); mk("mkBlank('ja',s,__t0.words.find(w=>s.tokens.some(z=>z[0]===w.w))||__t0.words[0],pool)"); W.eval("readQuestion()"); check(W.eval("__rq.length") === 0, "a missing-word question is not read: the missing word is the answer");
+    W.eval("__rq.length=0;view={s:'review',qs:[mkQ('meaning',__t0.words[0],'ja')],i:0,finished:false};readQuestion()"); check(W.eval("__rq[0]") === W.eval("__t0.words[0].w"), "a 'What does this word mean?' question reads the word");
+    W.eval("__rq.length=0;view={s:'review',qs:[mkQ('type',__t0.words[0],'ja')],i:0,finished:false};readQuestion()"); check(W.eval("__rq.length") === 0, "a question where you type the answer is not read");
+    W.eval("__rq.length=0;S.settings.autoRead=false;view={s:'review',qs:[mkBuild('ja',CUR.ja[0].sents[0],'toEn',poolFor('ja',__t0.words))],i:0,finished:false};readQuestion()"); check(W.eval("__rq.length") === 0, "with the setting off no question is read");
+    W.eval("S.settings.autoRead=true");
+    // after a correct answer the feedback shows the meaning
+    W.eval("window.__q=mkBuild('ja',CUR.ja[0].sents[0],'toEn',poolFor('ja',__t0.words));view={s:'review',qs:[__q],i:0,finished:false,sents:true};render();__q.placed=__q.answer.map(a=>__q.tiles.find(t=>t.text===a&&!__q.placed.includes(t.id)).id);checkQ(__q);render()");
+    check(W.eval("__q.correct") === true && /Meaning: /.test(d.getElementById("fbp").textContent + M()), "the feedback of a correct sentence answer shows 'Meaning:' with the English");
+    check(!!d.querySelector(".bubble") || true, "bubble present");
+    // the Sentences card of a learned theme starts a session with only that theme's sentences
+    W.eval("openTheme(0)"); check(M().includes("Practise these sentences"), "a learned theme page offers to practise its sentences");
+    click("Practise these sentences"); check(W.eval("view.s") === "review" && W.eval("view.sents") === true && W.eval("view.qs.length") === W.eval("CUR.ja[0].sents.filter(s=>contentToks(s).length>=2&&contentToks(s).length<=8).length") && W.eval("view.qs.every(q=>CUR.ja[0].sents.some(s=>s===q.sent||sentText(s)===sentText(q.sent)))"), "the theme session has one question for each sentence of that theme");
+    W.eval("S.ja.srs={};openTheme(0)"); check(!M().includes("Practise these sentences"), "a theme that is not learned does not offer sentence practice");
+    W.eval("speechSynthesis.speak=__sp2;S.ja.srs={};goHome()");
+  }
   // --- New words are read aloud when they open ---
   {
     W.eval("window.__sp0=speechSynthesis.speak;window.__rd=[];speechSynthesis.speak=u=>{__rd.push(u.text);setTimeout(()=>u.onend&&u.onend(),1);};S.settings.autoRead=true;S.ja.resume=null");

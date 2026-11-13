@@ -309,6 +309,18 @@ function readWordCard(){
   if(w.tk&&S.settings.hlWord!==false){const tok=++playTok;hlClear();hlTrack(u,w.tk.tokens,()=>document.querySelector("#main .sent .gl"),()=>tok===playTok);u.onend=()=>{if(tok===playTok)hlClear();};}
   speechSynthesis.speak(u);
 }
+/* Quiz questions: when a question opens, the word or sentence it is about is read aloud (setting autoRead): the sentence of "Build the English meaning",
+   the sentence of "Listen and build", the word of "What does this word mean?" and "Listen and choose". Never the missing-word question and not the questions
+   where you type or say the answer. Called after a tap (start, Continue, Back), not on every redraw. */
+function readQuestion(){
+  if(S.settings.autoRead===false||!("speechSynthesis" in window))return;
+  const v=view;let q=null;
+  if(v.s==="lesson"&&v.step===4)q=v.quiz&&v.quiz[v.i];else if(v.s==="review"&&!v.finished)q=v.qs&&v.qs[v.i];
+  if(!q||q.answered)return;
+  const l=S.lang;
+  if(q.type==="build"&&(q.mode==="toEn"||q.mode==="listen"))sayAt(sentText(q.sent),l,1);
+  else if((q.type==="meaning"||q.type==="listen")&&q.word)say(q.word.w,l);
+}
 function lessonResumeFor(l,words){const r=S[l]&&S[l].resume;if(!r||!Array.isArray(r.words)||!words||!words.length)return null;return r.ti===themeIdxOf(l,words[0])&&r.words[0]===words[0].w&&r.words.length===words.length?r:null;}
 function lessonResumeText(l,r){const n=r.words.length;return r.step===0?"New words, word "+(r.i+1)+" of "+n:STEPS[r.step].replace(/^\S+\s/,"");}
 function lessonSave(v){if(!v||v.s!=="lesson"||v.repeat)return;const l=v.lang,st=S[l];if(v.step===0&&v.i===0)st.resume=null;else st.resume={ti:themeIdxOf(l,v.words[0]),words:v.words.map(w=>w.w),title:v.title,step:v.step,i:v.step===4?0:v.i,u:Date.now()};save();}
@@ -322,7 +334,7 @@ function startLesson(words,title,repeat,fresh){
   if(rs){view.step=Math.max(0,Math.min(rs.step,5));view.i=view.step>=4?0:Math.max(0,Math.min(rs.i,lessonItemCount(view)-1));}
   else if(fresh&&!repeat&&S[l].resume){S[l].resume=null;save();}
   render();window.scrollTo(0,0);
-  readWordCard();
+  readWordCard();readQuestion();
 }
 function lessonItemCount(v){const n=v.words.length;return [n,1+v.gq.length,1,1,v.quiz.length,1][v.step];}
 function lessonMove(d){
@@ -332,7 +344,7 @@ function lessonMove(d){
   if(v.step===2&&!v.sents.length){v.step+=d>0?1:-1;v.i=d>0?0:lessonItemCount(v)-1;}
   lessonSave(v);
   render();window.scrollTo(0,0);
-  readWordCard();
+  readWordCard();readQuestion();
 }
 function aiMsg(st,what){return st==="none"?"This version has no AI. "+what:st;}
 function screenLesson(){
@@ -395,7 +407,7 @@ function startReview(given,recap){
   const types=S.settings.speaking?["meaning","listen","type","speak"]:["meaning","listen","type"];
   const pool=poolFor(l,ws),qs=ws.map((w,i)=>{if(i%4===1){const s2=pool.find(x=>x.tokens.some(z=>z[0]===w.w));const b=s2&&mkBlank(l,s2,w,pool);if(b)return b;}return mkQ(types[i%types.length],w,l);});
   const c=pool.filter(x=>{const n=contentToks(x).length;return n>=2&&n<=7;});if(c.length&&!recap)qs.push(mkBuild(l,shuffle(c)[0],"build",pool));
-  view={s:"review",qs,i:0,finished:false};render();window.scrollTo(0,0);
+  view={s:"review",qs,i:0,finished:false};render();window.scrollTo(0,0);readQuestion();
 }
 function screenReview(){
   const v=view;
@@ -403,15 +415,19 @@ function screenReview(){
     return {row:"title",title:"Mistakes",prog:`<div class="ptext">Mistakes: finished</div><div class="psub">Still in Mistakes: ${n}</div><div class="bar"><i style="width:100%"></i></div>`,
       main:`<div class="card"><h2>Mistakes session finished</h2><p>Correct: ${v.qs.filter(q=>q.correct).length} of ${v.qs.length}.</p><p>Questions you answered correctly are removed from Mistakes. Questions you answered incorrectly stay in Mistakes for your next session.</p><p>Still in Mistakes: ${n}.</p></div>`,
       back:{label:"Back",dis:true},next:{label:"Go to home",fn:goHome}};}
+  if(v.finished&&v.sents){const c=v.qs.filter(q=>q.correct).length;
+    return {row:"title",title:"Sentences",prog:`<div class="ptext">Sentences: finished</div><div class="psub">Correct: ${c} of ${v.qs.length}</div><div class="bar"><i style="width:100%"></i></div>`,
+      main:`<div class="card"><h2>Sentences session finished</h2><p>Correct: ${c} of ${v.qs.length}.</p><p>Sentences you answered incorrectly are saved in Mistakes, where you can repeat them.</p></div>`,
+      back:{label:"Back",dis:true},next:{label:"Go to home",fn:()=>{histPush(S.lang,"🔁 Sentences");save();goHome();}}};}
   if(v.finished){const c=v.qs.filter(q=>q.correct).length;
     return {row:"title",title:"Review",prog:`<div class="ptext">Review: finished</div><div class="psub">Correct: ${c} of ${v.qs.length}</div><div class="bar"><i style="width:100%"></i></div>`,
       main:`<div class="card"><h2>Review finished</h2><p>Correct: ${c} of ${v.qs.length}.</p><p>Words you answered correctly move to a longer review interval. Words you answered incorrectly are due again now.</p></div>${recsHTML(S.lang,{k:"review"})}`,
       back:{label:"Back",dis:true},next:{label:"Go to home",fn:()=>{histPush(S.lang,"🔁 Review");save();goHome();}}};}
-  const q=v.qs[v.i];view.q=q;
-  const r={row:"title",title:v.mis?"Mistakes":"Review",exit:true,prog:`<div class="ptext">${v.mis?"Mistakes":"Review"}: question ${v.i+1} of ${v.qs.length}</div><div class="psub">Each answer is saved when you check it.</div><div class="bar"><i style="width:${Math.round(v.i/v.qs.length*100)}%"></i></div>`,
-    main:`<div class="card">${qHTML(q)}</div>`,back:{label:"Back",fn:()=>{if(v.i===0){view.confirm=true;render();window.scrollTo(0,0);}else{v.i--;render();window.scrollTo(0,0);}}}};
+  const q=v.qs[v.i];view.q=q;const nm=v.mis?"Mistakes":v.sents?"Sentences":"Review";
+  const r={row:"title",title:nm,exit:true,prog:`<div class="ptext">${nm}: question ${v.i+1} of ${v.qs.length}</div><div class="psub">Each answer is saved when you check it.</div><div class="bar"><i style="width:${Math.round(v.i/v.qs.length*100)}%"></i></div>`,
+    main:`<div class="card">${qHTML(q)}</div>`,back:{label:"Back",fn:()=>{if(v.i===0){view.confirm=true;render();window.scrollTo(0,0);}else{v.i--;render();window.scrollTo(0,0);readQuestion();}}}};
   if(!q.answered){if(q.type==="speak")r.next={label:"Continue",dis:true};else r.next={label:"Check answer",fn:()=>{checkQ(q);render();},dis:!canCheck(q)};}
-  else r.next={label:"Continue",fn:()=>{if(v.mis&&!q.correct&&!q.again){const x=misList(S.lang).find(m=>m.id===q.mid),nq=x&&misRebuild(x,S.lang);q.again=true;if(nq){nq.again=true;v.qs.push(nq);}}if(v.i>=v.qs.length-1)v.finished=true;else v.i++;render();window.scrollTo(0,0);}};
+  else r.next={label:"Continue",fn:()=>{if(v.mis&&!q.correct&&!q.again){const x=misList(S.lang).find(m=>m.id===q.mid),nq=x&&misRebuild(x,S.lang);q.again=true;if(nq){nq.again=true;v.qs.push(nq);}}if(v.i>=v.qs.length-1)v.finished=true;else v.i++;render();window.scrollTo(0,0);readQuestion();}};
   return r;
 }
 
@@ -423,7 +439,7 @@ function screenSettings(){
   const vz=voiceFor("zh"),vj=voiceFor("ja");
   const reset=l=>view.reset===l?`<div class="confirm"><p><strong>Reset all ${L[l].name} progress?</strong> This deletes placement, learned words, review data and AI-created words for ${L[l].name}.</p><div class="inline"><button class="btn pri" data-a="${A(()=>{S[l]=blank();save();view.reset=null;render();})}">Reset ${L[l].name}</button><button class="btn sec" data-a="${A(()=>{view.reset=null;render();})}">Keep progress</button></div></div>`:`<button class="btn sec full" style="margin-bottom:10px" data-a="${A(()=>{view.reset=l;render();})}">Reset ${L[l].name} progress</button>`;
   return {row:"title",title:"Settings",prog:`<div class="ptext">Settings</div><div class="psub">Changes are saved immediately.</div>`,
-    main:`<div class="card"><h2>Display and audio</h2>${tg("showReading","Show pinyin and romaji","Shows the pronunciation guide under words and answer options.")}${tg("autoRead","Read new words aloud","In a lesson, each new word and then its example sentence are read aloud when the word opens. You can still tap the speaker button or any word.")}${tg("hlWord","Highlight the spoken word","Marks the word being spoken in stories, podcast episodes and conversations. Some voices do not report word positions. The highlight then follows an estimate and can be slightly early or late.")}${tg("gloss","Show word-by-word reading and meaning","Shows the reading and English meaning under each word in sentences. Tap a word to open its reference card.")}${tg("showEnglish","Show full English translation","Shows the English translation under each sentence.")}</div><div class="card"><h2>🈴 Furigana (Japanese)</h2>${[["fade","Fade as I learn kanji","Readings appear above kanji you have not learned yet."],["always","Always","Readings appear above every kanji."],["never","Never","No readings above kanji."]].map(([k,t,d])=>`<label class="toggle"><input type="radio" name="furi" ${(S.settings.furi||"fade")===k?"checked":""} data-a="${A(()=>{S.settings.furi=k;save();render();})}"><span><strong>${t}</strong><br><span class="small muted">${d}</span></span></label>`).join("")}</div><div class="card"><h2>🔊 Audio speed</h2><p class="small muted">Applies to all audio in the app.</p>${speedHTML()}${tg("speaking","Speaking questions","Includes questions where you say a word aloud.")}${tg("vib","Vibration","Short vibration on every tap. One vibration for a correct answer, three for an incorrect answer.")}${view.vibMsg?`<p class="small"><strong>${esc(view.vibMsg)}</strong></p>`:""}<button class="btn sec full" data-a="${A(()=>{let ok=false;try{ok=!!(navigator.vibrate&&navigator.vibrate(300));}catch(e){}view.vibMsg=ok?"Vibration request sent. If your phone did not vibrate, this view or this phone blocks vibration.":"This browser or this view does not support vibration.";render();})}">Test vibration</button></div>
+    main:`<div class="card"><h2>Display and audio</h2>${tg("showReading","Show pinyin and romaji","Shows the pronunciation guide under words and answer options.")}${tg("autoRead","Read words and sentences aloud","In a lesson, each new word and then its example sentence are read aloud when the word opens. In quizzes, the word or sentence of a question is read aloud when the question opens (not the missing-word questions). You can still tap the speaker button or any word.")}${tg("hlWord","Highlight the spoken word","Marks the word being spoken in stories, podcast episodes and conversations. Some voices do not report word positions. The highlight then follows an estimate and can be slightly early or late.")}${tg("gloss","Show word-by-word reading and meaning","Shows the reading and English meaning under each word in sentences. Tap a word to open its reference card.")}${tg("showEnglish","Show full English translation","Shows the English translation under each sentence.")}</div><div class="card"><h2>🈴 Furigana (Japanese)</h2>${[["fade","Fade as I learn kanji","Readings appear above kanji you have not learned yet."],["always","Always","Readings appear above every kanji."],["never","Never","No readings above kanji."]].map(([k,t,d])=>`<label class="toggle"><input type="radio" name="furi" ${(S.settings.furi||"fade")===k?"checked":""} data-a="${A(()=>{S.settings.furi=k;save();render();})}"><span><strong>${t}</strong><br><span class="small muted">${d}</span></span></label>`).join("")}</div><div class="card"><h2>🔊 Audio speed</h2><p class="small muted">Applies to all audio in the app.</p>${speedHTML()}${tg("speaking","Speaking questions","Includes questions where you say a word aloud.")}${tg("vib","Vibration","Short vibration on every tap. One vibration for a correct answer, three for an incorrect answer.")}${view.vibMsg?`<p class="small"><strong>${esc(view.vibMsg)}</strong></p>`:""}<button class="btn sec full" data-a="${A(()=>{let ok=false;try{ok=!!(navigator.vibrate&&navigator.vibrate(300));}catch(e){}view.vibMsg=ok?"Vibration request sent. If your phone did not vibrate, this view or this phone blocks vibration.":"This browser or this view does not support vibration.";render();})}">Test vibration</button></div>
     <div class="card"><h2>Lesson size</h2>${[5,10,15].map(n=>`<label class="toggle"><input type="radio" name="ls" ${st.size===n?"checked":""} data-a="${A(()=>{st.size=n;save();render();})}"><span><strong>${n} new words per lesson</strong><br><span class="small muted">About ${n*2} minutes.</span></span></label>`).join("")}</div><div class="card"><h2>Speaking method</h2>${rd("recognize","Speech recognition","The app listens and checks the word automatically.",!!SR)}${rd("record","Record and compare","You record yourself, play both recordings, and mark yourself.",canRecord)}${rd("self","Listen and self-check","You play the audio, say the word, and mark yourself. No microphone is used.",true)}</div>
     <div class="card"><h2>🎤 Microphone test</h2><p class="small muted">This test shows whether this view can use the microphone and speech recognition. It uses the language of the selected tab.</p>${view.mic?`<ul class="small">${view.mic.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`:""}<button class="btn sec full" data-a="${A(micTest)}">Run microphone test</button></div>
         ${accountCard()}<div class="card"><h2>Credits</h2><p class="small" style="margin:0">Kanji stroke order: KanjiVG, by Ulrich Apel, licensed CC BY-SA 3.0. Kanji meanings and readings: KANJIDIC2, by the Electronic Dictionary Research and Development Group, licensed CC BY-SA 4.0.</p></div><div class="card"><h2>Device check</h2><p>Chinese voice: ${vz?"found ("+esc(vz.name)+")":"not found. Audio may play in the wrong accent or not at all."}</p><p>Japanese voice: ${vj?"found ("+esc(vj.name)+")":"not found. Audio may play in the wrong accent or not at all."}</p><p>Progress is saved to your account.</p></div>

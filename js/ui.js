@@ -121,14 +121,32 @@ function startMixed(any){
   sv.forEach(x=>{const q=mkQ("meaning",{w:x.w,r:x.r||x.w,m:x.m||""},l);q.vitem=x;qs.push(q);});
   if(!qs.length&&any){const lw=shuffle(allWords(l).filter(w=>isL(l,w))).slice(0,8);lw.forEach((w,i)=>qs.push(mkQ(types[i%3],w,l)));}
   if(!qs.length){note("You have no learned words yet. Start with a lesson in Learn.");return;}
-  view={s:"review",qs,i:0,finished:false};render();window.scrollTo(0,0);
+  view={s:"review",qs,i:0,finished:false};render();window.scrollTo(0,0);readQuestion();
+}
+/* Sentences session (Practise tab, and the Sentences card of a learned theme with startSentences(themeIndex)): up to 10 questions from the practice sentences of the themes you have learned:
+   Build the English meaning, Choose the missing word, Build this sentence, Listen and build. Answers go through the same checks and Mistakes as quiz questions. */
+function sentenceTargets(l){
+  const out=[];
+  themes(l).forEach((t,i)=>{if(!t.words||!CUR[l][i]||!t.words.every(w=>isL(l,w)))return;
+    (CUR[l][i].sents||[]).forEach(s=>{const n=contentToks(s).length;if(n>=2&&n<=8)out.push({s,i});});});
+  return out;
+}
+function startSentences(only){if(typeof only!=="number")only=undefined;
+  const l=S.lang,all=sentenceTargets(l).filter(x=>only===undefined||x.i===only);
+  if(!all.length){note("You have no sentences yet. Finish the lesson of a theme in Learn first: this practice uses the practice sentences of the themes you have learned.");return;}
+  const types=["toEn","blank","build","listen"],off=Math.floor(Math.random()*types.length);
+  const qs=shuffle(all).slice(0,10).map(({s,i},k)=>{
+    const ws=themes(l)[i].words,pool=poolFor(l,ws);let t=types[(k+off)%types.length];
+    if(t==="blank"){const w=ws.find(x=>s.tokens.some(z=>z[0]===x.w)),b=w&&mkBlank(l,s,w,pool);if(b)return b;t="build";}
+    return mkBuild(l,s,t,pool);});
+  view={s:"review",qs,i:0,finished:false,sents:true};render();window.scrollTo(0,0);readQuestion();
 }
 function startMistakes(){
   const l=S.lang,qs=[],bad=[];
   misList(l).slice(0,10).forEach(x=>{const q=misRebuild(x,l);if(q)qs.push(q);else bad.push(x.id);});
   bad.forEach(id=>misRemove(l,id));
   if(!qs.length){note("You have no mistakes to repeat.");return;}
-  view={s:"review",qs,i:0,finished:false,mis:true};render();window.scrollTo(0,0);
+  view={s:"review",qs,i:0,finished:false,mis:true};render();window.scrollTo(0,0);readQuestion();
 }
 function homePractise(l,r){
   const dw=dueList(l).length,dk=l==="ja"?kanjiDue().length:0,ds=savedDue(l).length,tot=dw+dk+ds;
@@ -139,7 +157,8 @@ function homePractise(l,r){
   const sv=savedList(l).length,kn=KJ(),kl=kn.filter(k=>kLearned(k.c)).length;
   const kanaN=l==="ja"?["hira","kata"].reduce((a,s)=>a+KANA[s].flatMap(x=>x[1]).filter(([c])=>kanaLearned(c)).length,0):0;
   const gd=(S[l].grDone||[]).length;
-  let rows=uiRow(uiTileIcon("star"),"My words",`${sv} saved · ${ds} due`,openVocab);
+  const sn=sentenceTargets(l).length;
+  let rows=uiRow(uiTileIcon("book"),"Sentences",sn?`${sn} sentences from your themes`:"Finish a theme to unlock",()=>startSentences())+uiRow(uiTileIcon("star"),"My words",`${sv} saved · ${ds} due`,openVocab);
   const mn=misList(l).length;rows+=uiRow(uiTileIcon("review"),"Mistakes",mn?`${mn} to repeat`:"None to repeat",startMistakes);
   if(l==="ja")rows+=uiRow(uiTileChar("私"),"Kanji",`${kl} of ${kn.length} learned`,()=>openSub("kanji"))+uiRow(uiTileChar("あ"),"Kana",`${kanaN} of 142 learned`,()=>openSub("kana"));
   rows+=uiRow(uiTileIcon("grammar"),"Grammar",`${gd} of ${GR[l].length} points`,()=>openSub("grammar"));

@@ -94,6 +94,12 @@ input[type=text]:focus{border-color:var(--acc);outline:none}
 .fb strong{display:block;font-size:17px}
 .fb p{margin:2px 0 0}
 .ex{font-size:22px;margin:0 0 4px}
+.bubblerow{display:flex;align-items:center;gap:12px;margin:6px 0 12px}
+.bubble{position:relative;flex:1;min-width:0;display:flex;align-items:center;gap:10px;border:2px solid var(--line);border-radius:16px;padding:10px 12px;background:var(--surface)}
+.bubble::before{content:"";position:absolute;left:-9px;top:50%;width:14px;height:14px;background:var(--surface);border-left:2px solid var(--line);border-bottom:2px solid var(--line);transform:translateY(-50%) rotate(45deg)}
+.bubblerow.notail .bubble::before{display:none}
+.bubble .bt{min-width:0;flex:1;overflow-wrap:anywhere}
+.bubble .bt .ex{margin:0}
 .ex mark{background:transparent;color:var(--acc);font-weight:700;text-decoration:underline;text-underline-offset:4px}
 .line{border-top:1px solid var(--line);padding:10px 0}
 .line:first-of-type{border-top:0}
@@ -370,6 +376,16 @@ input[type=text],select,textarea{border-radius:14px;min-height:50px}
 .speed{gap:8px}
 .ico{flex:none}
 .hd-hidden{display:none}
+/* Question area: prompt and answer row at the top, tiles or options at the bottom (thumb reach). Taller content grows the page. */
+.qarea{display:flex;flex-direction:column;gap:10px;min-height:calc(100svh - 230px)}
+main:has(.qarea){padding-bottom:96px}
+.qarea>.bank,.qarea>.opts{margin-top:auto}
+.qarea>.fb{margin-top:0}
+/* word tiles of the sentence exercises: the general .tile (content tile) rule removes the border, so they are styled here */
+.bank .tile,.ansrow .tile{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;min-height:48px;min-width:44px;padding:6px 14px;border:2px solid var(--line);border-bottom-width:4px;border-radius:12px;background:var(--surface);color:var(--ink);font:inherit;font-size:18px;text-align:center}
+.bank .tile:disabled,.ansrow .tile:disabled{opacity:.7}
+.bank .tile.ghost{background:var(--fill);border-color:transparent;border-bottom-width:2px}
+.bubble.stack{flex-direction:column;align-items:flex-start;gap:6px}
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
