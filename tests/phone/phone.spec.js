@@ -101,7 +101,9 @@ for (const lang of ["ja", "zh"]) {
     "lesson sentences": () => { const l = S.lang, t = themes(l)[0]; startLesson(t.words.slice(0, 5), t.title); view.step = 2; view.i = 0; render(); },
     "lesson story": () => { const l = S.lang, t = themes(l)[0]; startLesson(t.words.slice(0, 5), t.title); view.step = 3; view.i = 0; render(); },
     "quiz feedback panel": () => { const l = S.lang, t = themes(l)[0]; startLesson(t.words.slice(0, 5), t.title); view.step = 4; const i = view.quiz.findIndex(q => ["build", "blank", "lbuild", "buildEn", "gram"].includes(q.type)); view.i = Math.max(i, 0); const q = view.quiz[view.i]; q.answered = true; q.correct = false; q.dk = false; render(); },
+    "lesson new word example": () => { const l = S.lang, t = themes(l)[0]; startLesson(t.words.slice(0, 5), t.title); },
     "theme page": () => openTheme(0),
+    "theme page word list": () => openTheme(0),
     "story reader": () => openChapter(0),
     "story player": () => openPlayer("story", 0),
     "podcast player": () => openPlayer("pod", 0),
@@ -112,7 +114,7 @@ for (const lang of ["ja", "zh"]) {
       const errors = await openApp(page, lang);
       await page.evaluate(l => { S[l].placed = true; }, lang);
       await page.evaluate("(" + open.toString() + ")()");
-      const words = page.locator(".tk:not(.pu)");
+      const words = page.locator(name === "theme page word list" ? ".wordrow" : name === "lesson new word example" ? "#main .tk:not(.pu)" : ".tk:not(.pu)");
       expect(await words.count(), "tappable words on this screen").toBeGreaterThan(0);
       for (const pos of ["first", "last"]) {
         const w = words[pos]();
@@ -121,7 +123,7 @@ for (const lang of ["ja", "zh"]) {
         await expect(page.locator("#callout")).toBeVisible();
         const r = await page.evaluate(() => {
           const c = document.getElementById("callout"), b = c.getBoundingClientRect(), vw = innerWidth;
-          const inPanel = !!document.querySelector(".tk.on").closest("#fbp");
+          const inPanel = !!document.querySelector(".tk.on, .wordrow.on").closest("#fbp");
           const bars = [...document.querySelectorAll(inPanel ? "#bbarw, #tabs" : "#bbarw, #tabs, #fbp")].filter(e => !e.hidden && e.getBoundingClientRect().height > 0).map(e => e.getBoundingClientRect().top);
           const hits = [...c.querySelectorAll("button")].map(x => { const q = x.getBoundingClientRect(), el = document.elementFromPoint(q.left + q.width / 2, q.top + q.height / 2); return !!el && c.contains(el); });
           const sizes = [...c.querySelectorAll("button")].map(x => { const q = x.getBoundingClientRect(); return [q.width, q.height]; });

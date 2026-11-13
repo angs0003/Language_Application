@@ -8,6 +8,11 @@ const { ZH, JA, GR, STORY_ZH, STORY_JA, TRIP_JA, TRIP_ZH, VIDS, CASUAL } = ctx._
 const { formMatcher } = require("./lib-known");
 const PUN = /^[\s。、，,.!?！？：:；;「」『』“”"'（）()…·\-]+$/;
 let errors = 0; const err = (...m) => { errors++; console.log("ERROR:", ...m); };
+/* Optional last element of a word entry: the example sentence with word breaks (checked by tools/lib-word-breaks.js). */
+const { checkWordBreak } = require("./lib-word-breaks");
+function checkWordBreaks(name, ti, wi, w, width) {
+  checkWordBreak(name, w.slice(0, width), w[width]).forEach(m => err(`${name} theme ${ti + 1} word ${wi + 1} (${w[0]}) word breaks:`, m));
+}
 function checkLine(where, ln) {
   if (typeof ln !== "string") return err(where, "line is not a string");
   const k = ln.lastIndexOf(" = ");
@@ -23,7 +28,9 @@ for (const [name, themes, width] of [["zh", ZH, 6], ["ja", JA, 7]]) {
   themes.forEach((t, ti) => {
     if (!Array.isArray(t) || typeof t[0] !== "string" || !Array.isArray(t[1])) return err(name, "theme", ti, "bad shape");
     t[1].forEach((w, wi) => {
-      if (!Array.isArray(w) || w.length !== width || w.some(x => typeof x !== "string" || !x)) err(name, `theme ${ti + 1} word ${wi + 1}`, "bad word entry", JSON.stringify(w));
+      if (!Array.isArray(w) || (w.length !== width && w.length !== width + 1) || w.some(x => typeof x !== "string" || !x)) err(name, `theme ${ti + 1} word ${wi + 1}`, "bad word entry", JSON.stringify(w));
+      else if (w.length === width) err(name, `theme ${ti + 1} word ${wi + 1} (${w[0]})`, "has no word breaks for its example sentence (run node tools/add-word-breaks.js)");
+      else checkWordBreaks(name, ti, wi, w, width);
       if (seen.has(w[0])) err(name, "duplicate word", w[0], "in themes", seen.get(w[0]) + 1, "and", ti + 1);
       else seen.set(w[0], ti);
     });
@@ -62,7 +69,7 @@ for (const [name, themes, width] of [["zh", ZH, 6], ["ja", JA, 7]]) {
     if (!c || typeof c.t !== "string" || !c.t || typeof c.e !== "string" || !c.e || !Array.isArray(c.p) || c.p.length < 4 || c.p.length > 6) return err(w, "needs t, e and 4 to 6 pairs in p");
     c.p.forEach((x, j) => { if (!Array.isArray(x) || x.length !== 3 || typeof x[2] !== "string" || !x[2]) return err(w, "pair", j + 1, "must be [polite, casual, who]"); checkLine(`${w} polite ${j + 1}`, x[0]); checkLine(`${w} casual ${j + 1}`, x[1]); if (x[0] === x[1]) err(w, "pair", j + 1, "polite and casual are the same"); });
   });
-  console.log(`${name}: ${themes.length} themes, ${seen.size} words, ${story.length} chapters, ${GR[name].length} grammar points, ${trip.length} travel situations`);
+  console.log(`${name}: ${themes.length} themes, ${seen.size} words, ${story.length} chapters, ${GR[name].length} grammar points, ${trip.length} travel situations, ${themes.reduce((n, t) => n + t[1].filter(w => w.length === width + 1).length, 0)} of ${seen.size} example sentences with word breaks`);
 }
 {
   /* Romaji of each Japanese word must convert to its kana (the app builds furigana from the romaji). Warning only. */

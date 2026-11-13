@@ -8,7 +8,8 @@ const isAdjJa = w => !/to /.test(w[3] || "") && /い$/.test(w[0]) && /い$/.test
 function formMatcher(lang, words) {
   const exact = new Set(words.map(w => w[0])), stems = [];
   if (lang === "ja") words.forEach(w => { if ((isVerbJa(w) || isAdjJa(w)) && w[0].length >= 2) stems.push(w[0].slice(0, -1)); });
-  return t => exact.has(t) || (lang === "ja" && stems.some(s => t.length > s.length && t.length - s.length <= 6 && t.startsWith(s)));
+  const hasSuru = lang === "ja" && exact.has("する");/* する changes its stem: し, さ, せ (します, して, しない) */
+  return t => exact.has(t) || (lang === "ja" && stems.some(s => t.length > s.length && t.length - s.length <= 6 && t.startsWith(s))) || (hasSuru && /^[しさせ]/.test(t) && t.length <= 6);
 }
 function partOf(parts, i) { let p = parts[0]; parts.forEach(x => { if (i >= x.t) p = x; }); return p; }
 function grammarUpTo(parts, gr, i) { const p = partOf(parts, i); const gi = Math.min(gr.length - 1, p.g + ((i - p.t) % p.n)); const last = (i - p.t) >= p.n - 1 ? p.g + p.n - 1 : gi; return Math.max(gi, Math.min(gr.length - 1, last)); }
