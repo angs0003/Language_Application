@@ -3,7 +3,7 @@
      Pixel 9 Pro    427 x 876 visible in Chrome (427 x 952 screen)
    No other sizes are tested. Run: npm run test:phone. First time on your computer: npx playwright install chromium
    Both phones run in Chromium (always available, also in GitHub). To run the iPhone in its real engine, WebKit: npx playwright install webkit, then PW_WEBKIT=1 npm run test:phone
-   (the Pixel project is skipped in that run; GitHub does not run WebKit yet). */
+   (the Pixel project is skipped in that run). GitHub runs both: the Chromium projects, then the WebKit iPhone (see .github/workflows/test.yml). */
 const { defineConfig, devices } = require("@playwright/test");
 const launchOptions = process.env.PW_CHROME ? { executablePath: process.env.PW_CHROME } : {};
 const webkit = process.env.PW_WEBKIT === "1";
@@ -15,7 +15,7 @@ module.exports = defineConfig({
   reporter: [["list"]],
   use: { baseURL: "http://localhost:4173" },
   projects: webkit
-    ? [{ name: "iPhone 15 Pro", use: phone("iPhone 15 Pro", true) }]
+    ? [{ name: "iPhone 15 Pro (WebKit)", use: phone("iPhone 15 Pro", true) }]
     : [{ name: "iPhone 15 Pro", use: phone("iPhone 15 Pro") }, { name: "Pixel 9 Pro", use: phone("Pixel 9 Pro") }],
   webServer: { command: "node tests/phone/serve.js 4173", url: "http://localhost:4173", reuseExistingServer: true }
 });

@@ -203,7 +203,7 @@ function openWord(l,t,toks,e){
   const c=document.createElement("div");c.id="callout";c.className="callout";c.setAttribute("role","status");c.setAttribute("aria-label","Word meaning");
   c.innerHTML=`<span class="cohd"><span class="tx" lang="${L[l].hl}">${esc(sh.text)}</span>${sh.r?`<span class="cor">${esc(sh.r)}</span>`:""}</span><span class="com">${esc(sh.m||"")}</span><i class="coar"></i>`;
   placeCallout(c,b);calloutBtn=b;b.classList.add("on");b.setAttribute("aria-expanded","true");
-  say(sh.text,l);/* the word is read aloud when you tap it */
+  if("speechSynthesis" in window)say(sh.text,l);/* the word is read aloud when you tap it; without speech the callout still opens (say() would show a note, and a note redraws the screen and closes the callout) */
 }
 document.addEventListener("click",e=>{if(document.getElementById("callout")&&!e.target.closest("#callout")&&!e.target.closest(".tk,.wordrow"))closeCallout();});
 window.addEventListener("resize",closeCallout);
