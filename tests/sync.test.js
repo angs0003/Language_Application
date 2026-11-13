@@ -59,6 +59,14 @@ const check = (ok, msg) => { if (!ok) failures.push(msg); else console.log("ok:"
   check(D.W.eval(`S.ja.real[${JSON.stringify(ph)}].r`) === "repeat" && D.W.eval("realReview('ja').length") === 1, "device D receives the result and lists the phrase");
   D.W.eval(`realSet("ja",${JSON.stringify(ph)},"ok")`); await wait(2200);
   check(T.user_settings[0].data.per.ja.real[ph].r === "ok", "a changed result on device D reaches the database");
+  // The saved place of an unfinished lesson syncs to other devices
+  A.W.eval("view={s:'home'};libSec=null;S.ja.resume=null;const t=themes('ja')[0];startLesson(t.words.slice(0,5),t.title);lessonMove(1);lessonMove(1)"); await wait(2200);
+  check(T.user_settings[0].data.per.ja.resume && T.user_settings[0].data.per.ja.resume.i === 2, "a saved lesson place is saved in the database");
+  const ee = makeDom({ db: mockDB(store, user), failures }); await ready(ee); await wait(300);
+  const E = tools(ee, failures);
+  check(E.W.eval("S.ja.resume && S.ja.resume.step") === 0 && E.W.eval("S.ja.resume.i") === 2 && E.W.eval("S.ja.resume.words.length") === 5, "another device receives the saved lesson place");
+  E.W.eval("S.ja.resume=null;save()"); await wait(2200);
+  check(T.user_settings[0].data.per.ja.resume === null, "clearing the saved place reaches the database");
   failures.forEach(f => console.log("FAIL:", f));
   console.log(failures.length ? failures.length + " failure(s)." : "Sync test OK.");
   process.exit(failures.length ? 1 : 0);

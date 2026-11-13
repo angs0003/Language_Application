@@ -151,6 +151,9 @@ for (const lang of ["ja", "zh"]) {
     await expect(start).toBeVisible();
     await start.click();
     await expect(page.locator("#main")).not.toBeEmpty();
+    const back = page.locator("#bbar button", { hasText: "Back" });
+    await expect(back, "Back is active on the first word").toBeEnabled();
+    const bb = await back.boundingBox(); expect(bb.width).toBeGreaterThanOrEqual(44); expect(bb.height).toBeGreaterThanOrEqual(44);
     await checkScreen(page, `${lang} lesson`);
     expect(errors, "script errors").toEqual([]);
   });

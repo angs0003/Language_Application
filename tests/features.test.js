@@ -92,6 +92,40 @@ const check = (ok, msg) => { if (!ok) failures.push(msg); else console.log("ok:"
     check(!!d.getElementById("callout") && !d.querySelector(".sheet") && d.querySelector(".wordrow.on"), "tapping a word in the theme word list opens the callout, not the bottom sheet");
     d.body.click();
   }
+  // --- Lesson: Back leaves the lesson and the place is saved ---
+  {
+    W.eval("S.ja.resume=null");
+    W.eval("window.__t=(()=>{const l='ja',ths=themes(l),i=ths.findIndex(t=>t.words&&!t.words.every(w=>isL(l,w)));return {i,todo:ths[i].words.filter(w=>!isL(l,w)),title:ths[i].title};})();startLesson(__t.todo,__t.title)");
+    const backBtn = () => [...d.querySelectorAll("#bbar button")].find(b => b.textContent.trim() === "Back");
+    check(!!backBtn() && !backBtn().disabled, "Back is active on the first word of a lesson");
+    backBtn().click(); check(W.eval("view.s") !== "lesson" && W.eval("S.ja.resume") === null, "Back on the first word leaves the lesson without saving a place");
+    W.eval("startLesson(__t.todo,__t.title)"); click("Continue"); click("Continue");
+    check(W.eval("S.ja.resume.step") === 0 && W.eval("S.ja.resume.i") === 2 && W.eval("S.ja.resume.words.length") === W.eval("__t.todo.length"), "moving through a lesson saves the place");
+    backBtn().click(); check(W.eval("view.i") === 1 && W.eval("S.ja.resume.i") === 1, "Back on a later word goes to the earlier word and saves it");
+    click("Continue");
+    d.querySelector('[aria-label="Exit"]').click();
+    check(M().includes("Your place in this lesson is saved"), "the exit panel says that the place is saved");
+    click("Exit now"); check(W.eval("view.s") !== "lesson", "the exit panel leaves the lesson");
+    tab("Learn"); check(M().includes("Continue lesson") && M().includes("You stopped at New words, word 3 of") && d.querySelectorAll("#main .btn.pri").length === 1, "the Learn tab offers Continue lesson with one primary button and shows the place");
+    click("Continue lesson"); check(W.eval("view.s") === "lesson" && W.eval("view.step") === 0 && W.eval("view.i") === 2, "Continue lesson opens the lesson at the saved word");
+    for (let n = 0; n < 40 && W.eval("view.step") < 4; n++) click("Continue");
+    check(W.eval("view.step") === 4 && W.eval("S.ja.resume.step") === 4 && W.eval("S.ja.resume.i") === 0, "leaving during the quiz saves the start of the quiz");
+    W.eval("goHome()"); W.eval("startLesson(__t.todo,__t.title)");
+    check(W.eval("view.step") === 4 && W.eval("view.i") === 0, "the lesson continues at the start of the quiz");
+    W.eval("goHome()"); tab("Learn"); click("Start from the beginning");
+    check(W.eval("view.s") === "lesson" && W.eval("view.step") === 0 && W.eval("view.i") === 0 && W.eval("S.ja.resume") === null, "Start from the beginning opens the first word and clears the saved place");
+    click("Continue"); W.eval("view.step=5;view.i=0;render()");
+    check(W.eval("S.ja.resume") === null, "finishing a lesson clears the saved place");
+    W.eval("S.ja.srs={};save()");
+    // Repeat lessons never save a place
+    W.eval("startLesson(__t.todo,__t.title,true)"); click("Continue"); check(W.eval("S.ja.resume") === null, "a repeat lesson does not save a place");
+    // Review, test: Back on the first question asks before leaving
+    W.eval("goHome()"); await W.eval("startTest(0)"); await wait(50);
+    check(W.eval("view.s") === "test" && !backBtn().disabled, "Back is active on the first question of a test");
+    backBtn().click(); check(!!d.querySelector(".confirm") && M().includes("Exit now?"), "Back on the first test question opens the exit panel");
+    click("Stay"); check(W.eval("view.s") === "test" && !d.querySelector(".confirm"), "Stay keeps the test open");
+    W.eval("goHome()");
+  }
   W.eval('openTrip(0)'); W.eval('openPlayer("trip",0)'); d.querySelector(".plline .tk:not(.pu)").click(); click("Save word"); d.body.click();
   // --- My words ---
   W.eval("goHome()"); tab("Practise"); click("My words");

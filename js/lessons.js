@@ -69,7 +69,7 @@ function screenTest(){
   }
   const q=v.qs[v.i];view.q=q;
   const r={row:"title",title:"Test out: "+v.title,exit:true,prog:`<div class="ptext">Test out: question ${v.i+1} of ${v.qs.length}</div><div class="psub">Pass mark: ${need} correct</div><div class="bar"><i style="width:${Math.round(v.i/v.qs.length*100)}%"></i></div>`,
-    main:`<div class="card">${qHTML(q,{noAI:true})}</div>`,back:{label:"Back",fn:()=>{v.i--;render();window.scrollTo(0,0);},dis:v.i===0}};
+    main:`<div class="card">${qHTML(q,{noAI:true})}</div>`,back:{label:"Back",fn:()=>{if(v.i===0){view.confirm=true;render();window.scrollTo(0,0);}else{v.i--;render();window.scrollTo(0,0);}}}};
   if(!q.answered)r.next={label:"Check answer",fn:()=>{checkQ(q);render();},dis:!canCheck(q)};
   else r.next={label:"Continue",fn:()=>{if(v.i>=v.qs.length-1)v.finished=true;else v.i++;render();window.scrollTo(0,0);}};
   return r;
@@ -93,7 +93,7 @@ function screenPlace(){
   const q=v.qs[v.i];view.q=q;
   const r={row:"title",title:"Placement quiz",exit:true,
     prog:`<div class="ptext">Placement quiz: question ${v.i+1} of up to ${v.qs.length}</div><div class="psub">Incorrect answers in a row: ${v.streak} of 3</div><div class="bar"><i style="width:${Math.round(v.i/v.qs.length*100)}%"></i></div>`,
-    main:`<div class="card">${qHTML(q,{noAI:true})}</div>`,back:{label:"Back",fn:()=>{v.i--;render();window.scrollTo(0,0);},dis:v.i===0}};
+    main:`<div class="card">${qHTML(q,{noAI:true})}</div>`,back:{label:"Back",fn:()=>{if(v.i===0){view.confirm=true;render();window.scrollTo(0,0);}else{v.i--;render();window.scrollTo(0,0);}}}};
   if(!q.answered)r.next={label:"Check answer",fn:()=>{checkQ(q);render();},dis:!canCheck(q)};
   else r.next={label:"Continue",fn:()=>{if(v.streak>=3||v.i>=v.qs.length-1)v.finished=true;else v.i++;render();window.scrollTo(0,0);}};
   return r;
@@ -277,12 +277,19 @@ Reply with only JSON in this shape:
   }catch(e){v.bState=aiErr(e);}
   if(view===v)render();
 }
-function startLesson(words,title,repeat){
+/* A lesson remembers where you stopped (S[lang].resume: theme, words, step, item). Starting the same lesson again continues there. */
+function lessonResumeFor(l,words){const r=S[l]&&S[l].resume;if(!r||!Array.isArray(r.words)||!words||!words.length)return null;return r.ti===themeIdxOf(l,words[0])&&r.words[0]===words[0].w&&r.words.length===words.length?r:null;}
+function lessonResumeText(l,r){const n=r.words.length;return r.step===0?"New words, word "+(r.i+1)+" of "+n:STEPS[r.step].replace(/^\S+\s/,"");}
+function lessonSave(v){if(!v||v.s!=="lesson"||v.repeat)return;const l=v.lang,st=S[l];if(v.step===0&&v.i===0)st.resume=null;else st.resume={ti:themeIdxOf(l,v.words[0]),words:v.words.map(w=>w.w),title:v.title,step:v.step,i:v.step===4?0:v.i,u:Date.now()};save();}
+function startLesson(words,title,repeat,fresh){
   const l=S.lang,types=["meaning","listen","type","speak"];
   const quiz=buildQuiz(l,words,S[l].lc||0);
   const g=GR[l][grFor(l,themeIdxOf(l,words[0]))];
   view={s:"lesson",lang:l,words,title,repeat:!!repeat,g,sents:((CUR[l][themeIdxOf(l,words[0])]||{}).sents)||[],step:0,i:0,quiz,ex:{},gex:[],gq:[],aState:"loading",bState:"loading",story:null,dia:null,confirm:false,sheet:null};
   {const ch=chapter(l,themeIdxOf(l,words[0]));view.story=ch?{title:ch.title,lines:ch.lines}:null;view.aState="none";view.bState="";}
+  const rs=!repeat&&!fresh?lessonResumeFor(l,words):null;
+  if(rs){view.step=Math.max(0,Math.min(rs.step,5));view.i=view.step>=4?0:Math.max(0,Math.min(rs.i,lessonItemCount(view)-1));}
+  else if(fresh&&!repeat&&S[l].resume){S[l].resume=null;save();}
   render();window.scrollTo(0,0);
 }
 function lessonItemCount(v){const n=v.words.length;return [n,1+v.gq.length,1,1,v.quiz.length,1][v.step];}
@@ -291,6 +298,7 @@ function lessonMove(d){
   if(d>0){if(v.i<n-1)v.i++;else{v.step++;v.i=0;}}
   else{if(v.i>0)v.i--;else if(v.step>0){v.step--;v.i=lessonItemCount(v)-1;}}
   if(v.step===2&&!v.sents.length){v.step+=d>0?1:-1;v.i=d>0?0:lessonItemCount(v)-1;}
+  lessonSave(v);
   render();window.scrollTo(0,0);
 }
 function aiMsg(st,what){return st==="none"?"This version has no AI. "+what:st;}
@@ -301,7 +309,7 @@ function screenLesson(){
   const counts=[ws.length,1+v.gq.length,1,1,v.quiz.length,1];let pos=0;for(let k=0;k<v.step;k++)pos+=counts[k];pos+=v.i;const total=counts.reduce((a,b)=>a+b,0);
   const r={row:"title",title:unitLabel,exit:true,
     prog:`<div class="ptext">Step ${v.step+1-(!v.sents.length&&v.step>2?1:0)} of ${v.sents.length?6:5}: ${STEPS[v.step]}</div><div class="psub">${itemNames[v.step]&&n>1?itemNames[v.step]+" "+(v.i+1)+" of "+n:""}</div><div class="bar"><i style="width:${Math.round(pos/total*100)}%"></i></div>`,
-    back:{label:"Back",fn:()=>lessonMove(-1),dis:v.step===0&&v.i===0},next:{label:"Continue",fn:()=>lessonMove(1)}};
+    back:{label:"Back",fn:()=>{if(v.step===0&&v.i===0)goHome();else lessonMove(-1);}},next:{label:"Continue",fn:()=>lessonMove(1)}};
   let h="";
   const retry=(fn,label)=>`<p><button class="btn sec full" data-a="${A(fn)}">${label}</button></p>`;
   if(v.step===0){
@@ -339,7 +347,7 @@ function screenLesson(){
     h=`<div class="card"><h2>Summary</h2><p>You finished ${esc(unitLabel)}.</p><p>Quiz result: ${correct} of ${v.quiz.length} correct.</p>${v.gq.length?`<p>Grammar questions: ${gc} of ${v.gq.length} correct.</p>`:""}<p>Grammar point: ${esc(v.g[0])}.</p></div>
     <div class="card"><h2>Words</h2><ul class="units">${res.map(x=>`<li><span>${cjk(l,x.w.w)} ${esc(x.w.r)}<br><span class="status">${esc(x.w.m)}</span></span><span class="status">${x.ok?"Correct":"Incorrect: added to today’s review"}</span></li>`).join("")}</ul></div>
     <div class="card"><p class="small muted" style="margin:0">✅ Progress saved in ${storeWhere}.</p></div>`;
-    if(!v.saved){v.saved=true;res.forEach(x=>{const e=S[l].srs[x.w.w];if(!e||!x.ok)srsSet(l,x.w.w,x.ok);});if(!v.repeat){S[l].gi++;{const gd=S[l].grDone||(S[l].grDone=[]),gx=GR[l].indexOf(v.g);if(!gd.includes(gx))gd.push(gx);}S[l].lc=(S[l].lc||0)+1;S[l].lst=(S[l].lst||0)+1;S[l].lastLesson=ws.map(w=>w.w);histPush(l,"🆕 Lesson: "+v.title);}save();}
+    if(!v.saved){v.saved=true;res.forEach(x=>{const e=S[l].srs[x.w.w];if(!e||!x.ok)srsSet(l,x.w.w,x.ok);});if(!v.repeat){S[l].gi++;{const gd=S[l].grDone||(S[l].grDone=[]),gx=GR[l].indexOf(v.g);if(!gd.includes(gx))gd.push(gx);}S[l].lc=(S[l].lc||0)+1;S[l].lst=(S[l].lst||0)+1;S[l].lastLesson=ws.map(w=>w.w);histPush(l,"🆕 Lesson: "+v.title);}S[l].resume=null;save();}
     h+=recsHTML(l,{k:"lesson",ti:themeIdxOf(l,ws[0]),g:GR[l].indexOf(v.g)});
     r.back={label:"Back",fn:()=>lessonMove(-1)};
     r.next={label:"Go to home",fn:goHome};
@@ -367,7 +375,7 @@ function screenReview(){
       back:{label:"Back",dis:true},next:{label:"Go to home",fn:()=>{histPush(S.lang,"🔁 Review");save();goHome();}}};}
   const q=v.qs[v.i];view.q=q;
   const r={row:"title",title:v.mis?"Mistakes":"Review",exit:true,prog:`<div class="ptext">${v.mis?"Mistakes":"Review"}: question ${v.i+1} of ${v.qs.length}</div><div class="psub">Each answer is saved when you check it.</div><div class="bar"><i style="width:${Math.round(v.i/v.qs.length*100)}%"></i></div>`,
-    main:`<div class="card">${qHTML(q)}</div>`,back:{label:"Back",fn:()=>{v.i--;render();window.scrollTo(0,0);},dis:v.i===0}};
+    main:`<div class="card">${qHTML(q)}</div>`,back:{label:"Back",fn:()=>{if(v.i===0){view.confirm=true;render();window.scrollTo(0,0);}else{v.i--;render();window.scrollTo(0,0);}}}};
   if(!q.answered){if(q.type==="speak")r.next={label:"Continue",dis:true};else r.next={label:"Check answer",fn:()=>{checkQ(q);render();},dis:!canCheck(q)};}
   else r.next={label:"Continue",fn:()=>{if(v.mis&&!q.correct&&!q.again){const x=misList(S.lang).find(m=>m.id===q.mid),nq=x&&misRebuild(x,S.lang);q.again=true;if(nq){nq.again=true;v.qs.push(nq);}}if(v.i>=v.qs.length-1)v.finished=true;else v.i++;render();window.scrollTo(0,0);}};
   return r;
