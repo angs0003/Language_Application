@@ -103,6 +103,8 @@ input[type=text]:focus{border-color:var(--acc);outline:none}
 .units li{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:8px 0;border-top:1px solid var(--line)}
 .units li:first-child{border-top:0}
 .status{font-size:14px;color:var(--muted);white-space:nowrap}
+.units li>.status:last-child{white-space:normal;text-align:right;max-width:50%}
+.units li>span:first-child{min-width:0;overflow-wrap:anywhere}
 .status.cur{color:var(--acc);font-weight:700}
 .toggle{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-top:1px solid var(--line);cursor:pointer}
 .toggle:first-of-type{border-top:0}

@@ -171,6 +171,12 @@ for (const lang of ["ja", "zh"]) {
       await page.evaluate(sc.open); await page.waitForTimeout(150);
       await expect(page.locator("#main")).not.toBeEmpty();
       await checkScreen(page, `${lang} ${sc.name}`, { maxPrimary: sc.maxPrimary });
+      // Wide-font stress: the machine that runs the tests in GitHub has other fonts than a phone or a developer's computer, and text that cannot wrap then pushes the page sideways.
+      // A monospace font is wider than any font the app uses, so a screen that fits with it fits everywhere.
+      await page.addStyleTag({ content: "*{font-family:'Courier New',monospace !important}" });
+      await page.waitForTimeout(100);
+      const wide = await page.evaluate(vw => document.documentElement.scrollWidth - vw, page.viewportSize().width);
+      expect(wide, `${lang} ${sc.name}: with a wide font the page scrolls sideways by ${wide} px (text that cannot wrap)`).toBeLessThanOrEqual(1);
       expect(errors, "script errors").toEqual([]);
     });
   }
