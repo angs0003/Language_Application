@@ -21,7 +21,7 @@ async function openApp(page, lang) {
   return errors;
 }
 
-async function checkScreen(page, name) {
+async function checkScreen(page, name, opts = {}) {
   const r = await page.evaluate(vw => {
     const vis = el => { const b = el.getBoundingClientRect(), s = getComputedStyle(el); return b.width > 0 && b.height > 0 && s.visibility !== "hidden" && s.display !== "none"; };
     const label = el => (el.getAttribute("aria-label") || el.textContent || el.getAttribute("placeholder") || "").trim().replace(/\s+/g, " ").slice(0, 40);
@@ -36,7 +36,7 @@ async function checkScreen(page, name) {
     };
   }, page.viewportSize().width); // the configured screen width: in phone emulation window.innerWidth grows with wide content, which hides sideways overflow
   expect(r.overflow, `${name}: the page scrolls sideways by ${r.overflow} px`).toBeLessThanOrEqual(1);
-  expect(r.primaries, `${name}: more than one visible primary button`).toBeLessThanOrEqual(1);
+  expect(r.primaries, `${name}: more than ${opts.maxPrimary || 1} visible primary button(s)`).toBeLessThanOrEqual(opts.maxPrimary || 1);
   const fresh = [];
   for (const s of r.small) {
     const id = `${name} | ${s.key} | ${s.label}`; found.add(id);
@@ -161,6 +161,25 @@ for (const lang of ["ja", "zh"]) {
     expect(await status()).toMatch(/^Words · 3 of /);
     expect(errors, "script errors").toEqual([]);
   });
+  // Every screen of the registry (tests/phone/screens.js) passes the generic checks
+  for (const sc of require("./screens.js").screens) {
+    if (sc.langs && !sc.langs.includes(lang)) continue;
+    test(`${lang} screen: ${sc.name}`, async ({ page }) => {
+      const errors = await openApp(page, lang);
+      await page.evaluate(l => { S[l].placed = true; save(); render(); }, lang);
+      if (sc.setup) await page.evaluate(sc.setup);
+      await page.evaluate(sc.open); await page.waitForTimeout(150);
+      await expect(page.locator("#main")).not.toBeEmpty();
+      await checkScreen(page, `${lang} ${sc.name}`, { maxPrimary: sc.maxPrimary });
+      // Wide-font stress: the machine that runs the tests in GitHub has other fonts than a phone or a developer's computer, and text that cannot wrap then pushes the page sideways.
+      // A monospace font is wider than any font the app uses, so a screen that fits with it fits everywhere.
+      await page.addStyleTag({ content: "*{font-family:'Courier New',monospace !important}" });
+      await page.waitForTimeout(100);
+      const wide = await page.evaluate(vw => document.documentElement.scrollWidth - vw, page.viewportSize().width);
+      expect(wide, `${lang} ${sc.name}: with a wide font the page scrolls sideways by ${wide} px (text that cannot wrap)`).toBeLessThanOrEqual(1);
+      expect(errors, "script errors").toEqual([]);
+    });
+  }
   // Answer choices low on the screen (thumb reach): tiles (.bank) or options (.opts) at the bottom, prompt and answer row at the top
   for (const mode of ["toEn", "listen", "build", "blank"]) {
     test(`${lang} question choices low on screen: ${mode}`, async ({ page }) => {

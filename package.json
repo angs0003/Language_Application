@@ -4,13 +4,14 @@
   "description": "Language Steps: Chinese and Japanese learning app (static PWA with Supabase).",
   "scripts": {
     "validate": "node tools/validate-content.js",
-    "test": "node tools/validate-content.js && node tests/smoke.js && node tests/sync.test.js && node tests/features.test.js && node tests/kanji.test.js && node tests/casual.test.js",
+    "test": "node tools/validate-content.js && node tests/smoke.js && node tests/sync.test.js && node tests/features.test.js && node tests/kanji.test.js && node tests/casual.test.js && node tests/hooks.test.js && node tests/gh.test.js && node tests/screens.test.js",
     "upload": "node tools/upload-content.js",
     "lint": "eslint .",
     "format": "prettier --write tools tests .claude docs README.md CLAUDE.md",
     "dict": "node tools/check-dictionary.js",
     "dict:get": "gh release download --repo scriptin/jmdict-simplified --pattern \"jmdict-eng-[0-9]*.json.zip\" --dir tmp/dict --clobber && unzip -o -q \"tmp/dict/jmdict-eng-*.json.zip\" -d tmp/dict",
-    "test:phone": "playwright test"
+    "test:phone": "playwright test",
+    "shot": "node tools/shot.js"
   },
   "devDependencies": {
     "@playwright/test": "1.65.0",
