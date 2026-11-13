@@ -23,7 +23,7 @@ function podSegs(l,i){
   const t=themes(l)[i],ch=chapter(l,i),segs=[];
   t.words.forEach(w=>segs.push({part:"Words",lang:l,text:w.w,rate:0.9,tokens:[[w.w,w.r,w.m]],rd:w.r,en:w.m,gap:1500}));
   const map=spkMap(ch.lines);
-  ch.lines.forEach(x=>{const k=spkSkip(x),si=spkIdx(map,x),rd=x.tokens.map(y=>y[1]).filter(Boolean).join(" ");segs.push({part:"Story",lang:l,text:spokenText(x),rate:0.9,tokens:x.tokens,skip:k,si,rd,en:k?x.english.replace(/^[^:：]{1,30}[:：]\s*/,""):x.english,gap:900});});
+  ch.lines.forEach(x=>{const k=spkSkip(x),si=spkIdx(map,x),rd=x.tokens.slice(k).map(y=>y[1]).filter(Boolean).join(" ");segs.push({part:"Story",lang:l,text:spokenText(x),rate:0.9,tokens:x.tokens,skip:k,si,nm:k?x.tokens[0][0]:"",rd,en:k?x.english.replace(/^[^:：]{1,30}[:：]\s*/,""):x.english,gap:900});});
   return segs;
 }
 function openPod(i){view={s:"pod",i,segs:podSegs(S.lang,i),idx:0,playing:false,slow:false,finished:false};render();window.scrollTo(0,0);}
@@ -68,7 +68,8 @@ function screenPod(){
     v.segs.forEach((s,k)=>{
       if(s.part!==lastPart){lastPart=s.part;h+=`<p class="podlab">${esc(s.part)}</p>`;}
       const en=sub==="both"&&s.en?`<span class="en">– ${esc(s.en)}</span>`:"";
-      h+=`<button class="podit${s.part==="Story"?" sent":""}${k===v.idx&&(v.playing||v.idx>0)?" now":""}" data-seg="${k}" data-a="${A(()=>podGo(v,k))}"><span lang="${L[l].hl}" class="cjk2">${s.tokens.map(x=>`<span class="tk pl">${esc(x[0])}</span>`).join("")}</span> <span class="rdg">${esc(s.rd||"")}</span> ${en}</button>`;
+      const av=s.nm?`<span class="avatar a${(s.si||0)%2}" role="img" aria-label="${esc(s.nm)}" lang="${L[l].hl}">${esc([...s.nm][0])}</span>`:"";
+      h+=`<button class="podit${s.part==="Story"?" sent":""}${k===v.idx&&(v.playing||v.idx>0)?" now":""}" data-seg="${k}" data-a="${A(()=>podGo(v,k))}">${av}<span class="pt"><span lang="${L[l].hl}" class="cjk2">${s.tokens.map((x,j)=>`<span class="tk pl${j<(s.skip||0)?" spkname":""}">${esc(x[0])}</span>`).join("")}</span> <span class="rdg">${esc(s.rd||"")}</span> ${en}</span></button>`;
     });
     h+=`</div>`;
   }

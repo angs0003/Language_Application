@@ -98,6 +98,24 @@ input[type=text]:focus{border-color:var(--acc);outline:none}
 .bubble{position:relative;flex:1;min-width:0;display:flex;align-items:center;gap:10px;border:2px solid var(--line);border-radius:16px;padding:10px 12px;background:var(--surface)}
 .bubble::before{content:"";position:absolute;left:-9px;top:50%;width:14px;height:14px;background:var(--surface);border-left:2px solid var(--line);border-bottom:2px solid var(--line);transform:translateY(-50%) rotate(45deg)}
 .bubblerow.notail .bubble::before{display:none}
+.blist{display:flex;flex-direction:column;gap:2px;padding-bottom:8px}
+.brow{display:flex;align-items:flex-start;gap:12px;margin:8px 0}
+.brow .bubble{align-items:flex-start}
+.brow .bubble::before{top:22px;transform:rotate(45deg)}
+.brow.narr .bubble::before{display:none}
+.brow.now .bubble{border-color:var(--acc);background:var(--tint)}
+.brow.now .bubble::before{background:var(--tint);border-color:var(--acc)}
+.brow .bt .gl{display:flex;flex-wrap:wrap;gap:2px 4px}
+.brow .bt .eng{margin:4px 0 0;color:var(--muted);font-size:16px}
+.brow[data-skip="2"] .gl>.tk:nth-child(-n+2){display:none}
+.avatar{flex:none;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;background:var(--tint);color:var(--acc);border:2px solid var(--acc)}
+.avatar.a1{background:var(--fill);color:var(--ink);border-color:var(--line)}
+.spkname,.tk.pl.spkname{display:none}
+.card.compact{padding:4px 16px}
+.card.compact>summary{min-height:44px}
+.brow .tk:not(.pu){min-width:44px;min-height:44px;display:inline-flex;flex-direction:column;align-items:center;justify-content:center}
+.podit.sent{display:flex;align-items:flex-start;gap:10px}
+.podit.sent .pt{flex:1;min-width:0}
 .bubble .bt{min-width:0;flex:1;overflow-wrap:anywhere}
 .bubble .bt .ex{margin:0}
 .ex mark{background:transparent;color:var(--acc);font-weight:700;text-decoration:underline;text-underline-offset:4px}

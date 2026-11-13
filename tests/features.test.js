@@ -120,6 +120,46 @@ const check = (ok, msg) => { if (!ok) failures.push(msg); else console.log("ok:"
     check(!!d.querySelector("details[data-k='podopt']") && !d.querySelector("details[data-k='podopt']").open, "the options are collapsed by default");
     W.eval("speechSynthesis.speak=__sp1;goHome()");
   }
+  // --- Story reader: one bubble per line, Continue shows and reads the next line ---
+  {
+    W.eval("window.__sp3=speechSynthesis.speak;window.__st=[];speechSynthesis.speak=u=>{__st.push(u.text);setTimeout(()=>u.onend&&u.onend(),1);};S.settings.autoRead=true;S.settings.sub='both';S.ja.chRead=[]");
+    W.eval("openChapter(0)"); const rows = () => [...d.querySelectorAll(".brow")], n = W.eval("chapter('ja',0).lines.length");
+    check(rows().length === 1 && d.getElementById("prog").textContent.includes("Line 1 of " + n), "the story opens with the first line in one bubble");
+    check(!!rows()[0].querySelector(".avatar") && rows()[0].querySelector(".avatar").getAttribute("aria-label") === W.eval("chapter('ja',0).lines[0].tokens[0][0]") && rows()[0].getAttribute("data-skip") === "2", "a line with a speaker has an avatar with the speaker's name and hides the name tokens");
+    check(W.eval("__st.length") === 1 && W.eval("__st[0]") === W.eval("spokenText(chapter('ja',0).lines[0])") && !W.eval("__st[0]").startsWith(W.eval("chapter('ja',0).lines[0].tokens[0][0]")), "the first line is read aloud when the story opens, without the speaker's name");
+    check(rows()[0].querySelector(".eng") && !rows()[0].querySelector(".eng").textContent.includes(":"), "the English is under the line and has no speaker name");
+    W.eval("__st.length=0"); click("Continue");
+    check(rows().length === 2 && d.getElementById("prog").textContent.includes("Line 2 of") && W.eval("__st[0]") === W.eval("spokenText(chapter('ja',0).lines[1])"), "Continue shows the next line and reads it aloud");
+    check(!!rows()[0].querySelector(".avatar.a0") && !!rows()[1].querySelector(".avatar.a1"), "the two speakers have different avatar styles");
+    W.eval("__st.length=0"); [...d.querySelectorAll("#bbar button")].find(b => b.textContent.trim() === "Back").click();
+    check(rows().length === 1 && W.eval("view.shown") === 1 && W.eval("view.s") === "story", "Back removes the last bubble");
+    W.eval("__st.length=0;S.settings.autoRead=false"); click("Continue"); check(rows().length === 2 && W.eval("__st.length") === 0, "with the setting off the next line is shown but not read");
+    W.eval("S.settings.autoRead=true");
+    d.querySelector(".brow .play").click(); check(W.eval("__st.length") === 1, "the speaker button of a bubble reads that line");
+    check(!d.querySelector("details[data-k='storyopt']").open, "the options are collapsed by default");
+    W.eval("S.settings.sub='target';render()"); check(!d.querySelector(".brow .eng"), "Target only hides the English");
+    W.eval("S.settings.sub='none';render()"); check(M().includes("Text hidden"), "No text hides the lines");
+    W.eval("S.settings.sub='both';render()");
+    check(W.eval("S.ja.chRead.includes(0)") === false, "reading the lines does not yet mark the chapter as read");
+    click("Show all lines"); check(rows().length === n && [...d.querySelectorAll("#bbar button")].some(b => /^Answer \d+ questions$/.test(b.textContent.trim())) && !M().includes("Show all lines"), "Show all lines shows every line and the main button becomes Answer questions");
+    [...d.querySelectorAll("#bbar button")].find(b => b.textContent.includes("Answer")).click(); check(W.eval("view.phase") === "q", "Answer questions opens the questions");
+    W.eval("openChapter(0)"); for (let i = 1; i < 3; i++) click("Continue");
+    [...d.querySelectorAll("#bbar button")].find(b => b.textContent.trim() === "Back").click(); [...d.querySelectorAll("#bbar button")].find(b => b.textContent.trim() === "Back").click();
+    [...d.querySelectorAll("#bbar button")].find(b => b.textContent.trim() === "Back").click(); check(W.eval("view.s") !== "story", "Back on the first line leaves the story");
+    // entry points open the new reader
+    W.eval("S.ja.srs={};themes('ja')[0].words.forEach(w=>{S.ja.srs[w.w]={b:3,d:Date.now()+1e9,u:Date.now()};})");
+    W.eval("goHome()"); tab("Listen"); click("Stories"); [...d.querySelectorAll(".tile")].find(t => t.textContent.includes("Story")).click();
+    check(W.eval("view.s") === "story" && W.eval("S.ja.lastListen.kind") === "story", "a story tile in Listen opens the story reader and is remembered for Continue");
+    W.eval("goHome()"); tab("Listen"); click("All"); const cont = [...d.querySelectorAll("button")].find(b => b.getAttribute("data-a") && b.className.includes("playbig")); if (cont) cont.click();
+    check(W.eval("view.s") === "story", "the Continue card in Listen opens the story reader");
+    W.eval("speechSynthesis.speak=__sp3;S.ja.srs={};goHome()");
+  }
+  // --- Podcast story lines look like the story bubbles ---
+  {
+    W.eval("openPod(0)"); const st = [...d.querySelectorAll(".podit.sent")];
+    check(st.length > 0 && st.every(b => b.querySelector(".avatar")) && st[0].querySelector(".spkname") && !st[0].querySelector(".rdg").textContent.includes(W.eval("chapter('ja',0).lines[0].tokens[0][1]")), "podcast story lines have an avatar and no speaker name or reading of the name");
+    W.eval("goHome()");
+  }
   // --- Sentences session and reading questions aloud ---
   {
     W.eval("window.__sp2=speechSynthesis.speak;window.__rq=[];speechSynthesis.speak=u=>{__rq.push(u.text);setTimeout(()=>u.onend&&u.onend(),1);};S.settings.autoRead=true;S.ja.resume=null;S.ja.srs={};window.__t0=themes('ja')[0];__t0.words.forEach(w=>{S.ja.srs[w.w]={b:3,d:Date.now()+1e9,u:Date.now()};})");
