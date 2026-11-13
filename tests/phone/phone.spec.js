@@ -180,6 +180,51 @@ for (const lang of ["ja", "zh"]) {
       expect(errors, "script errors").toEqual([]);
     });
   }
+  // Answer choices low on the screen (thumb reach): tiles (.bank) or options (.opts) at the bottom, prompt and answer row at the top
+  for (const mode of ["toEn", "listen", "build", "blank"]) {
+    test(`${lang} question choices low on screen: ${mode}`, async ({ page }) => {
+      const errors = await openApp(page, lang);
+      await page.evaluate(([l, m]) => {
+        S[l].placed = true;
+        const th = themes(l)[0], s = CUR[l][0].sents[0], pool = poolFor(l, th.words);
+        let q;
+        if (m === "blank") { const t = contentToks(s)[0]; q = mkBlank(l, s, { w: t[0], r: t[1], m: t[2] }, pool); }
+        else q = mkBuild(l, s, m, pool);
+        view = { s: "review", qs: [q], i: 0, finished: false, sents: true };
+        render();
+      }, [lang, mode]);
+      const sel = mode === "blank" ? ".opts" : ".bank";
+      await expect(page.locator(sel)).toBeVisible();
+      const r = await page.evaluate(sel => {
+        const b = document.querySelector(sel).getBoundingClientRect(), a = document.querySelector(".ansrow"), bar = document.getElementById("bbarw").getBoundingClientRect();
+        const prompt = document.querySelector(".qarea .q").getBoundingClientRect();
+        return { vh: innerHeight, bottom: b.bottom, top: b.top, barTop: bar.top, ansBottom: a ? a.getBoundingClientRect().bottom : null, promptTop: prompt.top, scrollW: document.documentElement.scrollWidth - innerWidth };
+      }, sel);
+      console.log(`${lang} ${mode} ${r.vh}px: choices ${Math.round(r.top)}-${Math.round(r.bottom)}, bar top ${Math.round(r.barTop)}, answer row bottom ${r.ansBottom && Math.round(r.ansBottom)}`);
+      expect(r.bottom, "choices end above the bottom bar").toBeLessThanOrEqual(r.barTop);
+      expect(r.bottom, "choices end in the lowest 25% of the screen").toBeGreaterThanOrEqual(r.vh * 0.75);
+      expect(r.promptTop, "the prompt stays at the top").toBeLessThan(r.vh * 0.4);
+      if (r.ansBottom !== null) expect(r.ansBottom, "the answer row is above the tiles").toBeLessThan(r.top);
+      await checkScreen(page, `${lang} question ${mode}`);
+      expect(errors, "script errors").toEqual([]);
+    });
+  }
+  // Sentences session from the Practise tab: every question screen of the session fits the phone
+  test(`${lang} sentences session`, async ({ page }) => {
+    const errors = await openApp(page, lang);
+    await page.evaluate(l => { S[l].placed = true; themes(l)[0].words.forEach(w => { S[l].srs[w.w] = { b: 3, d: Date.now() + 1e9, u: Date.now() }; }); render(); }, lang);
+    await page.locator(".tabb", { hasText: "Practise" }).click();
+    await page.locator(".lrow", { hasText: "Sentences" }).click();
+    await expect(page.locator("#hd")).toContainText("Sentences");
+    const n = await page.evaluate(() => view.qs.length);
+    expect(n).toBeGreaterThanOrEqual(4);
+    for (let k = 0; k < n; k++) {
+      await page.evaluate(i => { view.i = i; render(); window.scrollTo(0, 0); }, k);
+      await expect(page.locator(".qarea")).toBeVisible();
+      await checkScreen(page, `${lang} sentences question ${k + 1}`);
+    }
+    expect(errors, "script errors").toEqual([]);
+  });
   // System Back (Android back gesture or button) = the app's Back; on a tab screen it leaves the app. page.goBack() fires the same popstate.
   test(`${lang} system back`, async ({ page }) => {
     const errors = await openApp(page, lang);
