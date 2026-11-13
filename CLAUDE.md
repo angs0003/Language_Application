@@ -88,6 +88,10 @@ names defined in earlier files (inside functions, any file's names can be used).
 | `tests/kanji.test.js` | Kana lessons, kanji lessons and stroke steps, fading furigana, TV list, kanji/kana sync. |
 | `tests/casual.test.js` | Casual speech: row hidden when empty, list, lesson, quiz paths, done mark, sync to a second device, design checks. |
 | `tests/phone/phone.spec.js` | Real browser (Chromium) at 360x740 and 412x915: each tab in both languages and the first lesson. No script errors, no sideways scrolling (measured against the configured screen width, because in phone emulation `window.innerWidth` grows with wide content), at most one primary button, touch targets of at least 44 x 44 px (`npm run test:phone`; runs in the `test` check). |
+| `tests/phone/screens.js`, `tests/screens.test.js` | Registry of every screen (`screenX`, `homeX`) and how to open it. The phone test opens each registered screen in both languages and at both sizes (no script errors, no sideways scroll, one primary button, touch targets). `screens.test.js` fails when a screen function is in neither the registry nor its skip list. Known breaches of rule 2 are listed there with `maxPrimary`; known small touch targets are in `tests/phone/touch-baseline.json`. |
+| `tests/hooks.test.js`, `tests/gh.test.js` | The safety-rail hooks and the release helper `tools/gh.js` (against a fake GitHub). |
+| `tools/gh.js` | Release helper without the gh CLI: `create` (draft pull request), `status`, `merge N --yes` (waits for green CI, refuses on a conflict, merges, waits for Deploy, deletes the branch, syncs main), `cleanup`. Uses the credential git already has and never prints it. |
+| `tools/shot.js` | `npm run shot -- --js "openPod(0)" --name x`: screenshots of any screen at 360x740 and 412x915 in `tmp/shots/` (`--lang`, `--dark`, `--after`). |
 | `tests/helpers.js` | Shared jsdom setup, a simulated Supabase client, and an answer "solver" for tests. |
 
 ## 5. App architecture
@@ -260,16 +264,21 @@ readings from KANJI_JA sources), `validate-content.js` (everything, also run by 
 4. Changes are committed to a branch (never to `main`) and a pull request to `main` is open. Never push to `main`.
    Do not change `CACHE` in `sw.js` and do not run `npm run upload`: the Deploy workflow does both after the merge.
 5. Tell the owner what changed, in numbered points, with the pull request link. The owner merges after the `test` check is green.
+6. For a UI change: look at screenshots (`/shot`) in both languages and at both phone sizes, and test every screen where the feature appears. A new screen is added to `tests/phone/screens.js`.
 
 ## 9. Team setup in .claude/
 
 Commands (`.claude/commands/`): `/add-part`, `/check-content`, `/design-check`, `/release`, `/add-video`, `/curate-videos`,
-`/retro`, `/maintain`, `/ux-review`, `/content-report` (local only), `/content-gaps` (safe for public logs).
+`/retro`, `/maintain`, `/ux-review`, `/content-report` (local only), `/content-gaps` (safe for public logs), `/ship` (pull request, CI, merge after the owner says so, cleanup),
+`/shot` (screenshots of any screen at the phone sizes).
 Subagents (`.claude/agents/`, 10): `planner` (read-only; writes the plan before any change), `content-writer`, `content-reviewer`,
 `ui-engineer`, `test-runner`, `release-manager`, `coach`, `security-reviewer` (runs inside `/release`), `video-curator`
 (VIDS and TVREC only), `data-engineer` (owns supabase.sql, js/sync.js, normalize() defaults and the sync tests).
-Hooks (`.claude/settings.json`): the content validator runs after edits to `content/content.js`, and `npm test` must pass
-before commit, push or upload.
+Hooks (`.claude/settings.json`, scripts in `.claude/hooks/`): the content validator runs after edits to `content/content.js`.
+Safety rails (tested in `tests/hooks.test.js`): `guard-release.js` blocks a push to `main` or `master` (also by refspec, and a push with no target while on main), every force-push,
+a commit on `main`, and the content upload, and requires `npm test` to pass before any commit or push. `guard-files.js` blocks edits to `.env*`, `.github/workflows/*`,
+`.claude/settings*.json`, the guard scripts and any change to `CACHE` in `sw.js`. The owner can allow one protected edit by setting `ALLOW_PROTECTED_EDIT=1` for the session.
+Changing the guards or `.claude/settings.json` needs the owner to name the file.
 Improvement loop: `/retro` after every release (coach subagent proposes edits to this file, the agents, the commands and the
 tests, with evidence), `/maintain` and `/content-gaps` monthly (automatic, see section 12), `/ux-review` quarterly,
 `/content-report` monthly on the owner's computer. Inputs: GitHub issues (label `content-error` for content problems),

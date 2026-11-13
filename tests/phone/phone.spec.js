@@ -21,7 +21,7 @@ async function openApp(page, lang) {
   return errors;
 }
 
-async function checkScreen(page, name) {
+async function checkScreen(page, name, opts = {}) {
   const r = await page.evaluate(vw => {
     const vis = el => { const b = el.getBoundingClientRect(), s = getComputedStyle(el); return b.width > 0 && b.height > 0 && s.visibility !== "hidden" && s.display !== "none"; };
     const label = el => (el.getAttribute("aria-label") || el.textContent || el.getAttribute("placeholder") || "").trim().replace(/\s+/g, " ").slice(0, 40);
@@ -36,7 +36,7 @@ async function checkScreen(page, name) {
     };
   }, page.viewportSize().width); // the configured screen width: in phone emulation window.innerWidth grows with wide content, which hides sideways overflow
   expect(r.overflow, `${name}: the page scrolls sideways by ${r.overflow} px`).toBeLessThanOrEqual(1);
-  expect(r.primaries, `${name}: more than one visible primary button`).toBeLessThanOrEqual(1);
+  expect(r.primaries, `${name}: more than ${opts.maxPrimary || 1} visible primary button(s)`).toBeLessThanOrEqual(opts.maxPrimary || 1);
   const fresh = [];
   for (const s of r.small) {
     const id = `${name} | ${s.key} | ${s.label}`; found.add(id);
@@ -161,6 +161,19 @@ for (const lang of ["ja", "zh"]) {
     expect(await status()).toMatch(/^Words · 3 of /);
     expect(errors, "script errors").toEqual([]);
   });
+  // Every screen of the registry (tests/phone/screens.js) passes the generic checks
+  for (const sc of require("./screens.js").screens) {
+    if (sc.langs && !sc.langs.includes(lang)) continue;
+    test(`${lang} screen: ${sc.name}`, async ({ page }) => {
+      const errors = await openApp(page, lang);
+      await page.evaluate(l => { S[l].placed = true; save(); render(); }, lang);
+      if (sc.setup) await page.evaluate(sc.setup);
+      await page.evaluate(sc.open); await page.waitForTimeout(150);
+      await expect(page.locator("#main")).not.toBeEmpty();
+      await checkScreen(page, `${lang} ${sc.name}`, { maxPrimary: sc.maxPrimary });
+      expect(errors, "script errors").toEqual([]);
+    });
+  }
   // System Back (Android back gesture or button) = the app's Back; on a tab screen it leaves the app. page.goBack() fires the same popstate.
   test(`${lang} system back`, async ({ page }) => {
     const errors = await openApp(page, lang);
