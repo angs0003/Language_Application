@@ -78,6 +78,20 @@ const check = (ok, msg) => { if (!ok) failures.push(msg); else console.log("ok:"
     click("Next line"); check(!co(), "going to the next line closes the callout");
     check(W.eval("[...document.querySelectorAll('.callout button')].every(b=>true)") === true && !W.eval("document.querySelector('.callout')"), "no callout stays after a redraw");
   }
+  // --- Example sentences with word breaks ---
+  {
+    const all = W.eval("allWords('ja').filter(w=>w.tk)").length;
+    check(all === W.eval("allWords('ja').length") && W.eval("allWords('zh').filter(w=>w.tk).length") === W.eval("allWords('zh').length"), "every word of both languages has an example sentence with word breaks");
+    W.eval("const t=themes('ja')[0];startLesson(t.words.slice(0,5),t.title);view.i=3;render()");
+    const toks = () => [...d.querySelectorAll("#main .tk:not(.pu)")];
+    check(toks().length >= 5 && toks().map(e => e.textContent).join("").includes("駅"), "the lesson example under a new word shows each word of the sentence");
+    toks().find(e => e.textContent.includes("駅")).click();
+    check(!!d.getElementById("callout") && d.getElementById("callout").textContent.includes("station"), "tapping a word of the lesson example opens the callout with its meaning");
+    d.body.click();
+    W.eval("openTheme(0)"); d.querySelector(".wordrow").click();
+    check(!!d.getElementById("callout") && !d.querySelector(".sheet") && d.querySelector(".wordrow.on"), "tapping a word in the theme word list opens the callout, not the bottom sheet");
+    d.body.click();
+  }
   W.eval('openTrip(0)'); W.eval('openPlayer("trip",0)'); d.querySelector(".plline .tk:not(.pu)").click(); click("Save word"); d.body.click();
   // --- My words ---
   W.eval("goHome()"); tab("Practise"); click("My words");

@@ -29,7 +29,8 @@ for (const [name, themes, width] of [["zh", ZH, 6], ["ja", JA, 7]]) {
     if (!Array.isArray(t) || typeof t[0] !== "string" || !Array.isArray(t[1])) return err(name, "theme", ti, "bad shape");
     t[1].forEach((w, wi) => {
       if (!Array.isArray(w) || (w.length !== width && w.length !== width + 1) || w.some(x => typeof x !== "string" || !x)) err(name, `theme ${ti + 1} word ${wi + 1}`, "bad word entry", JSON.stringify(w));
-      else if (w.length === width + 1) checkWordBreaks(name, ti, wi, w, width);
+      else if (w.length === width) err(name, `theme ${ti + 1} word ${wi + 1} (${w[0]})`, "has no word breaks for its example sentence (run node tools/add-word-breaks.js)");
+      else checkWordBreaks(name, ti, wi, w, width);
       if (seen.has(w[0])) err(name, "duplicate word", w[0], "in themes", seen.get(w[0]) + 1, "and", ti + 1);
       else seen.set(w[0], ti);
     });

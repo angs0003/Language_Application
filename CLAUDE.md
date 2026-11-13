@@ -79,6 +79,7 @@ names defined in earlier files (inside functions, any file's names can be used).
 | `.github/workflows/test.yml` | Runs `npm test` and `npm run lint` on every pull request (required check `test` before merging to `main`). |
 | `.github/workflows/deploy.yml` | After a merge to `main`: test, upload content if `content/content.js` changed (secrets in GitHub), set `CACHE`, publish to GitHub Pages. |
 | `tools/validate-content.js` | Structural check of the content, plus a content → rows → content round trip. |
+| `tools/add-word-breaks.js`, `tools/lib-word-breaks.js`, `tools/check-word-breaks.js` | Word breaks of the example sentence of every word (section 6): `--todo` lists words, `--check file.json` checks a file, `file.json` adds it to `content.js`. `check-word-breaks.js` reports tokens whose meaning differs from the taught meaning of the same word (for review; it does not change anything). |
 | `tools/upload-content.js` | Uploads content to the `content` table (`npm run upload`). Deletes rows that no longer exist. |
 | `tests/smoke.js` | Simulated-browser flow test without a database. |
 | `tests/sync.test.js` | Simulated-database test: sign-in screen, content from the database, two-device progress sync. |
@@ -184,9 +185,13 @@ names defined in earlier files (inside functions, any file's names can be used).
 
 ## 6. Content format (content/content.js)
 
-- **Chinese word:** `[word, pinyin, meaning, example, example pinyin, example English]`
-- **Japanese word:** `[word, kana, romaji, meaning, example, example romaji, example English]`
+- **Chinese word:** `[word, pinyin, meaning, example, example pinyin, example English, example with word breaks]`
+- **Japanese word:** `[word, kana, romaji, meaning, example, example romaji, example English, example with word breaks]`
   (for kana-only words, kana = word).
+- **Example with word breaks** (last element, required; the validator fails without it): the example sentence in the sentence-string format below, one token per word with its reading and meaning in this sentence,
+  punctuation as bare tokens, ending with `= example English` (the same English as the example). The token texts must join to the example, the token readings must join to the example reading (case, spaces, tone marks and apostrophes ignored),
+  and one token must be the word itself (or its inflected form). A token meaning must never contain ` / ` (write `(at/to)`). The lesson shows this sentence under each new word, and each word opens the word callout.
+  Add the sentences with `node tools/add-word-breaks.js file.json` (a JSON file `{"zh":{"word":"sentence string"}}`); check meanings with `node tools/check-word-breaks.js`.
 - **Theme:** `["Title", [10 words], [6 sentence strings]]` (Level 1 themes 1 to 8 have 5 words). The third element holds the theme’s
   **practice sentences**: 6 sentences in the sentence-string format below, with **no speaker labels**, 2 to 8 content tokens each, using
   only words, grammar and kanji the learner has met. They appear in the lesson’s **Sentences** step and in the quiz (up to 4 sentence
@@ -236,6 +241,7 @@ readings from KANJI_JA sources), `validate-content.js` (everything, also run by 
    (`t` = number of Japanese themes before this part, `g` = number of Japanese grammar points before it).
 4. Update the matching label in `LEVELS`.
 4a. Run `node tools/add-kanji.js` to add the kanji the new Japanese words use.
+4b. Add the word breaks of every new word's example sentence (`node tools/add-word-breaks.js --todo ja FROM TO` lists them; `--check` then add). `npm test` fails without them.
 5. Run `npm test`. Fix every error.
 6. Run `/release`: it commits to a branch and opens a pull request. Do not run `npm run upload` and do not change `CACHE`.
 7. After the owner merges, the Deploy workflow uploads the content and publishes. The app downloads the new content at its next start.
