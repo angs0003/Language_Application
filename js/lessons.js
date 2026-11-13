@@ -177,7 +177,7 @@ function placeCallout(c,btn){
   c.classList.toggle("below",!above);c.style.setProperty("--ax",Math.max(18,Math.min(w-18,cx-left))+"px");c.style.visibility="";
 }
 function openWord(l,t,toks,e){
-  const btn=e&&e.target&&e.target.closest?e.target.closest(".tk"):null;
+  const btn=e&&e.target&&e.target.closest?e.target.closest(".tk,.wordrow"):null;
   if(!btn){openWordSheet(l,t,toks);return;}
   if(calloutBtn===btn&&document.getElementById("callout")){closeCallout();return;}
   const all=()=>[...document.querySelectorAll(".tk:not(.pu)")],idx=all().indexOf(btn);
@@ -189,7 +189,7 @@ function openWord(l,t,toks,e){
   c.innerHTML=`<span class="cohd"><span class="tx" lang="${L[l].hl}">${esc(sh.text)}</span>${sh.r?`<span class="cor">${esc(sh.r)}</span>`:""}</span><span class="com">${esc(sh.m||"")}</span><span class="coact"><button class="play" data-a="${A(()=>say(sh.text,l))}">${ico("play",20)}<span>Play audio</span></button><button class="play" aria-pressed="${saved}" data-a="${A(ev=>{const sb=ev.target.closest("button");toggleSave(sh,true);const s=isSaved(l,sh.text);sb.setAttribute("aria-pressed",s);sb.querySelector(".sl").textContent=s?"Saved (tap to remove)":"Save word";})}">${ico("star",20)}<span class="sl">${saved?"Saved (tap to remove)":"Save word"}</span></button></span><i class="coar"></i>`;
   placeCallout(c,b);calloutBtn=b;b.classList.add("on");b.setAttribute("aria-expanded","true");
 }
-document.addEventListener("click",e=>{if(document.getElementById("callout")&&!e.target.closest("#callout")&&!e.target.closest(".tk"))closeCallout();});
+document.addEventListener("click",e=>{if(document.getElementById("callout")&&!e.target.closest("#callout")&&!e.target.closest(".tk,.wordrow"))closeCallout();});
 window.addEventListener("resize",closeCallout);
 function openWordSheet(l,t,toks){if(view.s==="player"&&view.playing)plStop(view);const k=allWords(l).find(w=>w.w===t[0]);view.sheet={l,text:t[0],r:k?k.r:t[1],m:k?k.m:t[2],state:"",data:null,sent:toks?toks.map(x=>x[0]).join(""):"",tk:toks&&toks.length<=20?toks:null,src:srcLabel()};if(!AI_OFF)loadRef(view.sheet);render();}
 function closeSheet(){view.sheet=null;render();}
@@ -307,7 +307,7 @@ function screenLesson(){
   if(v.step===0){
     const w=ws[v.i],ex=v.ex[w.w];
     h=`<div class="card"><p class="q">New word</p>${glyph(l,w)}${readingHTML(l,w)}<p class="meaning">${esc(w.m)}</p><p class="center"><button class="play" data-a="${A(()=>say(w.w,l))}" aria-label="Play audio" title="Play audio">${PLAY}</button></p></div>
-    <div class="card"><p class="q">Example</p>${ex?sentHTML(l,ex,[w]):builtinEx(l,w)}${!ex&&v.aState==="loading"?`<p class="small muted" style="margin-top:6px">The word-by-word version is loading.</p>`:""}</div>`;
+    <div class="card"><p class="q">Example</p>${ex?sentHTML(l,ex,[w]):w.tk?sentHTML(l,w.tk,[w]):builtinEx(l,w)}${!ex&&v.aState==="loading"?`<p class="small muted" style="margin-top:6px">The word-by-word version is loading.</p>`:""}</div>`;
   }else if(v.step===1){
     if(v.i===0){
       const g=v.g;
