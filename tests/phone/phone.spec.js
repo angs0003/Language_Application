@@ -22,7 +22,7 @@ async function openApp(page, lang) {
 }
 
 async function checkScreen(page, name) {
-  const r = await page.evaluate(() => {
+  const r = await page.evaluate(vw => {
     const vis = el => { const b = el.getBoundingClientRect(), s = getComputedStyle(el); return b.width > 0 && b.height > 0 && s.visibility !== "hidden" && s.display !== "none"; };
     const label = el => (el.getAttribute("aria-label") || el.textContent || el.getAttribute("placeholder") || "").trim().replace(/\s+/g, " ").slice(0, 40);
     const small = [...document.querySelectorAll("button, a[href], input, select, summary, [role=button]")]
@@ -30,11 +30,11 @@ async function checkScreen(page, name) {
       .filter(el => { const b = el.getBoundingClientRect(); return b.width < 43.5 || b.height < 43.5; })
       .map(el => { const b = el.getBoundingClientRect(); return { key: `${el.tagName.toLowerCase()}.${[...el.classList].sort().join(".")}`, label: label(el), w: Math.round(b.width), h: Math.round(b.height) }; });
     return {
-      overflow: document.documentElement.scrollWidth - window.innerWidth,
+      overflow: document.documentElement.scrollWidth - vw,
       primaries: [...document.querySelectorAll(".btn.pri")].filter(vis).length,
       small
     };
-  });
+  }, page.viewportSize().width); // the configured screen width: in phone emulation window.innerWidth grows with wide content, which hides sideways overflow
   expect(r.overflow, `${name}: the page scrolls sideways by ${r.overflow} px`).toBeLessThanOrEqual(1);
   expect(r.primaries, `${name}: more than one visible primary button`).toBeLessThanOrEqual(1);
   const fresh = [];
@@ -142,6 +142,25 @@ for (const lang of ["ja", "zh"]) {
       expect(errors, "script errors").toEqual([]);
     });
   }
+  // Podcast episode: compact controls, one box per item, Previous and Next
+  test(`${lang} podcast episode`, async ({ page }) => {
+    const errors = await openApp(page, lang);
+    await page.evaluate(l => { S[l].placed = true; openPod(0); }, lang);
+    await expect(page.locator(".podit").first()).toBeVisible();
+    const vh = page.viewportSize().height, first = await page.locator(".podit").first().boundingBox();
+    expect(first.y, "the first item starts in the upper half of the screen").toBeLessThan(vh * 0.5);
+    await checkScreen(page, `${lang} podcast episode`);
+    const status = () => page.locator("#podpart").textContent();
+    expect(await status()).toMatch(/^Words · 1 of /);
+    await page.locator("summary", { hasText: "Options" }).click(); // with the options open the page must still fit
+    await checkScreen(page, `${lang} podcast episode with options`);
+    await page.locator("summary", { hasText: "Options" }).click();
+    await page.locator(".podnav button", { hasText: "Next" }).click();
+    expect(await status()).toMatch(/^Words · 2 of /);
+    await page.locator(".podit").nth(2).click();
+    expect(await status()).toMatch(/^Words · 3 of /);
+    expect(errors, "script errors").toEqual([]);
+  });
   // System Back (Android back gesture or button) = the app's Back; on a tab screen it leaves the app. page.goBack() fires the same popstate.
   test(`${lang} system back`, async ({ page }) => {
     const errors = await openApp(page, lang);

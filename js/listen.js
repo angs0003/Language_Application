@@ -18,47 +18,37 @@ function homePod(l,r){
   r.main=`<details class="card tint acc" data-k="in-pod" ${isOpen("in-pod",false)?"open":""}><summary>🎧 Podcast (about)</summary><p style="margin:0">One episode per theme. Each episode plays the new words, the story chapter (each line, then English) and 2 questions, like a radio show. Use it while walking or travelling.</p></details><div class="card"><ul class="units">${ths.map((t,i)=>{const c=t.words.filter(w=>isL(l,w)).length;return `${LV_START[l].includes(i)?`<li class="lvh"><span><strong>Level ${LV_START[l].indexOf(i)+1}</strong></span></li>`:""}<li><button class="rowbtn" data-a="${A(()=>openPod(i))}"><span><span aria-hidden="true">${pd[i]?"✅":"⭕"}</span> Episode ${i+1}: ${esc(t.title)}<br><span class="status">${pd[i]?"Listened":c?"Theme in progress":"Theme not started yet"}</span></span><span class="chev" aria-hidden="true">›</span></button></li>`;}).join("")}</ul></div>
   <div class="card"><h2>🌐 Podcasts outside this app</h2><ul class="units">${EXT[l].map(x=>`<li><span><a href="${x.url}" target="_blank" rel="noopener">${esc(x.name)}</a><br><span class="small">${esc(x.note)}</span></span></li>`).join("")}</ul><p class="small muted" style="margin:8px 0 0">These links open outside this app. They were checked on 2 November 2026.</p></div>`;
 }
-const POD_PARTS=["Intro","Words","Story","Questions","Outro"];
+const POD_PARTS=["Words","Story"];
 function podSegs(l,i){
   const t=themes(l)[i],ch=chapter(l,i),segs=[];
-  const P=(part,lang,text,o)=>segs.push(Object.assign({part,lang,text,show:text,rate:1,gap:500,tr:false},o||{}));
-  P("Intro","en",`Welcome to the Language Steps podcast. Episode ${i+1}: ${t.title}. Today you will hear ${t.words.length} words, then the story ${ch.title}.`);
-  P("Words","en","First, the new words. Listen, then say each word out loud.");
-  t.words.forEach(w=>{P("Words",l,w.w,{rate:0.9,show:`${w.w}  ${w.r}`,tokens:[[w.w,w.r,w.m]],rd:w.r,gap:900});P("Words","en",w.m,{tr:true,gap:1200});});
-  P("Story","en","Now the story. Each line is read in the language, then in English.");
+  t.words.forEach(w=>segs.push({part:"Words",lang:l,text:w.w,rate:0.9,tokens:[[w.w,w.r,w.m]],rd:w.r,en:w.m,gap:1500}));
   const map=spkMap(ch.lines);
-  ch.lines.forEach(s=>{const k=spkSkip(s),tx=sentText(s),rd=s.tokens.map(x=>x[1]).filter(Boolean).join(" "),si=spkIdx(map,s);P("Story",l,spokenText(s),{rate:0.9,show:`${tx}  ${rd}`,tokens:s.tokens,skip:k,si,rd,gap:700});P("Story","en",k?s.english.replace(/^[^:：]{1,30}[:：]\s*/,""):s.english,{tr:true,si,gap:900});});
-  P("Questions","en","Now, two questions about the story. Answer in your head.");
-  ch.qs.forEach(q=>{P("Questions","en",`${q.question} The options are: ${q.options.join(", ")}.`,{gap:3500});P("Questions","en",`The answer is: ${q.options[q.answer]}.`,{show:`The answer is: ${q.options[q.answer]}. ${q.why}`,gap:900});});
-  P("Outro","en",`This is the end of episode ${i+1}.`);
+  ch.lines.forEach(x=>{const k=spkSkip(x),si=spkIdx(map,x),rd=x.tokens.map(y=>y[1]).filter(Boolean).join(" ");segs.push({part:"Story",lang:l,text:spokenText(x),rate:0.9,tokens:x.tokens,skip:k,si,rd,en:k?x.english.replace(/^[^:：]{1,30}[:：]\s*/,""):x.english,gap:900});});
   return segs;
 }
-function enVoice(){return voices.find(v=>/^en[-_](AU|GB)/i.test(v.lang))||voices.find(v=>/^en/i.test(v.lang));}
 function openPod(i){view={s:"pod",i,segs:podSegs(S.lang,i),idx:0,playing:false,slow:false,finished:false};render();window.scrollTo(0,0);}
-function podMark(v){document.querySelectorAll(".seg.now").forEach(e=>e.classList.remove("now"));const el=document.querySelector(`[data-seg="${v.idx}"]`);if(el){el.classList.add("now");if(el.scrollIntoView)el.scrollIntoView({block:"center"});}const pt=document.getElementById("podpart");if(pt&&v.segs[v.idx])pt.textContent=`Part ${POD_PARTS.indexOf(v.segs[v.idx].part)+1} of 5: ${v.segs[v.idx].part}`;}
+function podMark(v){document.querySelectorAll(".podit.now").forEach(e=>e.classList.remove("now"));const el=document.querySelector(`[data-seg="${v.idx}"]`);if(el){el.classList.add("now");if(el.scrollIntoView)el.scrollIntoView({block:"center"});}const pt=document.getElementById("podpart");if(pt&&v.segs[v.idx])pt.textContent=podStatus(v);}
 function podStop(v){playTok++;try{speechSynthesis.cancel();}catch(e){}v.playing=false;hlClear();}
 function podPlay(v){
   if(!("speechSynthesis" in window)){note("This browser cannot play speech audio.");return;}
   speechSynthesis.cancel();const tok=++playTok,l=S.lang;v.playing=true;render();
   const step=()=>{
     if(tok!==playTok)return;
-    while(v.idx<v.segs.length&&v.segs[v.idx].tr&&!S.settings.podEn)v.idx++;
     if(v.idx>=v.segs.length){v.playing=false;v.finished=true;const pd=S[l].podDone||(S[l].podDone={});if(!pd[v.i]){pd[v.i]=true;histPush(l,"🎧 Episode "+(v.i+1));}save();if(view===v){render();window.scrollTo(0,0);}return;}
     const s=v.segs[v.idx];podMark(v);
-    const u=new SpeechSynthesisUtterance(s.text);u.lang=s.lang==="en"?"en-GB":L[s.lang].code;const vc=s.lang==="en"?enVoice():voiceFor(s.lang);if(vc)u.voice=vc;u.rate=s.rate*S.settings.speed;
-    if(s.si!=null)applySpeaker(u,s.lang==="en"?voices.filter(x=>/^en/i.test(x.lang)):voicesFor(s.lang),s.si);
+    const u=new SpeechSynthesisUtterance(s.text);u.lang=L[s.lang].code;const vc=voiceFor(s.lang);if(vc)u.voice=vc;u.rate=s.rate*S.settings.speed;
+    if(s.si!=null)applySpeaker(u,voicesFor(s.lang),s.si);
     if(s.tokens)hlTrack(u,s.tokens,()=>document.querySelector(`[data-seg="${v.idx}"]`),()=>tok===playTok,s.skip||0);
     let fin=false;const next=()=>{if(fin||tok!==playTok)return;fin=true;hlClear();if(!v.loop)v.idx++;setTimeout(step,s.gap);};u.onend=next;u.onerror=next;
     speechSynthesis.speak(u);
   };
   step();
 }
-function podJump(v,dir){
-  const cur=POD_PARTS.indexOf((v.segs[v.idx]||v.segs[v.segs.length-1]).part);let target=dir>0?cur+1:cur;
-  const startOf=p=>v.segs.findIndex(s=>s.part===POD_PARTS[p]);
-  if(dir<0&&v.idx===startOf(cur))target=Math.max(0,cur-1);
-  if(target>=POD_PARTS.length)return;
-  const was=v.playing;podStop(v);v.idx=Math.max(0,startOf(target));if(was)podPlay(v);else{render();podMark(v);}
+/* Podcast episode: the words of the theme, then its story. Only the target language is spoken; the English is shown in the same box. */
+function podStatus(v){const s=v.segs[Math.min(v.idx,v.segs.length-1)],inPart=v.segs.filter(x=>x.part===s.part);return `${s.part} · ${inPart.indexOf(s)+1} of ${inPart.length}`;}
+function podGo(v,k){
+  k=Math.max(0,Math.min(v.segs.length-1,k));if(k===v.idx)return;
+  const was=v.playing;podStop(v);v.idx=k;if(was)podPlay(v);else{render();podMark(v);}
 }
 function screenPod(){
   const v=view,l=S.lang,t=themes(l)[v.i];
@@ -68,16 +58,20 @@ function screenPod(){
     r.main=`<div class="card tint"><h2>✅ Episode ${v.i+1} finished</h2><p style="margin:0">${esc(t.title)}</p><p class="small muted" style="margin:0">This episode is marked as listened.</p><button class="btn link" data-a="${A(()=>{v.finished=false;v.idx=0;podPlay(v);})}">Play again</button></div>`;
     r.next=nextAfter("pod",v.i,true);return r;
   }
-  const cs=v.segs[v.idx]||v.segs[0];
-  r.prog=`<div class="ptext" id="podpart">Part ${POD_PARTS.indexOf(cs.part)+1} of 5: ${cs.part}</div><div class="psub">The line being played is highlighted.</div>`;
-  let h=`<div class="card"><div class="inline" style="justify-content:space-between"><button class="btn sec" data-a="${A(()=>podJump(v,-1))}">⏮️ Part</button><button class="btn sec" data-a="${A(()=>podJump(v,1))}">Part ⏭️</button></div>
-  <button class="btn sec full" style="margin-top:10px" data-a="${A(()=>{podStop(v);openPlayer("pod",v.i);})}">🎬 Player view: one line at a time</button><div style="margin-top:10px">${speedHTML()}</div><div style="margin-top:8px">${subChips()}</div><div class="inline" style="margin-top:8px"><button class="play" aria-pressed="${!!v.loop}" data-a="${A(()=>{v.loop=!v.loop;render();})}">🔁 Loop line: ${v.loop?"on":"off"}</button></div><div class="inline" style="margin-top:10px"><button class="play" aria-pressed="${S.settings.podEn}" data-a="${A(()=>{S.settings.podEn=!S.settings.podEn;save();if(v.playing){podStop(v);podPlay(v);}else render();})}">🇬🇧 English: ${S.settings.podEn?"on":"off"}</button></div></div>
-  <div class="card">`;
-  let last="";
-  v.segs.forEach((s,k)=>{if(s.part!==last){last=s.part;h+=`<p class="q" style="margin-top:10px">${POD_PARTS.indexOf(s.part)+1}. ${s.part}</p>`;}
-    if(s.tr&&!S.settings.podEn)return;if(S.settings.sub==="none")return;if(S.settings.sub==="target"&&s.lang==="en")return;
-    h+=`<div class="seg${k===v.idx&&(v.playing||v.idx>0)?" now":""}" data-seg="${k}"><span class="small muted">${s.lang==="en"?"Host":"🗣️"}</span> ${s.tokens&&s.lang!=="en"?`<span lang="${L[l].hl}" class="cjk2">${s.tokens.map(t=>`<span class="tk pl">${esc(t[0])}</span>`).join("")}</span> <span class="small muted">${esc(s.rd||"")}</span>`:`<span ${s.lang!=="en"?`lang="${L[l].hl}" class="cjk2"`:""}>${esc(s.show)}</span>`}</div>`;});
-  h+=`</div>`;
+  const sub=S.settings.sub,last=v.segs.length-1;
+  r.prog=`<div class="ptext" id="podpart">${podStatus(v)}</div><div class="psub">Tap a line to jump to it.</div>`;
+  let h=`<div class="card podctl"><div class="podnav"><button class="btn sec" ${v.idx<=0?"disabled":""} data-a="${A(()=>podGo(v,v.idx-1))}">${ico("prev",18)} Previous</button><button class="btn sec" ${v.idx>=last?"disabled":""} data-a="${A(()=>podGo(v,v.idx+1))}">Next ${ico("prev",18,'style="transform:scaleX(-1)"')}</button></div>
+  <details class="acc podopt" data-k="podopt" ${isOpen("podopt",false)?"open":""}><summary>Options</summary><div style="margin-top:6px">${speedHTML()}</div><div style="margin-top:8px">${subChips()}</div><div class="inline" style="margin-top:8px"><button class="play" aria-pressed="${!!v.loop}" data-a="${A(()=>{v.loop=!v.loop;render();})}">${ico("loop",18)} Repeat line: ${v.loop?"on":"off"}</button></div><button class="btn sec full" style="margin-top:10px" data-a="${A(()=>{podStop(v);openPlayer("pod",v.i);})}">Player view</button></details></div>`;
+  if(sub==="none"){h+=`<div class="card"><p class="small muted" style="margin:0">Text hidden (listening only). Change it in Options.</p></div>`;}
+  else{
+    h+=`<div class="card podlist">`;let lastPart="";
+    v.segs.forEach((s,k)=>{
+      if(s.part!==lastPart){lastPart=s.part;h+=`<p class="podlab">${esc(s.part)}</p>`;}
+      const en=sub==="both"&&s.en?`<span class="en">– ${esc(s.en)}</span>`:"";
+      h+=`<button class="podit${s.part==="Story"?" sent":""}${k===v.idx&&(v.playing||v.idx>0)?" now":""}" data-seg="${k}" data-a="${A(()=>podGo(v,k))}"><span lang="${L[l].hl}" class="cjk2">${s.tokens.map(x=>`<span class="tk pl">${esc(x[0])}</span>`).join("")}</span> <span class="rdg">${esc(s.rd||"")}</span> ${en}</button>`;
+    });
+    h+=`</div>`;
+  }
   r.main=h;
   r.next=v.playing?{label:"⏸️ Pause",fn:()=>{podStop(v);render();}}:{label:v.idx>0?"▶️ Resume":"▶️ Play episode",fn:()=>podPlay(v)};
   return r;

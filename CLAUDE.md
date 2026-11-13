@@ -87,7 +87,7 @@ names defined in earlier files (inside functions, any file's names can be used).
 | `tests/smoke.js` design checks | On each tab screen: no emoji, at most one primary button, no icon button without a label. |
 | `tests/kanji.test.js` | Kana lessons, kanji lessons and stroke steps, fading furigana, TV list, kanji/kana sync. |
 | `tests/casual.test.js` | Casual speech: row hidden when empty, list, lesson, quiz paths, done mark, sync to a second device, design checks. |
-| `tests/phone/phone.spec.js` | Real browser (Chromium) at 360x740 and 412x915: each tab in both languages and the first lesson. No script errors, no sideways scrolling, at most one primary button, touch targets of at least 44 x 44 px (`npm run test:phone`; runs in the `test` check). |
+| `tests/phone/phone.spec.js` | Real browser (Chromium) at 360x740 and 412x915: each tab in both languages and the first lesson. No script errors, no sideways scrolling (measured against the configured screen width, because in phone emulation `window.innerWidth` grows with wide content), at most one primary button, touch targets of at least 44 x 44 px (`npm run test:phone`; runs in the `test` check). |
 | `tests/helpers.js` | Shared jsdom setup, a simulated Supabase client, and an answer "solver" for tests. |
 
 ## 5. App architecture
@@ -135,7 +135,7 @@ names defined in earlier files (inside functions, any file's names can be used).
 - Exercises: meaning, listen, type, speak, match pairs, build sentence, listen-and-build, build English, fill blank, grammar choice.
 - Review timing: `srsSet()`, `INTERVAL=[0,1,2,4,8,16]` days by box.
 - Levels and parts: `PARTS` and `LEVELS` (in content); `grFor()` maps a theme to its grammar point.
-- Podcast `podSegs()`.
+- **Podcast episode** (`view.s="pod"`, `openPod`, `podSegs`, `screenPod`, `podGo`, `podStatus` in js/listen.js): two parts, Words and Story. Only the target language is spoken (no English host lines, no intro, questions or outro). Each word or story line is one box (`.podit`): the word or line, its reading, and `– English` after it in the same box. The text chips (Both languages, Target only, No text) control the English and the boxes. The top card has Previous and Next (jump to the previous or next item, playing or paused; tapping a box also jumps) and a collapsed Options row (speed, text, repeat line, Player view). The status line in the header shows the part and the place, for example `Words · 3 of 5`.
 - **🎬 Player** (`view.s="player"`, `openPlayer(kind,i)` with kind `story`, `pod` or `trip`): one line at a time, large and
   centred; text modes (`S.settings.sub`: both, target, none); auto-play or auto-pause (`S.settings.autoPause`); previous/next
   line, 🔁 loop line, speed. Tapping a word pauses playback and opens the word card.
