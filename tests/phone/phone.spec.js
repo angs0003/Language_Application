@@ -142,6 +142,41 @@ for (const lang of ["ja", "zh"]) {
       expect(errors, "script errors").toEqual([]);
     });
   }
+  // System Back (Android back gesture or button) = the app's Back; on a tab screen it leaves the app. page.goBack() fires the same popstate.
+  test(`${lang} system back`, async ({ page }) => {
+    const errors = await openApp(page, lang);
+    await page.evaluate(l => { S[l].placed = true; save(); render(); }, lang);
+    const where = () => page.evaluate(() => view.s + (view.s === "lesson" ? ":" + view.step + ":" + view.i : ""));
+    await page.evaluate(() => { const t = themes(S.lang)[0]; startLesson(t.words.slice(0, 5), t.title); });
+    await page.locator("#nextbtn").click(); await page.locator("#nextbtn").click();
+    expect(await where(), "third word").toBe("lesson:0:2");
+    await page.goBack(); await expect.poll(where).toBe("lesson:0:1");
+    await page.goBack(); await expect.poll(where).toBe("lesson:0:0");
+    await page.goBack(); await expect.poll(where, "Back on the first word leaves the lesson").toBe("home");
+    await expect(page.locator(".tabb[aria-current=page]")).toHaveText(/Learn/);
+    // a word callout is closed first, then the screen goes back
+    await page.evaluate(() => { openChapter(0); });
+    await page.locator(".tk:not(.pu)").first().click(); await expect(page.locator("#callout")).toBeVisible();
+    await page.goBack(); await expect(page.locator("#callout")).toHaveCount(0); expect(await where(), "still on the chapter").toBe("story");
+    await page.goBack(); await expect.poll(where).toBe("home");
+    // the Exit panel is closed first
+    await page.evaluate(() => { const t = themes(S.lang)[0]; startLesson(t.words.slice(0, 5), t.title); });
+    await page.locator("[aria-label=Exit]").click(); await expect(page.locator(".confirm")).toBeVisible();
+    await page.goBack(); await expect(page.locator(".confirm")).toHaveCount(0); expect(await where()).toBe("lesson:0:0");
+    await page.goBack(); await expect.poll(where).toBe("home");
+    // using the app's own Back and Exit buttons does not pile up history entries
+    const len0 = await page.evaluate(() => history.length);
+    for (let n = 0; n < 4; n++) {
+      await page.evaluate(() => { const t = themes(S.lang)[0]; startLesson(t.words.slice(0, 5), t.title); });
+      await page.locator("#bbar button", { hasText: "Back" }).click(); await expect.poll(where).toBe("home");
+    }
+    expect(await page.evaluate(() => history.length), "history length after 4 lessons opened and left with Back").toBeLessThanOrEqual(len0 + 1);
+    // a sub-screen (Settings) goes back to the tab, and Back on the tab screen leaves the app
+    await page.locator("[aria-label='Profile and settings']").click(); await expect.poll(where).toBe("settings");
+    await page.goBack(); await expect.poll(where).toBe("home");
+    await page.goBack(); await expect.poll(() => page.url(), "Back on a tab screen leaves the app").toBe("about:blank");
+    expect(errors, "script errors").toEqual([]);
+  });
   test(`${lang} first lesson screen`, async ({ page }) => {
     const errors = await openApp(page, lang);
     await page.evaluate(l => { S[l].placed = true; save(); render(); }, lang);/* without a placement the first card opens the placement quiz, not a lesson */

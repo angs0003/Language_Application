@@ -226,6 +226,8 @@ function render(){if(typeof closeCallout==="function")closeCallout();
     document.getElementById("bbar").innerHTML=deEmoji(`<button class="btn sec" ${b.dis||!b.fn?"disabled":""} data-a="${A(b.fn||(()=>{}))}">${esc(b.label)}</button><button id="nextbtn" class="btn pri${fb&&fb.classList.contains("ok")?" okbtn":""}" ${n.dis||!n.fn?"disabled":""} data-a="${A(n.fn||(()=>{}))}">${esc(n.label)}</button>`);
   }
   document.body.classList.toggle("istab",!!r.tab);
+  lastBack=r.back&&r.back.fn&&!r.back.dis?r.back.fn:null;
+  syncHistory(!r.tab);
   if(view.scrollEnd){view.scrollEnd=false;setTimeout(()=>window.scrollTo(0,document.body.scrollHeight),0);}
 }
 
