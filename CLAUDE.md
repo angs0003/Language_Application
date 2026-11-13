@@ -128,6 +128,9 @@ names defined in earlier files (inside functions, any file's names can be used).
   `homeListen` (filter, Continue card from `S[lang].lastListen`, tiles, Add a video, TV list), `homeTravel`.
   Sub-screens open with `openSub(key)` (themes, kanji, kana, grammar, watchadd) and reuse the older section renderers.
 - Lesson: New words → Grammar → Story (theme's chapter) → Quiz → Summary (`AI_OFF=true` skips the Dialogue step).
+- **Lesson place** (`S[lang].resume` = `{ti, words[], title, step, i, u}`; `lessonSave`, `lessonResumeFor`, `lessonResumeText`, `startLesson(words,title,repeat,fresh)` in js/lessons.js): moving inside a lesson saves the place (not for repeat lessons; a place at the first word is cleared; a place in the Quiz step is saved as the start of the quiz, because quiz questions are generated each time).
+  `startLesson` continues a matching saved place unless `fresh` is true. The Summary step and "Start from the beginning" clear it. The Learn card then says "Continue lesson". Synced inside `user_settings.data.per[lang]` like `mis` (last-write-wins, no SQL change).
+  Back on the first word of a lesson leaves the lesson; Back on the first question of a review session, test or placement quiz opens the same "Exit now?" panel as the X button.
 - Exercises: meaning, listen, type, speak, match pairs, build sentence, listen-and-build, build English, fill blank, grammar choice.
 - Review timing: `srsSet()`, `INTERVAL=[0,1,2,4,8,16]` days by box.
 - Levels and parts: `PARTS` and `LEVELS` (in content); `grFor()` maps a theme to its grammar point.

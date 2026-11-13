@@ -98,8 +98,8 @@ function homeLearn(l,r){
   const due=planSteps(l,1)[0],read=st.chRead||[],pd=st.podDone||{};
   const lessonIdx=idx.find(i=>!(ths[i].words||[]).every(w=>isL(l,w))),storyIdx=idx.find(i=>chapter(l,i)&&!read.includes(i)),podIdx=idx.find(i=>chapter(l,i)&&!pd[i]);
   let path="";
-  if(lessonIdx!==undefined){const t=ths[lessonIdx],todo=t.words.filter(w=>!isL(l,w));
-    path+=uiCard(`<div class="nxt"><span class="pn big" lang="${L[l].hl}">${esc([...t.words[0].w][0])}</span><span class="lrt">${uiLabel("NEXT THEME")}<span class="nxh">${esc(t.title)}</span><span class="lrs">${esc(lessonDesc(todo.length))}</span></span></div>${stepPreview(l,{kind:"lesson",i:lessonIdx})}${uiBtn("Start lesson",()=>startLesson(todo,t.title))}`,"hero");
+  if(lessonIdx!==undefined){const t=ths[lessonIdx],todo=t.words.filter(w=>!isL(l,w)),rs=lessonResumeFor(l,todo);
+    path+=uiCard(`<div class="nxt"><span class="pn big" lang="${L[l].hl}">${esc([...t.words[0].w][0])}</span><span class="lrt">${uiLabel("NEXT THEME")}<span class="nxh">${esc(t.title)}</span><span class="lrs">${esc(lessonDesc(todo.length))}</span></span></div>${rs?`<p class="small muted" style="margin:0">You stopped at ${esc(lessonResumeText(l,rs))}.</p>`:stepPreview(l,{kind:"lesson",i:lessonIdx})}${uiBtn(rs?"Continue lesson":"Start lesson",()=>startLesson(todo,t.title))}${rs?uiBtn("Start from the beginning",()=>startLesson(todo,t.title,false,true),"link"):""}`,"hero");
   }else path+=uiCard(`<h2>Level finished</h2><p style="margin:0">You learned every word in this level.</p>`);
   const rows=[];
   if(storyIdx!==undefined){const t=ths[storyIdx],c=chapter(l,storyIdx),open=(t.words||[]).every(w=>isL(l,w));
@@ -209,7 +209,7 @@ function render(){if(typeof closeCallout==="function")closeCallout();
     hd.innerHTML=`<div class="wrap hdrow sm">${left}<div class="hdmid">${r.title?`<span class="hdt2">${esc(r.title)}</span>`:""}<div id="prog" class="prog">${r.prog||""}</div></div></div>`;
   }
   let pre="";
-  if(view.confirm)pre=`<div class="confirm"><p><strong>Exit now?</strong> ${view.s==="review"?"Answers you already checked are saved. The rest of this session is not.":"Progress in this "+({place:"placement quiz",test:"test",story:"chapter",talk:"turn",trip:"practice"}[view.s]||"lesson")+" is not saved."}</p><div class="inline"><button class="btn pri" data-a="${A(()=>{if(view.s==="talk"||view.s==="trip"){view.mode="read";view.confirm=false;render();}else goHome();})}">Exit now</button><button class="btn sec" data-a="${A(()=>{view.confirm=false;render();})}">Stay</button></div></div>`;
+  if(view.confirm)pre=`<div class="confirm"><p><strong>Exit now?</strong> ${view.s==="review"?"Answers you already checked are saved. The rest of this session is not.":view.s==="lesson"&&!view.repeat?"Your place in this lesson is saved. You can continue it later from the Learn tab.":"Progress in this "+({place:"placement quiz",test:"test",story:"chapter",talk:"turn",trip:"practice"}[view.s]||"lesson")+" is not saved."}</p><div class="inline"><button class="btn pri" data-a="${A(()=>{if(view.s==="talk"||view.s==="trip"){view.mode="read";view.confirm=false;render();}else goHome();})}">Exit now</button><button class="btn sec" data-a="${A(()=>{view.confirm=false;render();})}">Stay</button></div></div>`;
   const main=document.getElementById("main");main.innerHTML=deEmoji(pre+r.main);
   hd.innerHTML=deEmoji(hd.innerHTML);
   document.getElementById("sheet").innerHTML=deEmoji(sheetHTML());
