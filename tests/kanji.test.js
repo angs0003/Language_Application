@@ -86,7 +86,7 @@ async function solveAll(W, click) { for (let k = 0; k < 60 && !W.eval("view.fini
   d.getElementById("nextbtn").click(); check(W.eval("view.c") !== "私", "Next kanji opens the next kanji");
   W.eval("libSec=null;goHome()");
   // furigana fades
-  W.eval("openChapter(1)");
+  W.eval("openChapter(1);view.shown=chapter('ja',1).lines.length;render()");
   check(!!d.querySelector("ruby"), "furigana appears above kanji that are not learned");
   W.eval("S.ja.kanji['私']={b:2,d:Date.now()+9e9,u:Date.now()};render()");
   const rubies = [...d.querySelectorAll("ruby")].map(x => x.textContent);

@@ -114,7 +114,7 @@ for (const lang of ["ja", "zh"]) {
       const errors = await openApp(page, lang);
       await page.evaluate(l => { S[l].placed = true; }, lang);
       await page.evaluate("(" + open.toString() + ")()");
-      const words = page.locator(name === "theme page word list" ? ".wordrow" : name === "lesson new word example" ? "#main .tk:not(.pu)" : ".tk:not(.pu)");
+      const words = page.locator(name === "theme page word list" ? ".wordrow" : name === "lesson new word example" ? "#main .tk:not(.pu):visible" : ".tk:not(.pu):visible");
       expect(await words.count(), "tappable words on this screen").toBeGreaterThan(0);
       for (const pos of ["first", "last"]) {
         const w = words[pos]();
@@ -225,6 +225,23 @@ for (const lang of ["ja", "zh"]) {
     }
     expect(errors, "script errors").toEqual([]);
   });
+  // Story reader: bubbles, Continue shows the next line, every step fits the phone
+  test(`${lang} story bubbles`, async ({ page }) => {
+    const errors = await openApp(page, lang);
+    await page.evaluate(l => { S[l].placed = true; save(); render(); openChapter(1); }, lang);
+    const n = await page.evaluate(() => chapter(S.lang, 1).lines.length);
+    await expect(page.locator(".brow")).toHaveCount(1);
+    for (let k = 1; k <= n; k++) {
+      await checkScreen(page, `${lang} story line ${k}`);
+      await page.addStyleTag({ content: "*{font-family:'Courier New',monospace !important}" });
+      const wide = await page.evaluate(vw => document.documentElement.scrollWidth - vw, page.viewportSize().width);
+      expect(wide, `story line ${k} with a wide font: sideways scroll`).toBeLessThanOrEqual(1);
+      if (k < n) { await page.reload(); await page.waitForFunction(() => document.querySelectorAll(".tabb").length === 4); await page.evaluate(([l, shown]) => { S[l].placed = true; openChapter(1); view.shown = shown; render(); }, [lang, k + 1]); }
+    }
+    await expect(page.locator("#nextbtn")).toHaveText(/Answer \d+ questions|Finish chapter/);
+    await expect(page.locator(".brow")).toHaveCount(n);
+    expect(errors, "script errors").toEqual([]);
+  });
   // System Back (Android back gesture or button) = the app's Back; on a tab screen it leaves the app. page.goBack() fires the same popstate.
   test(`${lang} system back`, async ({ page }) => {
     const errors = await openApp(page, lang);
@@ -239,7 +256,7 @@ for (const lang of ["ja", "zh"]) {
     await expect(page.locator(".tabb[aria-current=page]")).toHaveText(/Learn/);
     // a word callout is closed first, then the screen goes back
     await page.evaluate(() => { openChapter(0); });
-    await page.locator(".tk:not(.pu)").first().click(); await expect(page.locator("#callout")).toBeVisible();
+    await page.locator(".tk:not(.pu):visible").first().click(); await expect(page.locator("#callout")).toBeVisible();
     await page.goBack(); await expect(page.locator("#callout")).toHaveCount(0); expect(await where(), "still on the chapter").toBe("story");
     await page.goBack(); await expect.poll(where).toBe("home");
     // the Exit panel is closed first

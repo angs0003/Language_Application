@@ -172,13 +172,13 @@ function homeListen(l,r){
   let h=`<div class="lvline"><div class="lvtop">${lvPick(l,lv)}</div></div>`+uiSeg([["all","All"],["stories","Stories"],["podcast","Podcast"],["video","Video"]],f,k=>{view.lf=k;render();});
   const last=st.lastListen;
   if(last){let title="",fn=null,ch="";
-    if(last.kind==="story"&&chapter(l,last.i)){title="Story "+(last.i+1)+": "+chapter(l,last.i).title;fn=()=>openPlayer("story",last.i);ch=[...(ths[last.i].words[0].w)][0];}
+    if(last.kind==="story"&&chapter(l,last.i)){title="Story "+(last.i+1)+": "+chapter(l,last.i).title;fn=()=>openChapter(last.i);ch=[...(ths[last.i].words[0].w)][0];}
     else if(last.kind==="pod"&&ths[last.i]){title="Episode "+(last.i+1)+": "+ths[last.i].title;fn=()=>openPlayer("pod",last.i);ch=[...(ths[last.i].words[0].w)][0];}
     else if(last.kind==="trip"&&TRIP[l][last.i]){title="Travel: "+TRIP[l][last.i].t;fn=()=>openPlayer("trip",last.i);ch="旅";}
     if(fn)h+=uiCard(`<div class="nxt">${uiTileChar(ch,true)}<span class="lrt">${uiLabel("CONTINUE")}<span class="nxh">${esc(title)}</span></span><button class="playbig" aria-label="Play" data-a="${A(fn)}">${ico("play",24)}</button></div>`,"hero");}
   const tiles=[];
   const lvIdx=ths.map((t,i)=>i).filter(i=>lvOfTheme(l,i)===lv);
-  if(f==="all"||f==="stories")lvIdx.forEach(i=>{const t=ths[i],un=t.words.every(w=>isL(l,w));if(un&&chapter(l,i))tiles.push({k:"Story",ch:[...t.words[0].w][0],t:chapter(l,i).title,m:(st.chRead||[]).includes(i)?"Listened":`${chapter(l,i).lines.length} lines`,done:(st.chRead||[]).includes(i),fn:()=>openPlayer("story",i)});});
+  if(f==="all"||f==="stories")lvIdx.forEach(i=>{const t=ths[i],un=t.words.every(w=>isL(l,w));if(un&&chapter(l,i))tiles.push({k:"Story",ch:[...t.words[0].w][0],t:chapter(l,i).title,m:(st.chRead||[]).includes(i)?"Listened":`${chapter(l,i).lines.length} lines`,done:(st.chRead||[]).includes(i),fn:()=>openChapter(i)});});
   if(f==="all"||f==="podcast")lvIdx.slice(0,f==="all"?4:99).forEach(i=>{const t=ths[i];tiles.push({k:"Podcast",ch:[...t.words[0].w][0],t:"Episode "+(i+1)+": "+t.title,m:(st.podDone||{})[i]?"Listened":"Words and story",done:!!(st.podDone||{})[i],fn:()=>openPod(i)});});
   if(f==="all"||f==="video"){(VIDS[l]||[]).filter(x=>x.id&&(!x.lvn||x.lvn<=lv)).forEach(x=>tiles.push({k:"Video",ico:"video",t:x.title,m:[x.len,x.ch].filter(Boolean).join(" · "),fn:()=>openVideo(x.id)}));
     (st.videos||[]).forEach(x=>tiles.push({k:"Video",ico:"video",t:x.title,m:x.watched?"Watched":"Your video",fn:()=>openVideo(x.id)}));}

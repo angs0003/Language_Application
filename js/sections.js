@@ -204,7 +204,7 @@ Reply with only JSON in this shape:
   }catch(e){return aiErr(e);}
 }
 let playTok=0;
-function markLine(i){document.querySelectorAll(".line.now").forEach(e=>e.classList.remove("now"));if(i<0)return;const el=document.querySelector(`[data-line="${i}"]`);if(el){el.classList.add("now");if(el.scrollIntoView)el.scrollIntoView({block:"center"});}}
+function markLine(i){document.querySelectorAll("[data-line].now").forEach(e=>e.classList.remove("now"));if(i<0)return;const el=document.querySelector(`[data-line="${i}"]`);if(el){el.classList.add("now");if(el.scrollIntoView)el.scrollIntoView({block:"center"});}}
 function stopAudio(){playTok++;try{speechSynthesis.cancel();}catch(e){}markLine(-1);hlClear();}
 function playStory(lines,l,start){
   if(!("speechSynthesis" in window)){note("This browser cannot play speech audio.");return;}
@@ -215,15 +215,37 @@ function playStory(lines,l,start){
 }
 function openChapter(n){
   const l=S.lang,ch=chapter(l,n);if(!ch)return;
-  view={s:"story",n,phase:"read",qs:(ch.qs||[]).map(q=>mkGramQ(q,l,true)),k:0};render();window.scrollTo(0,0);
+  S[l].lastListen={kind:"story",i:n};save();
+  view={s:"story",n,phase:"read",shown:1,qs:(ch.qs||[]).map(q=>mkGramQ(q,l,true)),k:0};render();window.scrollTo(0,0);readStoryLine();
+}
+/* Story reader (phase "read"): one speech bubble per line with the speaker's first character as the avatar. Continue shows the next line and reads it aloud
+   (setting autoRead). The speaker name tokens stay in the page but are hidden, so that the spoken-word highlight keeps its token positions. */
+function playOneLine(lines,l,i){
+  if(!("speechSynthesis" in window)){note("This browser cannot play speech audio.");return;}
+  speechSynthesis.cancel();const tok=++playTok,x=lines[i],map=spkMap(lines),u=new SpeechSynthesisUtterance(spokenText(x));
+  u.lang=L[l].code;applySpeaker(u,voicesFor(l),spkIdx(map,x));u.rate=0.9*S.settings.speed;
+  hlTrack(u,x.tokens,()=>document.querySelector(`[data-line="${i}"]`),()=>tok===playTok,spkSkip(x));const st=u.onstart;
+  u.onstart=()=>{if(st)st();if(tok===playTok)markLine(i);};u.onend=()=>{if(tok===playTok){markLine(-1);hlClear();}};speechSynthesis.speak(u);
+}
+function readStoryLine(){
+  const v=view;if(!v||v.s!=="story"||v.phase!=="read"||S.settings.autoRead===false)return;
+  const ch=chapter(S.lang,v.n);if(ch)playOneLine(ch.lines,S.lang,v.shown-1);
+}
+function storyBubble(l,lines,x,i,map){
+  const k=spkSkip(x),si=(spkIdx(map,x)||0)%2,name=k?x.tokens[0][0]:"",m=S.settings.sub,en=k?x.english.replace(/^[^:：]{1,30}[:：]\s*/,""):x.english;
+  const body=m==="none"?`<p class="small muted" style="margin:0">Text hidden (listening only). Change it in Options.</p>`:glossHTML(l,x.tokens,[],m==="target")+(m==="both"&&S.settings.showEnglish&&en?`<p class="eng">${esc(en)}</p>`:"");
+  return `<div class="brow${k?"":" narr"}" data-line="${i}" data-skip="${k}">${k?`<span class="avatar a${si}" role="img" aria-label="${esc(name)}" lang="${L[l].hl}">${esc([...name][0]||"")}</span>`:""}<div class="bubble"><button class="play" aria-label="Play this line" title="Play this line" data-a="${A(()=>playOneLine(lines,l,i))}">${PLAY}</button><div class="bt">${body}</div></div></div>`;
 }
 function screenStory(){
   const v=view,l=S.lang,ch=chapter(l,v.n);
   const r={row:"title",title:`📖 Chapter ${v.n+1}: ${ch.title}`,back:{label:"Back",fn:()=>{stopAudio();goHome();}},main:""};
   if(v.phase==="read"){
-    r.prog=`<div class="ptext">Step 1 of 2: Read and listen</div><div class="psub">${ch.lines.length} lines. ${v.qs.length?v.qs.length+" questions after reading.":"No questions."}</div>`;
-    r.main=`<div class="card"><button class="btn pri full" style="margin-bottom:10px" data-a="${A(()=>openPlayer("story",v.n))}">🎬 Play as a video, one line at a time</button><div class="inline" style="margin-bottom:8px"><button class="play" data-a="${A(()=>playStory(ch.lines,l,0))}">${PLAY}Play whole chapter</button><button class="play" data-a="${A(stopAudio)}">⏹️ Stop</button></div>${speedHTML()}<div style="margin-top:6px">${subChips()}</div><p class="small muted">The line being played is highlighted. 🔊 plays one line. ▶️ plays from that line to the end. 🔁 repeats one line until you tap ⏹️ Stop.</p>${ch.lines.map((x,i)=>`<div class="line" data-line="${i}"><div class="sent"><div class="sbody"><p class="spk">Line ${i+1}</p>${storySentHTML(l,x)}</div><div class="stack2"><button class="play" aria-label="Loop this line" title="Loop this line" data-a="${A(()=>playLoop(x,l,i))}">🔁</button><button class="play" aria-label="Play this line" title="Play this line" data-a="${A(()=>playStory([x],l,0))}">${PLAY}</button><button class="play" aria-label="Play from this line" title="Play from this line" data-a="${A(()=>playStory(ch.lines,l,i))}">▶️</button></div></div></div>`).join("")}</div>`;
-    r.next=v.qs.length?{label:`Answer ${v.qs.length} questions`,fn:()=>{stopAudio();v.phase="q";v.k=0;render();window.scrollTo(0,0);}}:{label:"Finish chapter",fn:()=>{stopAudio();v.phase="done";render();window.scrollTo(0,0);}};
+    const n=ch.lines.length,map=spkMap(ch.lines),last=v.shown>=n;
+    r.prog=`<div class="ptext">Line ${v.shown} of ${n}</div><div class="bar"><i style="width:${Math.round(v.shown/n*100)}%"></i></div>`;
+    r.main=`<details class="card acc compact" data-k="storyopt" ${isOpen("storyopt",false)?"open":""}><summary>Options</summary><div style="margin-top:6px">${speedHTML()}</div><div style="margin-top:8px">${subChips()}</div>${last?"":`<button class="btn sec full" style="margin-top:10px" data-a="${A(()=>{v.shown=n;v.scrollEnd=true;stopAudio();render();})}">Show all lines</button>`}</details><div class="blist">${ch.lines.slice(0,v.shown).map((x,i)=>storyBubble(l,ch.lines,x,i,map)).join("")}</div>`;
+    r.back={label:"Back",fn:()=>{stopAudio();if(v.shown>1){v.shown--;render();}else goHome();}};
+    r.next=!last?{label:"Continue",fn:()=>{v.shown++;v.scrollEnd=true;render();readStoryLine();}}
+      :v.qs.length?{label:`Answer ${v.qs.length} questions`,fn:()=>{stopAudio();v.phase="q";v.k=0;render();window.scrollTo(0,0);}}:{label:"Finish chapter",fn:()=>{stopAudio();v.phase="done";render();window.scrollTo(0,0);}};
     return r;
   }
   if(v.phase==="q"&&v.k<v.qs.length){
