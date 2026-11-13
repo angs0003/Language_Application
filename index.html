@@ -401,6 +401,16 @@ input[type=text],select,textarea{border-radius:14px;min-height:50px}
 main:has(.qarea){padding-bottom:96px}
 .qarea>.bank,.qarea>.opts{margin-top:auto}
 .qarea>.fb{margin-top:0}
+/* short screens (iPhone in Safari is 659 px high): tighter spacing so that the question and the tiles fit without scrolling */
+@media (max-height:720px){
+  .qarea{gap:6px;min-height:calc(100svh - 215px)}
+  .qarea .bubblerow{margin:2px 0 4px}
+  .qarea .bubble{padding:6px 10px;gap:6px}
+  .qarea .ansrow{min-height:52px;margin:4px 0 6px;padding:4px 0 8px}
+  .qarea .bank,.qarea .ansrow{gap:6px}
+  .qarea .opt.dk{min-height:44px;margin-top:4px}
+  main:has(.qarea){padding-bottom:88px}
+}
 /* word tiles of the sentence exercises: the general .tile (content tile) rule removes the border, so they are styled here */
 .bank .tile,.ansrow .tile{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;min-height:48px;min-width:44px;padding:6px 14px;border:2px solid var(--line);border-bottom-width:4px;border-radius:12px;background:var(--surface);color:var(--ink);font:inherit;font-size:18px;text-align:center}
 .bank .tile:disabled,.ansrow .tile:disabled{opacity:.7}
