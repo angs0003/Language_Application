@@ -12,6 +12,22 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"){if(document.getElem
 
 function goHome(){try{playTok++;speechSynthesis.cancel();}catch(e){}view=libSec?{s:"lib",sec:libSec}:{s:"home"};noteText="";render();window.scrollTo(0,0);}
 function setLang(l){S.lang=l;save();goHome();}
+/* System Back (the Android back gesture or button, the browser back button): while a screen that is not a tab screen is open, one history entry is pushed.
+   Going back then fires popstate and runs the same Back as the bottom bar (or goes to the tab screen). On a tab screen there is no extra entry, so Back leaves the app. */
+let histDeep=false,histIgnore=0,lastBack=null;
+function syncHistory(deep){
+  if(deep&&!histDeep){try{history.pushState({ls:1},"",location.href);histDeep=true;}catch(e){}}
+  else if(!deep&&histDeep){histDeep=false;histIgnore++;try{history.back();}catch(e){histIgnore--;}}
+}
+window.addEventListener("popstate",()=>{
+  if(histIgnore>0){histIgnore--;return;}
+  if(!histDeep)return;
+  histDeep=false;
+  if(document.getElementById("callout")){closeCallout();syncHistory(true);return;}
+  if(view.confirm){view.confirm=false;render();return;}
+  if(view.sheet){closeSheet();return;}
+  if(lastBack)lastBack();else goHome();
+});
 
 /* ---------- Screens ---------- */
 async function genTheme(l,gi){
@@ -167,9 +183,8 @@ let calloutBtn=null;
 function closeCallout(){const c=document.getElementById("callout");if(c)c.remove();if(calloutBtn){calloutBtn.classList.remove("on");calloutBtn.removeAttribute("aria-expanded");}const b=calloutBtn;calloutBtn=null;return b;}
 function placeCallout(c,btn){
   const r=btn.getBoundingClientRect(),vw=document.documentElement.clientWidth,hd=document.getElementById("hd"),topLimit=Math.max(0,hd?hd.getBoundingClientRect().bottom:0);
-  c.style.visibility="hidden";document.body.appendChild(c);
-  const w=Math.min(300,vw-16);c.style.width=w+"px";
-  const h=c.offsetHeight,cx=r.left+r.width/2,left=Math.max(8,Math.min(cx-w/2,vw-w-8)),above=r.top-h-12>=topLimit+4;
+  c.style.visibility="hidden";c.style.maxWidth=Math.min(280,vw-16)+"px";document.body.appendChild(c);
+  const w=c.offsetWidth,h=c.offsetHeight,cx=r.left+r.width/2,left=Math.max(8,Math.min(cx-w/2,vw-w-8)),above=r.top-h-12>=topLimit+4;
   /* a word inside a fixed area (the quiz feedback panel) keeps the callout fixed too, so it does not drift when the page scrolls */
   let fixed=false;for(let p=btn;p&&p!==document.body;p=p.parentElement){if(getComputedStyle(p).position==="fixed"){fixed=true;break;}}
   c.style.position=fixed?"fixed":"";const ox=fixed?0:window.scrollX,oy=fixed?0:window.scrollY;
