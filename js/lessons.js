@@ -161,7 +161,7 @@ function sayLines(lines,l){
     u.rate=0.9*S.settings.speed;hlTrack(u,x.tokens,rootAt(k),()=>tok===playTok,spkSkip(x));if(k===lines.length-1)u.onend=()=>{if(tok===playTok)hlClear();};speechSynthesis.speak(u);});
 }
 /* Word reference card */
-/* Word callout: tapping a word opens a small box above it (below it when there is no room above) with the reading, the meaning, Play and Save.
+/* Word callout: tapping a word opens a small box above it (below it when there is no room above) with the reading and the meaning, and reads the word aloud.
    It is not part of render(): render() closes it. The old bottom sheet (openWordSheet, sheetHTML) is kept for when AI is turned on. */
 let calloutBtn=null;
 function closeCallout(){const c=document.getElementById("callout");if(c)c.remove();if(calloutBtn){calloutBtn.classList.remove("on");calloutBtn.removeAttribute("aria-expanded");}const b=calloutBtn;calloutBtn=null;return b;}
@@ -185,12 +185,18 @@ function openWord(l,t,toks,e){
   if(view.s==="player"&&view.playing)plStop(view);/* stopping may redraw the screen, so find the tapped word again */
   const b=document.contains(btn)?btn:all()[idx];if(!b)return;
   const k=allWords(l).find(w=>w.w===t[0]),sh={l,text:t[0],r:k?k.r:t[1],m:k?k.m:t[2],data:null,sent:toks?toks.map(x=>x[0]).join(""):"",tk:toks&&toks.length<=20?toks:null,src:srcLabel()};
-  const saved=isSaved(l,sh.text),c=document.createElement("div");c.id="callout";c.className="callout";c.setAttribute("role","dialog");c.setAttribute("aria-label","Word meaning");
-  c.innerHTML=`<span class="cohd"><span class="tx" lang="${L[l].hl}">${esc(sh.text)}</span>${sh.r?`<span class="cor">${esc(sh.r)}</span>`:""}</span><span class="com">${esc(sh.m||"")}</span><span class="coact"><button class="play" data-a="${A(()=>say(sh.text,l))}">${ico("play",20)}<span>Play audio</span></button><button class="play" aria-pressed="${saved}" data-a="${A(ev=>{const sb=ev.target.closest("button");toggleSave(sh,true);const s=isSaved(l,sh.text);sb.setAttribute("aria-pressed",s);sb.querySelector(".sl").textContent=s?"Saved (tap to remove)":"Save word";})}">${ico("star",20)}<span class="sl">${saved?"Saved (tap to remove)":"Save word"}</span></button></span><i class="coar"></i>`;
+  const c=document.createElement("div");c.id="callout";c.className="callout";c.setAttribute("role","status");c.setAttribute("aria-label","Word meaning");
+  c.innerHTML=`<span class="cohd"><span class="tx" lang="${L[l].hl}">${esc(sh.text)}</span>${sh.r?`<span class="cor">${esc(sh.r)}</span>`:""}</span><span class="com">${esc(sh.m||"")}</span><i class="coar"></i>`;
   placeCallout(c,b);calloutBtn=b;b.classList.add("on");b.setAttribute("aria-expanded","true");
+  say(sh.text,l);/* the word is read aloud when you tap it */
 }
 document.addEventListener("click",e=>{if(document.getElementById("callout")&&!e.target.closest("#callout")&&!e.target.closest(".tk,.wordrow"))closeCallout();});
 window.addEventListener("resize",closeCallout);
+/* The star on the New word card of a lesson saves the word to My words (with its example sentence). */
+function starWord(l,w,ev){
+  const b=ev.target.closest("button"),sh={l,text:w.w,r:w.r,m:w.m,sent:w.ex[0],tk:w.tk&&w.tk.tokens.length<=20?w.tk.tokens:null,src:srcLabel()};
+  toggleSave(sh,true);const s=isSaved(l,w.w);b.classList.toggle("on",s);b.setAttribute("aria-pressed",s);b.setAttribute("aria-label",s?"Remove from My words":"Save to My words");
+}
 function openWordSheet(l,t,toks){if(view.s==="player"&&view.playing)plStop(view);const k=allWords(l).find(w=>w.w===t[0]);view.sheet={l,text:t[0],r:k?k.r:t[1],m:k?k.m:t[2],state:"",data:null,sent:toks?toks.map(x=>x[0]).join(""):"",tk:toks&&toks.length<=20?toks:null,src:srcLabel()};if(!AI_OFF)loadRef(view.sheet);render();}
 function closeSheet(){view.sheet=null;render();}
 async function loadRef(sh){
@@ -314,7 +320,8 @@ function screenLesson(){
   const retry=(fn,label)=>`<p><button class="btn sec full" data-a="${A(fn)}">${label}</button></p>`;
   if(v.step===0){
     const w=ws[v.i],ex=v.ex[w.w];
-    h=`<div class="card"><p class="q">New word</p>${glyph(l,w)}${readingHTML(l,w)}<p class="meaning">${esc(w.m)}</p><p class="center"><button class="play" data-a="${A(()=>say(w.w,l))}" aria-label="Play audio" title="Play audio">${PLAY}</button></p></div>
+    const sv=isSaved(l,w.w);
+    h=`<div class="card hasstar"><button class="ibtn starbtn${sv?" on":""}" aria-label="${sv?"Remove from My words":"Save to My words"}" aria-pressed="${sv}" data-a="${A(ev=>starWord(l,w,ev))}">${ico("star",22)}</button><p class="q">New word</p>${glyph(l,w)}${readingHTML(l,w)}<p class="meaning">${esc(w.m)}</p><p class="center"><button class="play" data-a="${A(()=>say(w.w,l))}" aria-label="Play audio" title="Play audio">${PLAY}</button></p></div>
     <div class="card"><p class="q">Example</p>${ex?sentHTML(l,ex,[w]):w.tk?sentHTML(l,w.tk,[w]):builtinEx(l,w)}${!ex&&v.aState==="loading"?`<p class="small muted" style="margin-top:6px">The word-by-word version is loading.</p>`:""}</div>`;
   }else if(v.step===1){
     if(v.i===0){

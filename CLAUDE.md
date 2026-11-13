@@ -48,7 +48,7 @@ Match it for any new screen.
 7. **Touch targets** at least 44 px (most are 48 to 56 px). Body text 17 px.
 8. **No timers, no auto-advance, no streak loss, no leaderboards, no flashing or animation.**
 9. **Literal feedback**, "I do not know" on every question, Check answer before any result, Back to see earlier answers.
-10. **Word readings appear when a word is tapped**: a callout opens above the word (below it when there is no room above) with the reading, the meaning, Play and Save (`openWord`, `placeCallout` in js/lessons.js). It closes on a tap outside, on Escape, on a tap of the same word, and on every redraw. The older bottom sheet (`openWordSheet`, `sheetHTML`) is kept for when AI is turned on. The setting "gloss" can show readings under every word.
+10. **Word readings appear when a word is tapped**: a callout opens above the word (below it when there is no room above) with the reading and the meaning, and the word is read aloud when you tap it (`openWord`, `placeCallout` in js/lessons.js). Saving a word to My words is the star at the top right of the New word card in a lesson (`starWord`). It closes on a tap outside, on Escape, on a tap of the same word, and on every redraw. The older bottom sheet (`openWordSheet`, `sheetHTML`) is kept for when AI is turned on. The setting "gloss" can show readings under every word.
 11. Light and dark mode through the tokens. Use ’ and “ ” in visible text.
 
 ## 4. Files

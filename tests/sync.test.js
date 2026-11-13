@@ -18,7 +18,7 @@ const check = (ok, msg) => { if (!ok) failures.push(msg); else console.log("ok:"
   const A = tools(a, failures);
   check(A.W.eval("LS_CONTENT_SOURCE") === "database", "device A loads content from the database");
   A.lang("ja"); A.click("Skip and start"); A.startNext(); await wait(5); await A.doLesson();
-  A.W.eval("openChapter(0)"); A.d.querySelector(".tk:not(.pu)").click(); A.click("Save word");
+  A.W.eval("const t=themes('ja')[0];startLesson(t.words.slice(0,5),t.title)"); A.d.querySelector(".starbtn").click(); A.W.eval("goHome()");
   A.W.eval("S.ja.chRead.push(0);save()");
   await wait(2200);
   const T = store.tables;
