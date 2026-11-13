@@ -170,7 +170,10 @@ function placeCallout(c,btn){
   c.style.visibility="hidden";document.body.appendChild(c);
   const w=Math.min(300,vw-16);c.style.width=w+"px";
   const h=c.offsetHeight,cx=r.left+r.width/2,left=Math.max(8,Math.min(cx-w/2,vw-w-8)),above=r.top-h-12>=topLimit+4;
-  c.style.left=(left+window.scrollX)+"px";c.style.top=((above?r.top-h-12:r.bottom+12)+window.scrollY)+"px";
+  /* a word inside a fixed area (the quiz feedback panel) keeps the callout fixed too, so it does not drift when the page scrolls */
+  let fixed=false;for(let p=btn;p&&p!==document.body;p=p.parentElement){if(getComputedStyle(p).position==="fixed"){fixed=true;break;}}
+  c.style.position=fixed?"fixed":"";const ox=fixed?0:window.scrollX,oy=fixed?0:window.scrollY;
+  c.style.left=(left+ox)+"px";c.style.top=((above?r.top-h-12:r.bottom+12)+oy)+"px";
   c.classList.toggle("below",!above);c.style.setProperty("--ax",Math.max(18,Math.min(w-18,cx-left))+"px");c.style.visibility="";
 }
 function openWord(l,t,toks,e){

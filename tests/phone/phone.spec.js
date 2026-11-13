@@ -95,31 +95,53 @@ for (const lang of ["ja", "zh"]) {
     await checkScreen(page, `${lang} Casual speech quiz`);
     expect(errors, "script errors").toEqual([]);
   });
-  test(`${lang} word callout`, async ({ page }) => {
-    const errors = await openApp(page, lang);
-    await page.evaluate(() => { S[S.lang].placed = true; openPlayer("story", 0); });
-    const words = page.locator(".plline .tk:not(.pu)");
-    expect(await words.count()).toBeGreaterThan(1);
-    for (const i of [0, (await words.count()) - 1]) {
-      await words.nth(i).click();
-      const co = page.locator("#callout");
-      await expect(co).toBeVisible();
-      const r = await page.evaluate(() => {
-        const c = document.getElementById("callout").getBoundingClientRect();
-        const bs = [...document.querySelectorAll("#callout button")].map(b => { const x = b.getBoundingClientRect(); return [x.width, x.height]; });
-        return { left: c.left, right: c.right, top: c.top + window.scrollY, overflow: document.documentElement.scrollWidth - window.innerWidth, vw: window.innerWidth, bs };
-      });
-      expect(r.left, "callout left edge inside the screen").toBeGreaterThanOrEqual(0);
-      expect(r.right, "callout right edge inside the screen").toBeLessThanOrEqual(r.vw);
-      expect(r.top, "callout top inside the page").toBeGreaterThanOrEqual(0);
-      expect(r.overflow, "page scrolls sideways").toBeLessThanOrEqual(1);
-      expect(r.bs.length).toBe(2);
-      for (const [w, h] of r.bs) { expect(w).toBeGreaterThanOrEqual(44); expect(h).toBeGreaterThanOrEqual(44); }
-      await page.keyboard.press("Escape");
-      await expect(co).toHaveCount(0);
-    }
-    expect(errors, "script errors").toEqual([]);
-  });
+  // Word callout on every screen where words can be tapped (CLAUDE.md rule 10). Each screen is opened by an app function.
+  const CALLOUT_SCREENS = {
+    "lesson grammar": () => { const l = S.lang, t = themes(l)[0]; startLesson(t.words.slice(0, 5), t.title); view.step = 1; view.i = 0; render(); },
+    "lesson sentences": () => { const l = S.lang, t = themes(l)[0]; startLesson(t.words.slice(0, 5), t.title); view.step = 2; view.i = 0; render(); },
+    "lesson story": () => { const l = S.lang, t = themes(l)[0]; startLesson(t.words.slice(0, 5), t.title); view.step = 3; view.i = 0; render(); },
+    "quiz feedback panel": () => { const l = S.lang, t = themes(l)[0]; startLesson(t.words.slice(0, 5), t.title); view.step = 4; const i = view.quiz.findIndex(q => ["build", "blank", "lbuild", "buildEn", "gram"].includes(q.type)); view.i = Math.max(i, 0); const q = view.quiz[view.i]; q.answered = true; q.correct = false; q.dk = false; render(); },
+    "theme page": () => openTheme(0),
+    "story reader": () => openChapter(0),
+    "story player": () => openPlayer("story", 0),
+    "podcast player": () => openPlayer("pod", 0),
+    "travel conversation": () => openTrip(0)
+  };
+  for (const [name, open] of Object.entries(CALLOUT_SCREENS)) {
+    test(`${lang} word callout: ${name}`, async ({ page }) => {
+      const errors = await openApp(page, lang);
+      await page.evaluate(l => { S[l].placed = true; }, lang);
+      await page.evaluate("(" + open.toString() + ")()");
+      const words = page.locator(".tk:not(.pu)");
+      expect(await words.count(), "tappable words on this screen").toBeGreaterThan(0);
+      for (const pos of ["first", "last"]) {
+        const w = words[pos]();
+        await w.scrollIntoViewIfNeeded();
+        await w.click();
+        await expect(page.locator("#callout")).toBeVisible();
+        const r = await page.evaluate(() => {
+          const c = document.getElementById("callout"), b = c.getBoundingClientRect(), vw = innerWidth;
+          const inPanel = !!document.querySelector(".tk.on").closest("#fbp");
+          const bars = [...document.querySelectorAll(inPanel ? "#bbarw, #tabs" : "#bbarw, #tabs, #fbp")].filter(e => !e.hidden && e.getBoundingClientRect().height > 0).map(e => e.getBoundingClientRect().top);
+          const hits = [...c.querySelectorAll("button")].map(x => { const q = x.getBoundingClientRect(), el = document.elementFromPoint(q.left + q.width / 2, q.top + q.height / 2); return !!el && c.contains(el); });
+          const sizes = [...c.querySelectorAll("button")].map(x => { const q = x.getBoundingClientRect(); return [q.width, q.height]; });
+          return { left: b.left, right: b.right, top: b.top, bottom: b.bottom, vw, barTop: bars.length ? Math.min(...bars) : innerHeight, hits, sizes, inPanel, position: getComputedStyle(c).position, overflow: document.documentElement.scrollWidth - vw };
+        });
+        expect(r.left, pos + ": left edge inside the screen").toBeGreaterThanOrEqual(0);
+        expect(r.right, pos + ": right edge inside the screen").toBeLessThanOrEqual(r.vw);
+        expect(r.top, pos + ": top inside the page").toBeGreaterThanOrEqual(0);
+        expect(r.bottom, pos + ": not under the bottom bar").toBeLessThanOrEqual(r.barTop);
+        expect(r.hits.every(Boolean), pos + ": both buttons are not covered").toBe(true);
+        expect(r.sizes.length).toBe(2);
+        for (const [bw, bh] of r.sizes) { expect(bw).toBeGreaterThanOrEqual(44); expect(bh).toBeGreaterThanOrEqual(44); }
+        expect(r.overflow, pos + ": page scrolls sideways").toBeLessThanOrEqual(1);
+        if (r.inPanel) expect(r.position, "a callout for a word in the fixed panel is fixed too").toBe("fixed");
+        await page.keyboard.press("Escape");
+        await expect(page.locator("#callout")).toHaveCount(0);
+      }
+      expect(errors, "script errors").toEqual([]);
+    });
+  }
   test(`${lang} first lesson screen`, async ({ page }) => {
     const errors = await openApp(page, lang);
     await page.locator(".tabb", { hasText: "Learn" }).click();
