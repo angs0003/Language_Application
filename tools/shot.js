@@ -1,9 +1,10 @@
-/* Screenshots of any screen of the app at phone sizes, to look at a change before a pull request (no temporary test files needed).
-   Usage: npm run shot -- --js "openPod(0)" --name podcast [--lang zh] [--sizes 360x740,412x915] [--dark] [--full] [--after "code"]
+/* Screenshots of any screen of the app on the two phones the app is made for (iPhone 15 Pro and Pixel 9 Pro, Playwright device profiles), to look at a change before a pull request (no temporary test files needed).
+   Usage: npm run shot -- --js "openPod(0)" --name podcast [--lang zh] [--app] [--dark] [--full] [--after "code"]
      --js     JavaScript run in the page after the app has started and the language is set and marked as placed (any app function: openPod(0), startLesson(...), openTheme(0), ...)
      --after  more JavaScript run after the first screenshot; a second screenshot is saved as <name>-after-<size>.png (for example open a callout or Options)
      --lang   zh or ja (default ja)
      --dark   dark mode
+   --app    the full screen of an installed app (iPhone 393 x 852, Pixel 427 x 952) instead of the browser window (iPhone 393 x 659 in Safari, Pixel 427 x 876 in Chrome)
    The PNG files are saved in tmp/shots/ (not committed) and their paths are printed. First time on a computer: npx playwright install chromium */
 const http = require("http"), fs = require("fs"), path = require("path");
 const arg = (k, d) => { const i = process.argv.indexOf("--" + k); return i >= 0 && process.argv[i + 1] && !process.argv[i + 1].startsWith("--") ? process.argv[i + 1] : d; };
@@ -23,9 +24,11 @@ const server = http.createServer((req, res) => {
   fs.mkdirSync(OUT, { recursive: true });
   const browser = await chromium.launch(process.env.PW_CHROME ? { executablePath: process.env.PW_CHROME } : {}), files = [];
   try {
-    for (const size of arg("sizes", "360x740,412x915").split(",")) {
-      const [w, h] = size.split("x").map(Number);
-      const ctx = await browser.newContext({ viewport: { width: w, height: h }, isMobile: true, hasTouch: true, deviceScaleFactor: 2, colorScheme: has("dark") ? "dark" : "light" });
+    const { devices } = require("@playwright/test");
+    for (const dev of ["iPhone 15 Pro", "Pixel 9 Pro"]) {
+      const { defaultBrowserType, ...d } = devices[dev], size = dev.toLowerCase().replace(/ /g, "-");
+      if (has("app")) d.viewport = d.screen;
+      const ctx = await browser.newContext(Object.assign({}, d, { deviceScaleFactor: 2, colorScheme: has("dark") ? "dark" : "light" }));
       const page = await ctx.newPage(), errors = [];
       page.on("pageerror", e => errors.push(e.message));
       await page.route("**/config.js", r => r.fulfill({ contentType: "text/javascript", body: "window.LS_CONFIG={};" }));

@@ -3,7 +3,7 @@
    touch targets of at least 44 x 44 px. The app runs with bundled content (no database, no network).
    Touch targets that were already too small when this test was added are listed in touch-baseline.json:
    they are reported, not failed. Any new too-small target fails the test.
-   After fixing old ones, refresh the list with: UPDATE_BASELINE=1 npm run test:phone */
+   After fixing old ones, refresh the list with: UPDATE_BASELINE=1 npx playwright test --workers=1 (one worker: the list is the union of both phones) */
 const { test, expect } = require("@playwright/test");
 const fs = require("fs"), path = require("path");
 const BASE_FILE = path.join(__dirname, "touch-baseline.json");
@@ -28,7 +28,7 @@ async function checkScreen(page, name, opts = {}) {
     const small = [...document.querySelectorAll("button, a[href], input, select, summary, [role=button]")]
       .filter(vis)
       .filter(el => { const b = el.getBoundingClientRect(); return b.width < 43.5 || b.height < 43.5; })
-      .map(el => { const b = el.getBoundingClientRect(); return { key: `${el.tagName.toLowerCase()}.${[...el.classList].sort().join(".")}`, label: label(el), w: Math.round(b.width), h: Math.round(b.height) }; });
+      .map(el => { const b = el.getBoundingClientRect(); return { key: el.classList.contains("tk") ? "button.tk" : `${el.tagName.toLowerCase()}.${[...el.classList].filter(c => !["on", "now", "spoken"].includes(c)).sort().join(".")}`, /* word buttons are one kind; temporary classes (a word being spoken, an open callout) are ignored */ label: el.classList.contains("tk") ? "(any word in a sentence)" : label(el), w: Math.round(b.width), h: Math.round(b.height) }; });
     return {
       overflow: document.documentElement.scrollWidth - vw,
       primaries: [...document.querySelectorAll(".btn.pri")].filter(vis).length,
@@ -195,6 +195,7 @@ for (const lang of ["ja", "zh"]) {
       }, [lang, mode]);
       const sel = mode === "blank" ? ".opts" : ".bank";
       await expect(page.locator(sel)).toBeVisible();
+      await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight)); // a long sentence can make the question taller than a short screen: scroll to the end, as a learner does
       const r = await page.evaluate(sel => {
         const b = document.querySelector(sel).getBoundingClientRect(), a = document.querySelector(".ansrow"), bar = document.getElementById("bbarw").getBoundingClientRect();
         const prompt = document.querySelector(".qarea .q").getBoundingClientRect();
@@ -202,7 +203,7 @@ for (const lang of ["ja", "zh"]) {
       }, sel);
       console.log(`${lang} ${mode} ${r.vh}px: choices ${Math.round(r.top)}-${Math.round(r.bottom)}, bar top ${Math.round(r.barTop)}, answer row bottom ${r.ansBottom && Math.round(r.ansBottom)}`);
       expect(r.bottom, "choices end above the bottom bar").toBeLessThanOrEqual(r.barTop);
-      expect(r.bottom, "choices end in the lowest 25% of the screen").toBeGreaterThanOrEqual(r.vh * 0.75);
+      expect(r.barTop - r.bottom, "choices end within 130 px above the bottom bar (thumb reach; \"I do not know\" is under them)").toBeLessThanOrEqual(130);
       expect(r.promptTop, "the prompt stays at the top").toBeLessThan(r.vh * 0.4);
       if (r.ansBottom !== null) expect(r.ansBottom, "the answer row is above the tiles").toBeLessThan(r.top);
       await checkScreen(page, `${lang} question ${mode}`);
@@ -299,7 +300,7 @@ for (const lang of ["ja", "zh"]) {
 }
 
 test.afterAll(async ({}, info) => {
-  if (process.env.UPDATE_BASELINE && info.project.name.startsWith("small")) {
+  if (process.env.UPDATE_BASELINE && info.project.name === "Pixel 9 Pro") {
     const all = new Set([...found]);
     fs.writeFileSync(BASE_FILE, JSON.stringify([...all].sort(), null, 2) + "\n");
     console.log(`Wrote ${all.size} entries to touch-baseline.json`);
