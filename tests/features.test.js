@@ -55,28 +55,34 @@ const check = (ok, msg) => { if (!ok) failures.push(msg); else console.log("ok:"
   const css = require("fs").readFileSync(require("path").join(__dirname, "..", "index.html"), "utf8");
   check(/body\[data-lang="zh"\]\{--acc:var\(--zh\)/.test(css) && /body,body\[data-lang="ja"\],body\[data-lang="zh"\]\{--acc:var\(--ja\)/.test(css) && !/body\[data-sec=/.test(css), "colours follow the language, not the tab");
   W.eval('openPlayer("trip",0)'); check(M().includes("Local") || d.getElementById("prog").textContent.includes("Local"), "travel conversation opens in the player with speaker labels");
-  // tap a word in the player and save it with its sentence
-  W.eval('openPlayer("story",1)'); d.querySelector(".plline .tk:not(.pu)").click(); click("Save word");
-  check(W.eval("S.ja.saved.length") === 1 && W.eval("S.ja.saved[0].tk && S.ja.saved[0].tk.length > 1"), "word saved from the player keeps its sentence tokens");
-  check(W.eval("S.ja.saved[0].src").startsWith("Story chapter"), "saved word records its source");
-  d.body.click();
+  // save a new word with the star on the New word card: it keeps its example sentence and its source
+  W.eval("S.ja.saved=[];window.__lw=themes('ja')[0].words.slice(0,5);startLesson(__lw,themes('ja')[0].title)");
+  const star = () => d.querySelector(".starbtn");
+  check(!!star() && star().getAttribute("aria-label") === "Save to My words" && star().getAttribute("aria-pressed") === "false", "the New word card has a star to save the word");
+  star().click();
+  check(W.eval("S.ja.saved.length") === 1 && W.eval("S.ja.saved[0].tk && S.ja.saved[0].tk.length > 1") && star().getAttribute("aria-pressed") === "true" && star().classList.contains("on"), "the star saves the word with its example sentence and shows it as saved");
+  check(W.eval("S.ja.saved[0].src").startsWith("Lesson:"), "saved word records its source");
+  star().click(); check(W.eval("S.ja.saved.length") === 0 && star().getAttribute("aria-label") === "Save to My words", "the star removes the saved word again");
+  star().click();
   // --- Word callout ---
   {
+    W.eval("window.__say0=say;window.__said=[];say=(t)=>{__said.push(t);}");
     W.eval('openPlayer("story",0)');
     const words = () => [...d.querySelectorAll(".plline .tk:not(.pu)")], co = () => d.getElementById("callout");
     words()[0].click();
-    check(!!co() && d.querySelectorAll("#callout").length === 1 && co().getAttribute("role") === "dialog" && co().textContent.includes(W.eval("view.lines[0].tokens.find(t=>t[1]||t[2])[2]")), "tapping a word opens one callout with its meaning");
-    check(!d.querySelector(".sheet") && !d.querySelector(".scrim") && d.querySelectorAll(".callout button").length === 2, "the callout replaces the bottom sheet and has Play and Save");
+    check(!!co() && d.querySelectorAll("#callout").length === 1 && co().getAttribute("role") === "status" && co().textContent.includes(W.eval("view.lines[0].tokens.find(t=>t[1]||t[2])[2]")), "tapping a word opens one callout with its meaning");
+    check(!d.querySelector(".sheet") && !d.querySelector(".scrim") && d.querySelectorAll(".callout button").length === 0, "the callout replaces the bottom sheet and has no buttons");
+    check(W.eval("__said.length") === 1 && W.eval("__said[0]") === W.eval("view.lines[0].tokens.find(t=>t[1]||t[2])[0]"), "tapping a word reads it aloud");
+    d.body.click(); words()[0].click(); words()[0].click(); check(W.eval("__said.length") === 2, "closing the callout does not read the word again");
+    d.body.click(); words()[0].click();
     check(words()[0].getAttribute("aria-expanded") === "true" && words()[0].classList.contains("on"), "the tapped word is marked as open");
     words()[0].click(); check(!co() && !words()[0].classList.contains("on"), "tapping the same word again closes the callout");
     words()[0].click(); words()[1].click(); check(d.querySelectorAll("#callout").length === 1 && words()[1].classList.contains("on") && !words()[0].classList.contains("on"), "tapping another word moves the callout to that word");
     d.body.click(); check(!co(), "tapping outside closes the callout");
     words()[0].click(); d.dispatchEvent(new W.KeyboardEvent("keydown", { key: "Escape", bubbles: true })); check(!co(), "Escape closes the callout");
-    const before = W.eval("S.ja.saved.length"); words()[0].click();
-    click("Save word"); check(!!co() && W.eval("S.ja.saved.length") === before + 1 && co().textContent.includes("Saved (tap to remove)") && co().querySelector("[aria-pressed=true]"), "Save in the callout saves the word and keeps the callout open");
-    click("Saved (tap to remove)"); check(!!co() && W.eval("S.ja.saved.length") === before && co().textContent.includes("Save word"), "tapping Saved removes the word again");
     click("Next line"); check(!co(), "going to the next line closes the callout");
-    check(W.eval("[...document.querySelectorAll('.callout button')].every(b=>true)") === true && !W.eval("document.querySelector('.callout')"), "no callout stays after a redraw");
+    check(!W.eval("document.querySelector('.callout')"), "no callout stays after a redraw");
+    W.eval("say=__say0");
   }
   // --- Example sentences with word breaks ---
   {
@@ -126,8 +132,9 @@ const check = (ok, msg) => { if (!ok) failures.push(msg); else console.log("ok:"
     click("Stay"); check(W.eval("view.s") === "test" && !d.querySelector(".confirm"), "Stay keeps the test open");
     W.eval("goHome()");
   }
-  W.eval('openTrip(0)'); W.eval('openPlayer("trip",0)'); d.querySelector(".plline .tk:not(.pu)").click(); click("Save word"); d.body.click();
+  W.eval("startLesson(__lw,themes('ja')[0].title);view.i=1;render()"); d.querySelector(".starbtn").click(); W.eval("goHome()");
   // --- My words ---
+  W.eval("S.ja.saved[0].src='Travel: At the station'");/* words saved in lessons carry a Lesson source; mark one as saved in travel to test the source filter */
   W.eval("goHome()"); tab("Practise"); click("My words");
   check(W.eval("view.s") === "vocab" && d.querySelectorAll("#vlist li").length === 2, "My words lists 2 saved words");
   click("Travel"); check(d.querySelectorAll("#vlist li").length === 1, "source filter shows travel words only");

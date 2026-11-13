@@ -125,17 +125,15 @@ for (const lang of ["ja", "zh"]) {
           const c = document.getElementById("callout"), b = c.getBoundingClientRect(), vw = innerWidth;
           const inPanel = !!document.querySelector(".tk.on, .wordrow.on").closest("#fbp");
           const bars = [...document.querySelectorAll(inPanel ? "#bbarw, #tabs" : "#bbarw, #tabs, #fbp")].filter(e => !e.hidden && e.getBoundingClientRect().height > 0).map(e => e.getBoundingClientRect().top);
-          const hits = [...c.querySelectorAll("button")].map(x => { const q = x.getBoundingClientRect(), el = document.elementFromPoint(q.left + q.width / 2, q.top + q.height / 2); return !!el && c.contains(el); });
-          const sizes = [...c.querySelectorAll("button")].map(x => { const q = x.getBoundingClientRect(); return [q.width, q.height]; });
-          return { left: b.left, right: b.right, top: b.top, bottom: b.bottom, vw, barTop: bars.length ? Math.min(...bars) : innerHeight, hits, sizes, inPanel, position: getComputedStyle(c).position, overflow: document.documentElement.scrollWidth - vw };
+          const mid = document.elementFromPoint(b.left + b.width / 2, b.top + b.height / 2), onTop = !!mid && c.contains(mid);
+          return { left: b.left, right: b.right, top: b.top, bottom: b.bottom, vw, barTop: bars.length ? Math.min(...bars) : innerHeight, onTop, buttons: c.querySelectorAll("button").length, inPanel, position: getComputedStyle(c).position, overflow: document.documentElement.scrollWidth - vw };
         });
         expect(r.left, pos + ": left edge inside the screen").toBeGreaterThanOrEqual(0);
         expect(r.right, pos + ": right edge inside the screen").toBeLessThanOrEqual(r.vw);
         expect(r.top, pos + ": top inside the page").toBeGreaterThanOrEqual(0);
         expect(r.bottom, pos + ": not under the bottom bar").toBeLessThanOrEqual(r.barTop);
-        expect(r.hits.every(Boolean), pos + ": both buttons are not covered").toBe(true);
-        expect(r.sizes.length).toBe(2);
-        for (const [bw, bh] of r.sizes) { expect(bw).toBeGreaterThanOrEqual(44); expect(bh).toBeGreaterThanOrEqual(44); }
+        expect(r.onTop, pos + ": the callout is not covered").toBe(true);
+        expect(r.buttons, pos + ": the callout has no buttons").toBe(0);
         expect(r.overflow, pos + ": page scrolls sideways").toBeLessThanOrEqual(1);
         if (r.inPanel) expect(r.position, "a callout for a word in the fixed panel is fixed too").toBe("fixed");
         await page.keyboard.press("Escape");
@@ -146,11 +144,17 @@ for (const lang of ["ja", "zh"]) {
   }
   test(`${lang} first lesson screen`, async ({ page }) => {
     const errors = await openApp(page, lang);
+    await page.evaluate(l => { S[l].placed = true; save(); render(); }, lang);/* without a placement the first card opens the placement quiz, not a lesson */
     await page.locator(".tabb", { hasText: "Learn" }).click();
     const start = page.locator(".card.hero .btn.pri").first();
     await expect(start).toBeVisible();
     await start.click();
     await expect(page.locator("#main")).not.toBeEmpty();
+    const star = page.locator(".starbtn");
+    await expect(star, "star on the New word card").toBeVisible();
+    const sb = await star.boundingBox(), card = await page.locator(".card.hasstar").boundingBox();
+    expect(sb.width).toBeGreaterThanOrEqual(44); expect(sb.height).toBeGreaterThanOrEqual(44);
+    expect(sb.x + sb.width, "star at the right edge of the card").toBeGreaterThan(card.x + card.width - 24); expect(sb.y, "star at the top of the card").toBeLessThan(card.y + 24);
     const back = page.locator("#bbar button", { hasText: "Back" });
     await expect(back, "Back is active on the first word").toBeEnabled();
     const bb = await back.boundingBox(); expect(bb.width).toBeGreaterThanOrEqual(44); expect(bb.height).toBeGreaterThanOrEqual(44);
