@@ -98,6 +98,28 @@ const check = (ok, msg) => { if (!ok) failures.push(msg); else console.log("ok:"
     check(!!d.getElementById("callout") && !d.querySelector(".sheet") && d.querySelector(".wordrow.on"), "tapping a word in the theme word list opens the callout, not the bottom sheet");
     d.body.click();
   }
+  // --- Podcast episode: Chinese or Japanese only is spoken, English is shown in the same box, Previous and Next ---
+  {
+    W.eval("window.__sp1=speechSynthesis.speak;window.__pd=[];speechSynthesis.speak=u=>{__pd.push({t:u.text,l:u.lang});setTimeout(()=>u.onend&&u.onend(),1);};S.settings.sub='both';S.ja.podDone={}");
+    W.eval("openPod(0)");
+    const items = () => [...d.querySelectorAll(".podit")];
+    check(W.eval("podSegs('ja',0).every(s=>s.lang==='ja')") && W.eval("[...new Set(podSegs('ja',0).map(s=>s.part))].join()") === "Words,Story" && W.eval("podSegs('ja',0).length") === W.eval("themes('ja')[0].words.length+chapter('ja',0).lines.length"), "an episode has only the words and the story, all in the language being learned");
+    check(items().length === W.eval("view.segs.length") && items()[0].textContent.includes("– " + W.eval("themes('ja')[0].words[0].m")) && !d.querySelector(".seg"), "each word or line is one box with its English after it");
+    check(items().filter(b => b.classList.contains("sent")).every(b => b.querySelector(".en") && b.querySelector(".en").textContent.startsWith("– ")), "a story line shows its English after the Japanese in the same box");
+    const prev = () => [...d.querySelectorAll(".podnav button")].find(b => b.textContent.includes("Previous")), next = () => [...d.querySelectorAll(".podnav button")].find(b => b.textContent.includes("Next"));
+    check(prev().disabled && !next().disabled && d.getElementById("podpart").textContent === "Words · 1 of " + W.eval("themes('ja')[0].words.length"), "Previous is off on the first item and the status line shows the part and the place");
+    next().click(); check(W.eval("view.idx") === 1 && !prev().disabled && d.getElementById("podpart").textContent.startsWith("Words · 2 of") && items()[1].classList.contains("now"), "Next moves to the next item and highlights it");
+    items()[W.eval("themes('ja')[0].words.length")].click(); check(d.getElementById("podpart").textContent.startsWith("Story · 1 of"), "tapping a box jumps to it (the status line changes to the story)");
+    W.eval("__pd.length=0;podPlay(view)"); await wait(30);
+    check(W.eval("__pd.length") >= 1 && W.eval("__pd[0].t") === W.eval("view.segs[view.segs.findIndex(s=>s.part==='Story')].text") && W.eval("__pd.every(u=>u.l==='ja-JP')"), "playing speaks the Japanese only");
+    W.eval("__pd.length=0;window.__i0=view.idx"); next().click(); check(W.eval("view.playing") === true && W.eval("view.idx") === W.eval("__i0+1") && W.eval("__pd[0].t") === W.eval("view.segs[__i0+1].text"), "Next while playing continues with the next line");
+    W.eval("podStop(view);render()");
+    W.eval("S.settings.sub='target';render()"); check(!d.querySelector(".podit .en") && items().length === W.eval("view.segs.length"), "Target only hides the English");
+    W.eval("S.settings.sub='none';render()"); check(items().length === 0 && M().includes("Text hidden"), "No text hides the boxes (listening only)");
+    W.eval("S.settings.sub='both';render()");
+    check(!!d.querySelector("details[data-k='podopt']") && !d.querySelector("details[data-k='podopt']").open, "the options are collapsed by default");
+    W.eval("speechSynthesis.speak=__sp1;goHome()");
+  }
   // --- New words are read aloud when they open ---
   {
     W.eval("window.__sp0=speechSynthesis.speak;window.__rd=[];speechSynthesis.speak=u=>{__rd.push(u.text);setTimeout(()=>u.onend&&u.onend(),1);};S.settings.autoRead=true;S.ja.resume=null");
