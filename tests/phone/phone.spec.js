@@ -95,6 +95,31 @@ for (const lang of ["ja", "zh"]) {
     await checkScreen(page, `${lang} Casual speech quiz`);
     expect(errors, "script errors").toEqual([]);
   });
+  test(`${lang} word callout`, async ({ page }) => {
+    const errors = await openApp(page, lang);
+    await page.evaluate(() => { S[S.lang].placed = true; openPlayer("story", 0); });
+    const words = page.locator(".plline .tk:not(.pu)");
+    expect(await words.count()).toBeGreaterThan(1);
+    for (const i of [0, (await words.count()) - 1]) {
+      await words.nth(i).click();
+      const co = page.locator("#callout");
+      await expect(co).toBeVisible();
+      const r = await page.evaluate(() => {
+        const c = document.getElementById("callout").getBoundingClientRect();
+        const bs = [...document.querySelectorAll("#callout button")].map(b => { const x = b.getBoundingClientRect(); return [x.width, x.height]; });
+        return { left: c.left, right: c.right, top: c.top + window.scrollY, overflow: document.documentElement.scrollWidth - window.innerWidth, vw: window.innerWidth, bs };
+      });
+      expect(r.left, "callout left edge inside the screen").toBeGreaterThanOrEqual(0);
+      expect(r.right, "callout right edge inside the screen").toBeLessThanOrEqual(r.vw);
+      expect(r.top, "callout top inside the page").toBeGreaterThanOrEqual(0);
+      expect(r.overflow, "page scrolls sideways").toBeLessThanOrEqual(1);
+      expect(r.bs.length).toBe(2);
+      for (const [w, h] of r.bs) { expect(w).toBeGreaterThanOrEqual(44); expect(h).toBeGreaterThanOrEqual(44); }
+      await page.keyboard.press("Escape");
+      await expect(co).toHaveCount(0);
+    }
+    expect(errors, "script errors").toEqual([]);
+  });
   test(`${lang} first lesson screen`, async ({ page }) => {
     const errors = await openApp(page, lang);
     await page.locator(".tabb", { hasText: "Learn" }).click();

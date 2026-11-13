@@ -8,7 +8,7 @@ function A(fn){const k="a"+(++A.n);acts[k]=fn;return k;}A.n=0;
 document.addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(!b||b.disabled)return;buzz(10);const f=acts[b.dataset.a];if(f)f(e);});
 document.addEventListener("change",e=>{if(e.target.id==="lvl"){LVSEL[S.lang]=+e.target.value;view.lvl=null;render();}});
 document.addEventListener("input",e=>{if(e.target.id==="vsearch"){const q=e.target.value.trim().toLowerCase();document.querySelectorAll("#vlist li").forEach(li=>{li.style.display=!q||li.dataset.s.includes(q)?"":"none";});return;}if(e.target.id==="tin"&&view.q){view.q.input=e.target.value;const nb=document.getElementById("nextbtn");if(nb)nb.disabled=!canCheck(view.q);}});
-document.addEventListener("keydown",e=>{if(e.key==="Escape"&&view.sheet){closeSheet();return;}if(e.key==="Enter"&&e.target.id==="tin"&&view.q&&canCheck(view.q)){checkQ(view.q);render();}});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){if(document.getElementById("callout")){const b=closeCallout();if(b&&document.contains(b))b.focus();return;}if(view.sheet){closeSheet();return;}}if(e.key==="Enter"&&e.target.id==="tin"&&view.q&&canCheck(view.q)){checkQ(view.q);render();}});
 
 function goHome(){try{playTok++;speechSynthesis.cancel();}catch(e){}view=libSec?{s:"lib",sec:libSec}:{s:"home"};noteText="";render();window.scrollTo(0,0);}
 function setLang(l){S.lang=l;save();goHome();}
@@ -108,7 +108,7 @@ function glossHTML(l,tokens,hw,plain){
   const set=new Set((hw||[]).map(w=>w.w));
   return `<div class="gl">${tokens.map(t=>{
     if(PUNCT.test(t[0])||(!t[1]&&!t[2]))return `<span class="tk pu"><span class="tx" lang="${L[l].hl}">${esc(t[0])}</span></span>`;
-    return `<button class="tk${set.has(t[0])?" hw":""}" data-a="${A(()=>openWord(l,t,tokens))}"><span class="tx" lang="${L[l].hl}">${(()=>{const f=furiFor(l,t);return f?`<ruby>${esc(t[0])}<rt>${esc(f)}</rt></ruby>`:esc(t[0]);})()}</span>${S.settings.gloss&&!plain?`<span class="tr">${esc(t[1])}</span><span class="tm">${esc(t[2])}</span>`:""}</button>`;}).join("")}</div>`;
+    return `<button class="tk${set.has(t[0])?" hw":""}" data-a="${A(e=>openWord(l,t,tokens,e))}"><span class="tx" lang="${L[l].hl}">${(()=>{const f=furiFor(l,t);return f?`<ruby>${esc(t[0])}<rt>${esc(f)}</rt></ruby>`:esc(t[0]);})()}</span>${S.settings.gloss&&!plain?`<span class="tr">${esc(t[1])}</span><span class="tm">${esc(t[2])}</span>`:""}</button>`;}).join("")}</div>`;
 }
 function sentHTML(l,s,hw){return `<div class="sent"><div class="sbody">${glossHTML(l,s.tokens,hw)}${S.settings.showEnglish&&s.english?`<p class="eng">${esc(s.english)}</p>`:""}</div><button class="play" data-a="${A(()=>say(spokenText(s),l))}" aria-label="Play audio" title="Play audio">${PLAY}</button></div>`;}
 function builtinEx(l,w,hw){return `<div class="sent"><div class="sbody"><p class="ex" lang="${L[l].hl}">${hl(w.ex[0],hw||[w])}</p>${S.settings.showReading?`<p class="muted" style="margin:0 0 4px">${esc(w.ex[1])}</p>`:""}${S.settings.showEnglish?`<p class="eng">${esc(w.ex[2])}</p>`:""}</div><button class="play" data-a="${A(()=>say(w.ex[0],l))}" aria-label="Play audio" title="Play audio">${PLAY}</button></div>`;}
@@ -161,7 +161,34 @@ function sayLines(lines,l){
     u.rate=0.9*S.settings.speed;hlTrack(u,x.tokens,rootAt(k),()=>tok===playTok,spkSkip(x));if(k===lines.length-1)u.onend=()=>{if(tok===playTok)hlClear();};speechSynthesis.speak(u);});
 }
 /* Word reference card */
-function openWord(l,t,toks){if(view.s==="player"&&view.playing)plStop(view);const k=allWords(l).find(w=>w.w===t[0]);view.sheet={l,text:t[0],r:k?k.r:t[1],m:k?k.m:t[2],state:"",data:null,sent:toks?toks.map(x=>x[0]).join(""):"",tk:toks&&toks.length<=20?toks:null,src:srcLabel()};if(!AI_OFF)loadRef(view.sheet);render();}
+/* Word callout: tapping a word opens a small box above it (below it when there is no room above) with the reading, the meaning, Play and Save.
+   It is not part of render(): render() closes it. The old bottom sheet (openWordSheet, sheetHTML) is kept for when AI is turned on. */
+let calloutBtn=null;
+function closeCallout(){const c=document.getElementById("callout");if(c)c.remove();if(calloutBtn){calloutBtn.classList.remove("on");calloutBtn.removeAttribute("aria-expanded");}const b=calloutBtn;calloutBtn=null;return b;}
+function placeCallout(c,btn){
+  const r=btn.getBoundingClientRect(),vw=document.documentElement.clientWidth,hd=document.getElementById("hd"),topLimit=Math.max(0,hd?hd.getBoundingClientRect().bottom:0);
+  c.style.visibility="hidden";document.body.appendChild(c);
+  const w=Math.min(300,vw-16);c.style.width=w+"px";
+  const h=c.offsetHeight,cx=r.left+r.width/2,left=Math.max(8,Math.min(cx-w/2,vw-w-8)),above=r.top-h-12>=topLimit+4;
+  c.style.left=(left+window.scrollX)+"px";c.style.top=((above?r.top-h-12:r.bottom+12)+window.scrollY)+"px";
+  c.classList.toggle("below",!above);c.style.setProperty("--ax",Math.max(18,Math.min(w-18,cx-left))+"px");c.style.visibility="";
+}
+function openWord(l,t,toks,e){
+  const btn=e&&e.target&&e.target.closest?e.target.closest(".tk"):null;
+  if(!btn){openWordSheet(l,t,toks);return;}
+  if(calloutBtn===btn&&document.getElementById("callout")){closeCallout();return;}
+  const all=()=>[...document.querySelectorAll(".tk:not(.pu)")],idx=all().indexOf(btn);
+  closeCallout();
+  if(view.s==="player"&&view.playing)plStop(view);/* stopping may redraw the screen, so find the tapped word again */
+  const b=document.contains(btn)?btn:all()[idx];if(!b)return;
+  const k=allWords(l).find(w=>w.w===t[0]),sh={l,text:t[0],r:k?k.r:t[1],m:k?k.m:t[2],data:null,sent:toks?toks.map(x=>x[0]).join(""):"",tk:toks&&toks.length<=20?toks:null,src:srcLabel()};
+  const saved=isSaved(l,sh.text),c=document.createElement("div");c.id="callout";c.className="callout";c.setAttribute("role","dialog");c.setAttribute("aria-label","Word meaning");
+  c.innerHTML=`<span class="cohd"><span class="tx" lang="${L[l].hl}">${esc(sh.text)}</span>${sh.r?`<span class="cor">${esc(sh.r)}</span>`:""}</span><span class="com">${esc(sh.m||"")}</span><span class="coact"><button class="play" data-a="${A(()=>say(sh.text,l))}">${ico("play",20)}<span>Play audio</span></button><button class="play" aria-pressed="${saved}" data-a="${A(ev=>{const sb=ev.target.closest("button");toggleSave(sh,true);const s=isSaved(l,sh.text);sb.setAttribute("aria-pressed",s);sb.querySelector(".sl").textContent=s?"Saved (tap to remove)":"Save word";})}">${ico("star",20)}<span class="sl">${saved?"Saved (tap to remove)":"Save word"}</span></button></span><i class="coar"></i>`;
+  placeCallout(c,b);calloutBtn=b;b.classList.add("on");b.setAttribute("aria-expanded","true");
+}
+document.addEventListener("click",e=>{if(document.getElementById("callout")&&!e.target.closest("#callout")&&!e.target.closest(".tk"))closeCallout();});
+window.addEventListener("resize",closeCallout);
+function openWordSheet(l,t,toks){if(view.s==="player"&&view.playing)plStop(view);const k=allWords(l).find(w=>w.w===t[0]);view.sheet={l,text:t[0],r:k?k.r:t[1],m:k?k.m:t[2],state:"",data:null,sent:toks?toks.map(x=>x[0]).join(""):"",tk:toks&&toks.length<=20?toks:null,src:srcLabel()};if(!AI_OFF)loadRef(view.sheet);render();}
 function closeSheet(){view.sheet=null;render();}
 async function loadRef(sh){
   const c=S[sh.l].ref[sh.text];if(c){sh.data=c;return;}
