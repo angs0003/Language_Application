@@ -120,6 +120,24 @@ const check = (ok, msg) => { if (!ok) failures.push(msg); else console.log("ok:"
     check(!!d.querySelector("details[data-k='podopt']") && !d.querySelector("details[data-k='podopt']").open, "the options are collapsed by default");
     W.eval("speechSynthesis.speak=__sp1;goHome()");
   }
+  // --- New words are read aloud when they open ---
+  {
+    W.eval("window.__sp0=speechSynthesis.speak;window.__rd=[];speechSynthesis.speak=u=>{__rd.push(u.text);setTimeout(()=>u.onend&&u.onend(),1);};S.settings.autoRead=true;S.ja.resume=null");
+    W.eval("window.__w=themes('ja')[0].words.slice(0,5);startLesson(__w,themes('ja')[0].title)");
+    const rd = () => W.eval("__rd.slice()");
+    check(rd().length === 2 && rd()[0] === W.eval("__w[0].w") && rd()[1] === W.eval("__w[0].ex[0]"), "opening the first word reads the word and then its example sentence");
+    W.eval("__rd.length=0"); click("Continue");
+    check(rd().length === 2 && rd()[0] === W.eval("__w[1].w") && rd()[1] === W.eval("__w[1].ex[0]"), "Continue reads the next word and its example");
+    W.eval("__rd.length=0"); d.querySelector(".starbtn").click(); d.querySelector(".starbtn").click();/* save and remove again: the saved words stay as they were */
+    check(rd().length === 0, "saving a word with the star does not read it again");
+    W.eval("__rd.length=0"); [...d.querySelectorAll("#bbar button")].find(b => b.textContent.trim() === "Back").click();
+    check(rd()[0] === W.eval("__w[0].w") && rd().length === 2, "Back to the earlier word reads it again");
+    W.eval("S.settings.autoRead=false;__rd.length=0"); click("Continue");
+    check(rd().length === 0, "with the setting off nothing is read automatically");
+    W.eval("S.settings.autoRead=true;__rd.length=0;lessonMove(1);lessonMove(1);lessonMove(1);lessonMove(1)");
+    check(W.eval("view.step") === 1 && rd().length === 6, "the remaining words are read, and the step after New words is not read");
+    W.eval("speechSynthesis.speak=__sp0;S.ja.resume=null;goHome()");
+  }
   // --- Lesson: Back leaves the lesson and the place is saved ---
   {
     W.eval("S.ja.resume=null");

@@ -24,7 +24,7 @@ const DAY=864e5, INTERVAL=[0,1,2,4,8,16];
 /* ---------- State and saving ---------- */
 const KEY="language-steps-v1";
 const blank=()=>({placed:false,unit:0,done:[],srs:{},custom:[],gen:{},gi:0,ref:{},lc:0,chRead:[],talkDone:{},tripDone:{},tripOpen:{},podDone:{},hist:[],lst:0,lastLesson:[],saved:[],videos:[],videosWatched:{},kana:{},kanji:{},mis:[],real:{},casualDone:{},resume:null});
-const DEF={showReading:true,showEnglish:true,slow:false,speaking:true,speakMode:"",size:5,gloss:false,vib:true,speed:1,sub:"both",autoPause:false,furi:"fade",hlWord:true};
+const DEF={showReading:true,showEnglish:true,slow:false,speaking:true,speakMode:"",size:5,gloss:false,vib:true,speed:1,sub:"both",autoPause:false,furi:"fade",hlWord:true,autoRead:true};
 function normalize(d){const s={v:1,updatedAt:d.updatedAt||0,lang:d.lang==="ja"?"ja":"zh",tab:d.tab||"path",lastActive:d.lastActive||0,settings:Object.assign({},DEF,d.settings||{}),zh:Object.assign(blank(),d.zh||{}),ja:Object.assign(blank(),d.ja||{})};for(const l of ["zh","ja"])if(!s[l].real||typeof s[l].real!=="object"||Array.isArray(s[l].real))s[l].real={};for(const l of ["zh","ja"])if(!s[l].casualDone||typeof s[l].casualDone!=="object"||Array.isArray(s[l].casualDone))s[l].casualDone={};for(const l of ["zh","ja"])if(!s[l].resume||typeof s[l].resume!=="object"||!Array.isArray(s[l].resume.words))s[l].resume=null;return s;}
 let S=normalize({});
 try{const t=localStorage.getItem(KEY);if(t){const d=JSON.parse(t);if(d&&d.v===1)S=normalize(d);}}catch(e){}
