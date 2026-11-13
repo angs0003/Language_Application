@@ -59,8 +59,26 @@ const check = (ok, msg) => { if (!ok) failures.push(msg); else console.log("ok:"
   W.eval('openPlayer("story",1)'); d.querySelector(".plline .tk:not(.pu)").click(); click("Save word");
   check(W.eval("S.ja.saved.length") === 1 && W.eval("S.ja.saved[0].tk && S.ja.saved[0].tk.length > 1"), "word saved from the player keeps its sentence tokens");
   check(W.eval("S.ja.saved[0].src").startsWith("Story chapter"), "saved word records its source");
-  d.querySelector(".scrim").click();
-  W.eval('openTrip(0)'); W.eval('openPlayer("trip",0)'); d.querySelector(".plline .tk:not(.pu)").click(); click("Save word"); d.querySelector(".scrim").click();
+  d.body.click();
+  // --- Word callout ---
+  {
+    W.eval('openPlayer("story",0)');
+    const words = () => [...d.querySelectorAll(".plline .tk:not(.pu)")], co = () => d.getElementById("callout");
+    words()[0].click();
+    check(!!co() && d.querySelectorAll("#callout").length === 1 && co().getAttribute("role") === "dialog" && co().textContent.includes(W.eval("view.lines[0].tokens.find(t=>t[1]||t[2])[2]")), "tapping a word opens one callout with its meaning");
+    check(!d.querySelector(".sheet") && !d.querySelector(".scrim") && d.querySelectorAll(".callout button").length === 2, "the callout replaces the bottom sheet and has Play and Save");
+    check(words()[0].getAttribute("aria-expanded") === "true" && words()[0].classList.contains("on"), "the tapped word is marked as open");
+    words()[0].click(); check(!co() && !words()[0].classList.contains("on"), "tapping the same word again closes the callout");
+    words()[0].click(); words()[1].click(); check(d.querySelectorAll("#callout").length === 1 && words()[1].classList.contains("on") && !words()[0].classList.contains("on"), "tapping another word moves the callout to that word");
+    d.body.click(); check(!co(), "tapping outside closes the callout");
+    words()[0].click(); d.dispatchEvent(new W.KeyboardEvent("keydown", { key: "Escape", bubbles: true })); check(!co(), "Escape closes the callout");
+    const before = W.eval("S.ja.saved.length"); words()[0].click();
+    click("Save word"); check(!!co() && W.eval("S.ja.saved.length") === before + 1 && co().textContent.includes("Saved (tap to remove)") && co().querySelector("[aria-pressed=true]"), "Save in the callout saves the word and keeps the callout open");
+    click("Saved (tap to remove)"); check(!!co() && W.eval("S.ja.saved.length") === before && co().textContent.includes("Save word"), "tapping Saved removes the word again");
+    click("Next line"); check(!co(), "going to the next line closes the callout");
+    check(W.eval("[...document.querySelectorAll('.callout button')].every(b=>true)") === true && !W.eval("document.querySelector('.callout')"), "no callout stays after a redraw");
+  }
+  W.eval('openTrip(0)'); W.eval('openPlayer("trip",0)'); d.querySelector(".plline .tk:not(.pu)").click(); click("Save word"); d.body.click();
   // --- My words ---
   W.eval("goHome()"); tab("Practise"); click("My words");
   check(W.eval("view.s") === "vocab" && d.querySelectorAll("#vlist li").length === 2, "My words lists 2 saved words");

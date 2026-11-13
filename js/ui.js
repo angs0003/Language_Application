@@ -194,7 +194,7 @@ function recsHTML(l,ctx){
   return uiCard(`${uiLabel("NEXT")}<span class="nxh">${esc(first.t)}</span>${uiBtn("Continue with this",first.fn)}${rest.length?`<div class="list" style="margin-top:4px">${rest.map(x=>uiRow(uiTileIcon("chev"),esc(x.t),"",x.fn)).join("")}</div>`:""}`,"hero");
 }
 /* Shell */
-function render(){
+function render(){if(typeof closeCallout==="function")closeCallout();
   acts={};A.n=0;
   document.body.dataset.lang=S.lang;document.body.dataset.sec=secOf();
   let r;const v=view.s;
