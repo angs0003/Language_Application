@@ -87,7 +87,7 @@ function srcLabel(){const l=S.lang;try{if(view.s==="lesson")return "Lesson: "+vi
 function toggleSave(sh,keep){const a=savedList(sh.l),i=a.findIndex(x=>x.w===sh.text);if(i>=0)a.splice(i,1);else{a.unshift({w:sh.text,r:sh.r,m:(sh.data&&sh.data.meaning)||sh.m,s:sh.sent||"",src:sh.src||"",b:0,d:Date.now(),t:Date.now(),u:Date.now(),tk:sh.tk||null});buzz(30);}save();if(!keep)render();}
 function savedDue(l){const now=Date.now();return savedList(l).filter(x=>(x.d||0)<=now);}
 function startCards(){const l=S.lang,due=savedDue(l),list=(due.length?due:savedList(l)).slice(0,20);if(!list.length){note("You have no saved words yet. Tap a word in any sentence, then tap “⭐ Save word”.");return;}view={s:"cards",list:shuffle(list),k:0,show:false,res:[]};render();window.scrollTo(0,0);}
-function gradeCard(v,ok){const x=v.list[v.k];x.u=Date.now();x.b=ok?Math.min(5,(x.b||0)+1):1;x.d=Date.now()+(ok?INTERVAL[x.b]*DAY:0);v.res[v.k]=ok;save();buzz(ok?30:[40,60,40]);v.k++;v.show=false;render();window.scrollTo(0,0);}
+function gradeCard(v,ok){const x=v.list[v.k];srsStep(x,ok);v.res[v.k]=ok;save();buzz(ok?30:[40,60,40]);v.k++;v.show=false;render();window.scrollTo(0,0);}
 function screenCards(){
   const v=view,l=S.lang;const r={row:"title",title:"⭐ My words",back:{label:"Back",fn:goHome},main:""};
   if(v.k>=v.list.length){const c=v.res.filter(Boolean).length;r.prog=`<div class="ptext">Practice finished</div>`;r.main=`<div class="card tint"><h2>✅ Practice finished</h2><p style="margin:0">You knew ${c} of ${v.list.length} words. Words you did not know come back today.</p></div>`;r.next={label:"Go to home",fn:goHome};return r;}

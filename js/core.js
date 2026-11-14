@@ -158,7 +158,10 @@ async function previewCall(prompt,json){
   try{return JSON.parse(c.slice(i,j+1));}catch(e){throw{code:"invalid_json"};}
 }
 /* ---------- Spaced repetition ---------- */
-function srsSet(l,w,ok){const e=S[l].srs[w]||{b:0,d:0};e.u=Date.now();e.b=ok?Math.min(5,e.b+1):1;e.d=Date.now()+(ok?INTERVAL[e.b]*DAY:0);S[l].srs[w]=e;}
+/* One review answer for an item {b:box, d:due, u:updated}. A wrong answer goes to box 1 and is due now. A correct answer raises the box and sets the next due date only when the item was due;
+   a correct answer before the due date (for example in "Practise anyway") leaves the schedule as it is, because spaced practice works through recall after a delay (docs/research/learning-methods.md). */
+function srsStep(e,ok){const now=Date.now();e.u=now;if(!ok){e.b=1;e.d=0;return;}if((e.d||0)>now)return;e.b=Math.min(5,(e.b||0)+1);e.d=now+INTERVAL[e.b]*DAY;}
+function srsSet(l,w,ok){const e=S[l].srs[w]||{b:0,d:0};srsStep(e,ok);S[l].srs[w]=e;}
 function dueList(l){const now=Date.now();return allWords(l).filter(w=>S[l].srs[w.w]&&S[l].srs[w.w].d<=now);}
 function nextDue(l){const ds=Object.values(S[l].srs).map(e=>e.d);return ds.length?Math.min(...ds):0;}
 
