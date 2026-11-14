@@ -79,6 +79,7 @@ const check = (ok, msg) => { if (!ok) failures.push(msg); else console.log("ok:"
     words()[0].click(); check(!co() && !words()[0].classList.contains("on"), "tapping the same word again closes the callout");
     words()[0].click(); words()[1].click(); check(d.querySelectorAll("#callout").length === 1 && words()[1].classList.contains("on") && !words()[0].classList.contains("on"), "tapping another word moves the callout to that word");
     d.body.click(); check(!co(), "tapping outside closes the callout");
+    { const sy = W.speechSynthesis; delete W.speechSynthesis; words()[0].click(); check(!!co(), "without speech in the browser the callout still opens (the note about missing speech would redraw the screen and close it)"); d.body.click(); W.speechSynthesis = sy; }
     words()[0].click(); d.dispatchEvent(new W.KeyboardEvent("keydown", { key: "Escape", bubbles: true })); check(!co(), "Escape closes the callout");
     click("Next line"); check(!co(), "going to the next line closes the callout");
     check(!W.eval("document.querySelector('.callout')"), "no callout stays after a redraw");
