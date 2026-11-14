@@ -442,3 +442,72 @@ function screenCasual(){
   r.next={label:"Practise this lesson",fn:()=>startCasualQuiz(v),dis:!c.p.length};
   return r;
 }
+
+/* ---------- Sounds: tone practice (Chinese) ----------
+   A question plays a word. The learner chooses which tones it has, from 4 options drawn as static lines with the pinyin under them.
+   Tones come from the tone marks of the word's pinyin (w.r). Words with 一 or 不 (their tone changes in speech) and words with two third tones in a row
+   (the first is spoken as tone 2) are left out, because the written tones and the spoken tones differ there. It uses the "gram" question type (js/exercises.js);
+   q.sound keeps its answers out of Mistakes. The audio is the device voice (CLAUDE.md section 11 item 1). */
+const TONE_VOW={"ā":["a",1],"á":["a",2],"ǎ":["a",3],"à":["a",4],"ē":["e",1],"é":["e",2],"ě":["e",3],"è":["e",4],"ī":["i",1],"í":["i",2],"ǐ":["i",3],"ì":["i",4],"ō":["o",1],"ó":["o",2],"ǒ":["o",3],"ò":["o",4],"ū":["u",1],"ú":["u",2],"ǔ":["u",3],"ù":["u",4],"ǖ":["ü",1],"ǘ":["ü",2],"ǚ":["ü",3],"ǜ":["ü",4]};
+const TONE_MARK={a:"āáǎà",e:"ēéěè",i:"īíǐì",o:"ōóǒò",u:"ūúǔù","ü":"ǖǘǚǜ"};
+const PY_INIT=["zh","ch","sh","b","p","m","f","d","t","n","l","g","k","h","j","q","x","r","z","c","s","y","w"];
+const PY_FIN=["iang","iong","uang","ueng","ang","eng","ian","iao","ing","ong","uai","uan","üan","ai","an","ao","ei","en","er","ia","ie","in","iu","ou","ua","ue","ui","un","uo","üe","ün","a","e","i","o","u","ü"];
+function pySyllables(py){
+  // returns [{b:base letters, t:tone 0 to 4}] or null when the pinyin cannot be split
+  let base="";const marks={};
+  for(const ch of String(py).toLowerCase()){const m=TONE_VOW[ch];if(m){marks[base.length]=m[1];base+=m[0];}else base+=ch;}
+  const out=[];let i=0;
+  while(i<base.length){
+    const c=base[i];if(c===" "||c==="'"||c==="’"||c==="-"){i++;continue;}
+    let n=0;for(const x of PY_INIT){if(base.startsWith(x,i)){n=x.length;break;}}
+    let f=0;for(const x of PY_FIN){if(base.startsWith(x,i+n)){f=x.length;break;}}
+    if(!f&&n){n=0;for(const x of PY_FIN){if(base.startsWith(x,i)){f=x.length;break;}}}
+    if(!f){if(base[i]==="r"&&out.length&&i===base.length-1){i++;continue;}return null;}
+    let t=0,k=0;for(let j=i;j<i+n+f;j++)if(marks[j]){t=marks[j];k++;}
+    if(k>1)return null;
+    out.push({b:base.slice(i,i+n+f),t});i+=n+f;
+  }
+  return out.length?out:null;
+}
+function pyMark(b,t){
+  if(!t)return b;
+  const v=[...b];let at=v.findIndex(x=>x==="a"||x==="e");
+  if(at<0){const o=b.indexOf("ou");at=o>=0?o:-1;}
+  if(at<0){for(let j=v.length-1;j>=0;j--)if("iouü".includes(v[j])){at=j;break;}}
+  if(at<0)return b;
+  v[at]=TONE_MARK[v[at]]?TONE_MARK[v[at]][t-1]:v[at];return v.join("");
+}
+const pyWord=sy=>sy.map(s=>pyMark(s.b,s.t)).join("");
+function toneSVG(sy){
+  const P={1:"M4 5 L26 5",2:"M4 17 L26 5",3:"M4 8 L12 18 L26 6",4:"M4 4 L26 19",0:"M11 16 L19 16"};
+  return `<svg class="tones" width="${sy.length*30}" height="24" viewBox="0 0 ${sy.length*30} 24" aria-hidden="true" focusable="false">${sy.map((s,k)=>`<path transform="translate(${k*30} 0)" d="${P[s.t]}" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`).join("")}</svg>`;
+}
+const TONE_WORDS={0:"light and short",1:"high and flat",2:"rising",3:"low, down and then up",4:"falling"};
+function soundsWords(l){
+  if(l!=="zh")return [];
+  return allWords(l).filter(w=>{
+    if(!isL(l,w)||/[一不]/.test(w.w))return false;
+    const sy=pySyllables(w.r);if(!sy||sy.length>3||!sy.some(s=>s.t))return false;
+    return !sy.some((s,i)=>i&&s.t===3&&sy[i-1].t===3);
+  });
+}
+function mkSoundQ(l,w){
+  const sy=pySyllables(w.r),ok=sy.map(s=>s.t),opts=[ok],seen=new Set([ok.join()]);
+  const idx=sy.map((s,i)=>s.t?i:-1).filter(i=>i>=0);let tries=0;
+  while(opts.length<4&&tries++<60){
+    const t=ok.slice();const k=1+Math.floor(Math.random()*Math.min(2,idx.length));
+    shuffle(idx).slice(0,k).forEach(i=>{const o=[1,2,3,4].filter(x=>x!==ok[i]);t[i]=o[Math.floor(Math.random()*o.length)];});
+    if(t.some((x,i)=>i&&x===3&&t[i-1]===3))continue;
+    if(!seen.has(t.join())){seen.add(t.join());opts.push(t);}
+  }
+  const list=shuffle(opts.map(t=>{const s2=sy.map((s,i)=>({b:s.b,t:t[i]}));return {text:pyWord(s2),svg:toneSVG(s2),ok:t===ok};}));
+  const names=sy.filter(s=>s.t||sy.length>1).map(s=>`${pyMark(s.b,s.t)}: ${TONE_WORDS[s.t]}`).join("; ");
+  return {type:"gram",plain:true,sound:true,lang:l,question:"Listen. Which tones did you hear?",audio:w.w,opts:list,ans:list.findIndex(o=>o.ok),
+    why:`${w.w} is read ${pyWord(sy)} and means “${w.m}”. Tones: ${names}.`,answered:false,correct:false,sel:null,input:"",explain:null,word:null};
+}
+function startSounds(){
+  const l=S.lang,ws=soundsWords(l);
+  if(ws.length<4){note("You have no words for sound practice yet. Finish a lesson in Learn first: this practice uses words you have learned.");return;}
+  const qs=shuffle(ws).slice(0,10).map(w=>mkSoundQ(l,w));
+  view={s:"review",qs,i:0,finished:false,sounds:true};render();window.scrollTo(0,0);readQuestion();
+}

@@ -35,7 +35,7 @@ function misRebuild(x,l){
     if(x.k==="blank"){if(!x.sent||!x.opts||!x.word)return null;const opts=shuffle(x.opts.map(o=>Object.assign({},o)));return {type:"blank",lang:l,sent:x.sent,idx:x.idx,opts,ans:opts.findIndex(o=>o.text===x.word.w),word:x.word,answered:false,correct:false,sel:null,input:"",mid:x.id};}
   }catch(e){/* an item that cannot be rebuilt is dropped by the caller */}
   return null;}
-function misTrack(q){if(view.s==="place"||view.s==="test"||view.s==="casual")return;if(!misKind(q))return;
+function misTrack(q){if(view.s==="place"||view.s==="test"||view.s==="casual"||q.sound)return;if(!misKind(q))return;
   if(q.correct){if(view.mis)misRemove(q.lang,q.mid||misId(q));}else misAdd(q);}
 function onAnswer(q){buzz(q.correct?30:[40,60,40]);misTrack(q);if(q.kk){kSet(q.kk.store,q.kk.key,q.correct);save();}else if(q.vitem){srsStep(q.vitem,q.correct);save();}else if(view.s==="review"&&!view.mis&&q.word){srsSet(q.lang,q.word.w,q.correct);save();}if(view.s==="place"){view.streak=q.correct?0:view.streak+1;}}
 
@@ -43,10 +43,10 @@ function qHTML(q,opts){
   if(q.type==="match"||q.type==="blank"||q.type==="build")return exHTML(q,opts);
   const l=q.lang,w=q.word;let h="";
   if(q.type==="gram"){
-    h=`<p class="q">${esc(q.question)}</p>${q.big?glyph(l,{w:q.big}):""}${q.audio?`<p class="center" style="margin:8px 0"><button class="btn pri" data-a="${A(()=>say(q.audio,l))}">🔊 Play audio</button></p>`:""}<div class="stack">`;
+    h=`<p class="q">${esc(q.question)}</p>${q.big?glyph(l,{w:q.big}):""}${q.audio?`<p class="center" style="margin:8px 0"><button class="btn sec" data-a="${A(()=>say(q.audio,l))}">🔊 Play audio</button></p>`:""}<div class="stack">`;
     q.opts.forEach((o,i)=>{let cls="opt",tag="";
       if(q.answered){if(i===q.ans){cls+=" right";tag="Correct answer";}else if(i===q.sel){cls+=" wrong";tag="Your answer";}}else if(q.sel===i)cls+=" sel";
-      h+=`<button class="${cls}" ${q.answered?"disabled":""} data-a="${A(()=>{q.sel=i;render();})}" aria-pressed="${q.sel===i}">${tag?`<span class="tag">${tag}</span>`:""}${q.plain?`<span>${esc(o.text)}</span>`:`<span class="cjk2" lang="${L[l].hl}">${esc(o.text)}</span>`}${S.settings.showReading&&o.reading?`<span class="tr2">${esc(o.reading)}</span>`:""}${o.english&&S.settings.showEnglish?`<span class="tr2">${esc(o.english)}</span>`:""}</button>`;});
+      h+=`<button class="${cls}" ${q.answered?"disabled":""} data-a="${A(()=>{q.sel=i;render();})}" aria-pressed="${q.sel===i}">${tag?`<span class="tag">${tag}</span>`:""}${o.svg||""}${q.plain?`<span>${esc(o.text)}</span>`:`<span class="cjk2" lang="${L[l].hl}">${esc(o.text)}</span>`}${S.settings.showReading&&o.reading?`<span class="tr2">${esc(o.reading)}</span>`:""}${o.english&&S.settings.showEnglish?`<span class="tr2">${esc(o.english)}</span>`:""}</button>`;});
     if(!q.answered)h+=`<button class="opt dk" data-a="${A(()=>{dontKnow(q);render();})}">I do not know</button>`;
     return h+`</div>`+fbHTML(q,opts||{});
   }
