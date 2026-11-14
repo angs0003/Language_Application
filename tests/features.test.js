@@ -344,6 +344,27 @@ const check = (ok, msg) => { if (!ok) failures.push(msg); else console.log("ok:"
     W.eval("goHome()");
   }
   check(W.eval("normalize({v:1,ja:{real:null}}).ja.real") !== null && Object.keys(W.eval("normalize({v:1}).zh.real")).length === 0, "old saved state without real loads with an empty log");
+  // Sounds (tone practice, Chinese)
+  W.eval('setLang("zh")');
+  check(W.eval('JSON.stringify(pySyllables("nǐ hǎo").map(x=>x.t))') === "[3,3]" && W.eval('pyWord(pySyllables("duìbuqǐ"))') === "duìbuqǐ", "pinyin is split into syllables with their tones");
+  check(W.eval("ZH.flatMap(t=>t[1]).filter(w=>!pySyllables(w[1])).length") === 0, "every Chinese word has pinyin that can be split into syllables");
+  check(W.eval("allWords('zh').every(w=>{const n=x=>x.toLowerCase().replace(/[ '’-]/g,'').replace(/r$/,'');return n(pyWord(pySyllables(w.r)))===n(w.r);})"), "writing the syllables back gives the same pinyin for every word");
+  W.eval("themes('zh').slice(0,4).forEach(t=>t.words.forEach(w=>{S.zh.srs[w.w]={b:3,d:Date.now()+1e9,u:Date.now()};}))");
+  const sw = () => JSON.parse(W.eval('JSON.stringify(soundsWords("zh").map(w=>w.w))'));
+  check(sw().length >= 4 && sw().every(x => !/[一不]/.test(x)), "sound practice uses learned words and leaves out 一 and 不");
+  check(W.eval('soundsWords("zh").every(w=>{const s=pySyllables(w.r);return !s.some((x,i)=>i&&x.t===3&&s[i-1].t===3);})'), "sound practice leaves out two third tones in a row");
+  check(W.eval('soundsWords("ja").length') === 0, "Japanese has no sound practice yet");
+  const sq = JSON.parse(W.eval('JSON.stringify((()=>{const w=soundsWords("zh")[0],q=mkSoundQ("zh",w);return {n:q.opts.length,u:new Set(q.opts.map(o=>o.text)).size,ok:q.opts.filter(o=>o.ok).length,at:q.opts[q.ans].text,py:pyWord(pySyllables(w.r)),svg:q.opts.every(o=>o.svg.includes("<svg")&&o.svg.includes("aria-hidden"))}})())'));
+  check(sq.n === 4 && sq.u === 4 && sq.ok === 1 && sq.at === sq.py && sq.svg, "a tone question has 4 different options, one correct (the word's own pinyin), each drawn as a line");
+  W.eval("S.zh.mis=[]");const before0 = W.eval("JSON.stringify(S.zh.srs)");
+  W.eval("startSounds()");
+  check(W.eval("view.s") === "review" && W.eval("view.sounds") === true && W.eval("view.qs.length") >= 4 && W.eval("view.qs.every(q=>q.sound&&q.type==='gram')"), "Sounds opens a review session of tone questions");
+  W.eval("(()=>{const q=view.qs[0];q.sel=(q.ans+1)%q.opts.length;checkQ(q);})()");
+  check(W.eval("S.zh.mis.length") === 0 && W.eval("JSON.stringify(S.zh.srs)") === before0, "a wrong tone answer is not added to Mistakes and does not change word review timing");
+  W.eval("goHome()");
+  W.eval("S.zh.srs={}");W.eval("startSounds()");
+  check(W.eval("view.s") !== "review" && W.eval("noteText").includes("no words for sound practice"), "Sounds with no learned words does not open and says what to do first");
+  W.eval('setLang("ja")');
   // Review timing: a correct answer before the due date does not raise the box (docs/research/learning-methods.md)
   W.eval("window.__e={b:2,d:Date.now()+2*864e5,u:0}"); W.eval("srsStep(__e,true)");
   check(W.eval("__e.b") === 2 && W.eval("__e.d > Date.now() + 86400000") && W.eval("__e.u") > 0, "a correct answer before the due date keeps the box and the due date");

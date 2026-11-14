@@ -326,6 +326,7 @@ function readQuestion(){
   const l=S.lang;
   if(q.type==="build"&&(q.mode==="toEn"||q.mode==="listen"))sayAt(sentText(q.sent),l,1);
   else if((q.type==="meaning"||q.type==="listen")&&q.word)say(q.word.w,l);
+  else if(q.sound&&q.audio)say(q.audio,l);
 }
 function lessonResumeFor(l,words){const r=S[l]&&S[l].resume;if(!r||!Array.isArray(r.words)||!words||!words.length)return null;return r.ti===themeIdxOf(l,words[0])&&r.words[0]===words[0].w&&r.words.length===words.length?r:null;}
 function lessonResumeText(l,r){const n=r.words.length;return r.step===0?"New words, word "+(r.i+1)+" of "+n:STEPS[r.step].replace(/^\S+\s/,"");}

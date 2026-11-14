@@ -162,6 +162,7 @@ function homePractise(l,r){
   const mn=misList(l).length;rows+=uiRow(uiTileIcon("review"),"Mistakes",mn?`${mn} to repeat`:"None to repeat",startMistakes);
   if(l==="ja")rows+=uiRow(uiTileChar("私"),"Kanji",`${kl} of ${kn.length} learned`,()=>openSub("kanji"))+uiRow(uiTileChar("あ"),"Kana",`${kanaN} of 142 learned`,()=>openSub("kana"));
   rows+=uiRow(uiTileIcon("grammar"),"Grammar",`${gd} of ${GR[l].length} points`,()=>openSub("grammar"));
+  const sw=soundsWords(l).length;if(l==="zh")rows+=uiRow(uiTileIcon("speaker"),"Sounds",sw>=4?`Tones: hear a word, choose its tones`:"Finish a lesson to unlock",startSounds);
   if(casualList(l).length)rows+=uiRow(uiTileIcon("speaker"),"Casual speech",`${casualCount(l)} of ${casualList(l).length} lessons done`,()=>openSub("casual"));
   h+=uiCard(rows,"list");
   r.main=h;
