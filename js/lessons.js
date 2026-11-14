@@ -14,19 +14,25 @@ function goHome(){try{playTok++;speechSynthesis.cancel();}catch(e){}view=libSec?
 function setLang(l){S.lang=l;save();goHome();}
 /* System Back (the Android back gesture or button, the browser back button): while a screen that is not a tab screen is open, one history entry is pushed.
    Going back then fires popstate and runs the same Back as the bottom bar (or goes to the tab screen). On a tab screen there is no extra entry, so Back leaves the app. */
-let histDeep=false,histIgnore=0,lastBack=null;
+/* Chrome skips history entries that a page adds without a tap, so one entry pushed inside the back handler is skipped by the next swipe and the app closes.
+   Therefore several entries are pushed while a tap is handled (HIST_BUF) and refilled on later taps; histDepth counts the entries behind the current one. Leaving to a tab screen goes back over the rest. */
+const HIST_BUF=8;let histDepth=0,histIgnore=0,histDeep=false,lastBack=null;
+function histFill(){if(histIgnore>0)return;while(histDepth<HIST_BUF){try{history.pushState({ls:1},"",location.href);histDepth++;}catch(e){break;}}}
 function syncHistory(deep){
-  if(deep&&!histDeep){try{history.pushState({ls:1},"",location.href);histDeep=true;}catch(e){}}
-  else if(!deep&&histDeep){histDeep=false;histIgnore++;try{history.back();}catch(e){histIgnore--;}}
+  histDeep=deep;
+  if(deep){if(histDepth===0)histFill();}
+  else if(histDepth>0){const n=histDepth;histDepth=0;histIgnore++;try{history.go(-n);}catch(e){histIgnore--;}}
 }
+document.addEventListener("click",()=>{if(histDeep&&histDepth<HIST_BUF)histFill();},true);
 window.addEventListener("popstate",()=>{
-  if(histIgnore>0){histIgnore--;return;}
-  if(!histDeep)return;
-  histDeep=false;
-  if(document.getElementById("callout")){closeCallout();syncHistory(true);return;}
-  if(view.confirm){view.confirm=false;render();return;}
-  if(view.sheet){closeSheet();return;}
-  if(lastBack)lastBack();else goHome();
+  if(histIgnore>0){histIgnore--;if(histIgnore===0&&histDeep&&histDepth===0)histFill();return;}
+  if(histDepth<=0)return;
+  histDepth--;
+  if(document.getElementById("callout")){closeCallout();}
+  else if(view.confirm){view.confirm=false;render();}
+  else if(view.sheet){closeSheet();}
+  else if(lastBack)lastBack();else goHome();
+  if(histDeep&&histDepth===0)histFill();
 });
 
 /* ---------- Screens ---------- */

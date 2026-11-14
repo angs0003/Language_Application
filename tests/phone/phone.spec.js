@@ -265,17 +265,32 @@ for (const lang of ["ja", "zh"]) {
     await page.locator("[aria-label=Exit]").click(); await expect(page.locator(".confirm")).toBeVisible();
     await page.goBack(); await expect(page.locator(".confirm")).toHaveCount(0); expect(await where()).toBe("lesson:0:0");
     await page.goBack(); await expect.poll(where).toBe("home");
-    // using the app's own Back and Exit buttons does not pile up history entries
+    // using the app's own Back and Exit buttons does not pile up history entries (at most the 8 spare entries)
     const len0 = await page.evaluate(() => history.length);
     for (let n = 0; n < 4; n++) {
       await page.evaluate(() => { const t = themes(S.lang)[0]; startLesson(t.words.slice(0, 5), t.title); });
       await page.locator("#bbar button", { hasText: "Back" }).click(); await expect.poll(where).toBe("home");
     }
-    expect(await page.evaluate(() => history.length), "history length after 4 lessons opened and left with Back").toBeLessThanOrEqual(len0 + 1);
+    expect(await page.evaluate(() => history.length), "history length after 4 lessons opened and left with Back").toBeLessThanOrEqual(len0 + 8);
     // a sub-screen (Settings) goes back to the tab, and Back on the tab screen leaves the app
     await page.locator("[aria-label='Profile and settings']").click(); await expect.poll(where).toBe("settings");
     await page.goBack(); await expect.poll(where).toBe("home");
     await page.goBack(); await expect.poll(() => page.url(), "Back on a tab screen leaves the app").toBe("about:blank");
+    expect(errors, "script errors").toEqual([]);
+  });
+  // Chrome skips history entries added without a tap, so spare entries are added during taps: a long walk back through a lesson must not close the app early.
+  test(`${lang} system back through a whole lesson`, async ({ page }) => {
+    const errors = await openApp(page, lang);
+    await page.evaluate(l => { S[l].placed = true; save(); render(); }, lang);
+    const len0 = await page.evaluate(() => history.length);
+    await page.evaluate(() => { const t = themes(S.lang)[0]; startLesson(t.words.slice(0, 5), t.title); });
+    for (let k = 0; k < 40 && await page.evaluate(() => view.step < 4); k++) { await page.locator("#nextbtn:not([disabled])").click(); }
+    expect(await page.evaluate(() => history.length), "spare entries were added during taps").toBeGreaterThan(len0);
+    let steps = 0;
+    while (await page.evaluate(() => view.s === "lesson") && steps < 30) { await page.goBack(); steps++; await page.waitForTimeout(60); expect(page.url(), "the app is still open after back " + steps).toContain("localhost"); }
+    expect(steps, "one back per step").toBeGreaterThanOrEqual(9);
+    expect(await page.evaluate(() => view.s)).toBe("home");
+    await page.goBack(); await expect.poll(() => page.url()).toBe("about:blank");
     expect(errors, "script errors").toEqual([]);
   });
   test(`${lang} first lesson screen`, async ({ page }) => {
