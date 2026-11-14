@@ -3,8 +3,8 @@
 const fs = require("fs"), vm = require("vm"), path = require("path");
 const src = fs.readFileSync(path.join(__dirname, "..", "content", "content.js"), "utf8");
 const ctx = {}; vm.createContext(ctx);
-vm.runInContext(src + "\n;this.__={ZH,JA,GR,STORY_ZH,STORY_JA,TRIP_JA,TRIP_ZH,VIDS,CASUAL};", ctx);
-const { ZH, JA, GR, STORY_ZH, STORY_JA, TRIP_JA, TRIP_ZH, VIDS, CASUAL } = ctx.__;
+vm.runInContext(src + "\n;this.__={ZH,JA,GR,STORY_ZH,STORY_JA,TRIP_JA,TRIP_ZH,VIDS,CASUAL,ACCENT_JA:typeof ACCENT_JA===\"undefined\"?{}:ACCENT_JA};", ctx);
+const { ZH, JA, GR, STORY_ZH, STORY_JA, TRIP_JA, TRIP_ZH, VIDS, CASUAL, ACCENT_JA } = ctx.__;
 const { formMatcher } = require("./lib-known");
 const PUN = /^[\s。、，,.!?！？：:；;「」『』“”"'（）()…·\-]+$/;
 let errors = 0; const err = (...m) => { errors++; console.log("ERROR:", ...m); };
@@ -87,10 +87,21 @@ for (const [name, themes, width] of [["zh", ZH, 6], ["ja", JA, 7]]) {
 }
 if (errors) { console.log(`${errors} error(s).`); process.exit(1); } else console.log("Content OK.");
 /* Round trip: content -> database rows -> content must be identical. */
+/* Pitch accent (ACCENT_JA: word -> "0" or "1,3": the accent numbers, 0 = flat, n = the pitch drops after mora n). Every key must be a Japanese word; every number must fit the mora count of its reading. */
+{
+  const { moras } = require("../js/content-rows"), words = new Map();
+  JA.forEach(t => t[1].forEach(w => words.set(w[0], w[1])));
+  Object.entries(ACCENT_JA || {}).forEach(([w, a]) => {
+    if (!words.has(w)) return err("accent", w, "is not a Japanese word of the content");
+    if (!/^\d{1,2}(,\d{1,2})*$/.test(a)) return err("accent", w, "must be numbers separated by commas, got", a);
+    const m = moras(words.get(w)).length;
+    a.split(",").forEach(n => { if (+n > m) err("accent", w, "accent", n, "is larger than the mora count", m); });
+  });
+}
 {
   const loadContent = require("./load-content"), { buildRows, buildContent } = require("../js/content-rows");
   const G = loadContent(), back = buildContent(buildRows(G, "test"));
-  for (const k of ["ZH", "JA", "GR", "STORY_ZH", "STORY_JA", "TRIP_ZH", "TRIP_JA", "PARTS", "LEVELS", "VIDS", "KANJI_JA", "KANA", "TVREC", "CASUAL"])
+  for (const k of ["ZH", "JA", "GR", "STORY_ZH", "STORY_JA", "TRIP_ZH", "TRIP_JA", "PARTS", "LEVELS", "VIDS", "KANJI_JA", "KANA", "TVREC", "CASUAL", "ACCENT_JA"])
     if (JSON.stringify(G[k]) !== JSON.stringify(back[k])) { console.log("ERROR: database round trip changed", k); process.exitCode = 1; }
   if (!process.exitCode) console.log("Database round trip OK.");
 }

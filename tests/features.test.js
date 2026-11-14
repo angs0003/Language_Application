@@ -353,7 +353,6 @@ const check = (ok, msg) => { if (!ok) failures.push(msg); else console.log("ok:"
   const sw = () => JSON.parse(W.eval('JSON.stringify(soundsWords("zh").map(w=>w.w))'));
   check(sw().length >= 4 && sw().every(x => !/[一不]/.test(x)), "sound practice uses learned words and leaves out 一 and 不");
   check(W.eval('soundsWords("zh").every(w=>{const s=pySyllables(w.r);return !s.some((x,i)=>i&&x.t===3&&s[i-1].t===3);})'), "sound practice leaves out two third tones in a row");
-  check(W.eval('soundsWords("ja").length') === 0, "Japanese has no sound practice yet");
   const sq = JSON.parse(W.eval('JSON.stringify((()=>{const w=soundsWords("zh")[0],q=mkSoundQ("zh",w);return {n:q.opts.length,u:new Set(q.opts.map(o=>o.text)).size,ok:q.opts.filter(o=>o.ok).length,at:q.opts[q.ans].text,py:pyWord(pySyllables(w.r)),svg:q.opts.every(o=>o.svg.includes("<svg")&&o.svg.includes("aria-hidden"))}})())'));
   check(sq.n === 4 && sq.u === 4 && sq.ok === 1 && sq.at === sq.py && sq.svg, "a tone question has 4 different options, one correct (the word's own pinyin), each drawn as a line");
   W.eval("S.zh.mis=[]");const before0 = W.eval("JSON.stringify(S.zh.srs)");
@@ -364,6 +363,17 @@ const check = (ok, msg) => { if (!ok) failures.push(msg); else console.log("ok:"
   W.eval("goHome()");
   W.eval("S.zh.srs={}");W.eval("startSounds()");
   check(W.eval("view.s") !== "review" && W.eval("noteText").includes("no words for sound practice"), "Sounds with no learned words does not open and says what to do first");
+  // Sounds (pitch accent, Japanese)
+  W.eval('setLang("ja")');
+  W.eval("themes('ja').slice(0,8).forEach(t=>t.words.forEach(w=>{S.ja.srs[w.w]={b:3,d:Date.now()+1e9,u:Date.now()};}))");
+  check(W.eval('soundsWords("ja").length') >= 4 && W.eval('soundsWords("ja").every(w=>{const n=accentOf(w),m=moraList(w).length;return n!==null&&n<=m&&m>=2&&m<=6;})'), "pitch practice uses learned words with one accent number that fits the mora count");
+  check(W.eval('JSON.stringify(LSContentRows.moras("じゅうがつ"))') === '["じゅ","う","が","つ"]' && W.eval('LSContentRows.moras("きょうと").length') === 3 && W.eval('LSContentRows.moras("がっこう").length') === 4 && W.eval('LSContentRows.moras("コーヒー").length') === 4, "moras are counted: small ゃゅょ join, っ ん and ー count");
+  check(W.eval('JSON.stringify([0,1,2,3].map(n=>pitchLevels(n,3).map(Number).join("")))') === '["0111","1000","0100","0110"]', "pitch levels: flat, head high, middle high, tail high (the last mark is the particle)");
+  const pq = JSON.parse(W.eval('JSON.stringify((()=>{const w=soundsWords("ja")[0],q=mkSoundQ("ja",w),m=moraList(w).length;return {n:q.opts.length,u:new Set(q.opts.map(o=>o.text)).size,ok:q.opts.filter(o=>o.ok).length,at:q.opts[q.ans].text===pitchWords(accentOf(w),m),svg:q.opts.every(o=>o.svg.includes("<svg")&&o.svg.includes("aria-hidden")),want:Math.min(4,m+1)}})())'));
+  check(pq.n === pq.want && pq.u === pq.n && pq.ok === 1 && pq.at && pq.svg, "a pitch question has different options, one correct (the word's own accent), each drawn as a line");
+  W.eval("startSounds()");
+  check(W.eval("view.s") === "review" && W.eval("view.qs.every(q=>q.sound)") && W.eval("view.qs[0].question").includes("pitch"), "Sounds opens a pitch practice for Japanese");
+  W.eval("goHome()");
   W.eval('setLang("ja")');
   // Review timing: a correct answer before the due date does not raise the box (docs/research/learning-methods.md)
   W.eval("window.__e={b:2,d:Date.now()+2*864e5,u:0}"); W.eval("srsStep(__e,true)");
