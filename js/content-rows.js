@@ -21,11 +21,12 @@
     add("meta:levels", "*", "meta", 1, G.LEVELS);
     add("meta:vids", "*", "meta", 2, G.VIDS);
     add("meta:casual", "*", "meta", 6, G.CASUAL || { ja: [], zh: [] });
+    add("meta:accent", "ja", "meta", 7, G.ACCENT_JA || {});
     add("meta:version", "*", "meta", 3, { version: version || "local" });
     return rows;
   }
   function buildContent(rows) {
-    const G = { KANJI_JA: [], KANA: null, TVREC: null, ZH: [], JA: [], GR: { zh: [], ja: [] }, STORY_ZH: [], STORY_JA: [], TRIP_ZH: [], TRIP_JA: [], PARTS: null, LEVELS: null, VIDS: null, CASUAL: null, version: null };
+    const G = { KANJI_JA: [], KANA: null, TVREC: null, ZH: [], JA: [], GR: { zh: [], ja: [] }, STORY_ZH: [], STORY_JA: [], TRIP_ZH: [], TRIP_JA: [], PARTS: null, LEVELS: null, VIDS: null, CASUAL: null, ACCENT_JA: {}, version: null };
     const sorted = rows.slice().sort((a, b) => a.ord - b.ord);
     for (const r of sorted) {
       if (r.kind === "theme") G[TH[r.lang]].push(r.data);
@@ -39,11 +40,18 @@
       else if (r.key === "meta:levels") G.LEVELS = r.data;
       else if (r.key === "meta:vids") G.VIDS = r.data;
       else if (r.key === "meta:casual") G.CASUAL = r.data;
+      else if (r.key === "meta:accent") G.ACCENT_JA = r.data;
       else if (r.key === "meta:version") G.version = r.data.version;
     }
     G.STORY = { zh: G.STORY_ZH, ja: G.STORY_JA };
     return G;
   }
-  const api = { buildRows, buildContent };
+  /* Moras of a kana string (small ゃゅょ and small vowels join the kana before them; っ, ん and ー count as one mora each). Shared by the Sounds practice and the content check. */
+  function moras(kana) {
+    const small = "ゃゅょぁぃぅぇぉゎャュョァィゥェォヮ", out = [];
+    for (const ch of String(kana || "")) { if (small.includes(ch) && out.length) out[out.length - 1] += ch; else out.push(ch); }
+    return out;
+  }
+  const api = { buildRows, buildContent, moras };
   if (typeof module !== "undefined" && module.exports) module.exports = api; else root.LSContentRows = api;
 })(typeof window !== "undefined" ? window : globalThis);

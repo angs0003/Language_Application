@@ -483,7 +483,19 @@ function toneSVG(sy){
   return `<svg class="tones" width="${sy.length*30}" height="24" viewBox="0 0 ${sy.length*30} 24" aria-hidden="true" focusable="false">${sy.map((s,k)=>`<path transform="translate(${k*30} 0)" d="${P[s.t]}" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`).join("")}</svg>`;
 }
 const TONE_WORDS={0:"light and short",1:"high and flat",2:"rising",3:"low, down and then up",4:"falling"};
+/* Japanese pitch accent: ACCENT_JA gives the number n of a word (js/content-rows.js moras(), tools/add-accent.js): 0 = low first mora, then high (also on a following particle);
+   1 = high first mora, then low; n of 2 or more = low first mora, high up to mora n, then low. Only words with one accent number and 2 to 6 moras are used. */
+const accentOf=w=>{const a=(typeof ACCENT_JA!=="undefined"?ACCENT_JA:{})[w.w];return a&&/^\d+$/.test(a)?+a:null;};
+const moraList=w=>LSContentRows.moras(w.k||w.w);
+function pitchLevels(n,m){const h=[];for(let i=0;i<m;i++)h.push(n===0?i>0:n===1?i===0:i>0&&i<n);h.push(n===0);return h;}
+function pitchSVG(n,mo){
+  const m=mo.length,lv=pitchLevels(n,m),y=v=>v?7:21,x=i=>16+i*30;
+  const line=lv.map((v,i)=>x(i)+","+y(v)).join(" "),w=(m+1)*30+2;
+  return `<svg class="tones pitch" width="${w}" height="46" viewBox="0 0 ${w} 46" aria-hidden="true" focusable="false"><polyline points="${line}" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/>${lv.map((v,i)=>`<circle cx="${x(i)}" cy="${y(v)}" r="4.5" ${i<m?'fill="currentColor"':'fill="var(--surface)" stroke="currentColor" stroke-width="2"'}/>`).join("")}${mo.map((c,i)=>`<text x="${x(i)}" y="41" text-anchor="middle" font-size="15" fill="currentColor">${esc(c)}</text>`).join("")}<text x="${x(m)}" y="41" text-anchor="middle" font-size="13" fill="currentColor" opacity=".6">の</text></svg>`;
+}
+function pitchWords(n,m){return n===0?"Flat: low, then high. A following particle stays high.":n===1?"Head high: high, then it drops.":n===m?"Tail high: low, then high to the end. A following particle is low.":`Middle high: low, high, then it drops after mora ${n}.`;}
 function soundsWords(l){
+  if(l==="ja")return allWords(l).filter(w=>{if(!isL(l,w))return false;const n=accentOf(w),m=moraList(w).length;return n!==null&&m>=2&&m<=6&&n<=m;});
   if(l!=="zh")return [];
   return allWords(l).filter(w=>{
     if(!isL(l,w)||/[一不]/.test(w.w))return false;
@@ -491,7 +503,14 @@ function soundsWords(l){
     return !sy.some((s,i)=>i&&s.t===3&&sy[i-1].t===3);
   });
 }
+function mkPitchQ(l,w){
+  const mo=moraList(w),m=mo.length,n=accentOf(w),all=[...Array(m+1).keys()],others=shuffle(all.filter(x=>x!==n)).slice(0,3);
+  const list=shuffle([n,...others].map(x=>({text:pitchWords(x,m),svg:pitchSVG(x,mo),ok:x===n})));
+  return {type:"gram",plain:true,sound:true,lang:l,question:"Listen. Which pitch pattern did you hear?",audio:w.w,opts:list,ans:list.findIndex(o=>o.ok),
+    why:`${w.w} (${w.k||w.w}) means “${w.m}”. Pitch accent ${n}: ${pitchWords(n,m)} If the voice sounded different, the phone voice may not speak this word’s pitch exactly.`,answered:false,correct:false,sel:null,input:"",explain:null,word:null};
+}
 function mkSoundQ(l,w){
+  if(l==="ja")return mkPitchQ(l,w);
   const sy=pySyllables(w.r),ok=sy.map(s=>s.t),opts=[ok],seen=new Set([ok.join()]);
   const idx=sy.map((s,i)=>s.t?i:-1).filter(i=>i>=0);let tries=0;
   while(opts.length<4&&tries++<60){
@@ -503,7 +522,7 @@ function mkSoundQ(l,w){
   const list=shuffle(opts.map(t=>{const s2=sy.map((s,i)=>({b:s.b,t:t[i]}));return {text:pyWord(s2),svg:toneSVG(s2),ok:t===ok};}));
   const names=sy.filter(s=>s.t||sy.length>1).map(s=>`${pyMark(s.b,s.t)}: ${TONE_WORDS[s.t]}`).join("; ");
   return {type:"gram",plain:true,sound:true,lang:l,question:"Listen. Which tones did you hear?",audio:w.w,opts:list,ans:list.findIndex(o=>o.ok),
-    why:`${w.w} is read ${pyWord(sy)} and means “${w.m}”. Tones: ${names}.`,answered:false,correct:false,sel:null,input:"",explain:null,word:null};
+    why:`${w.w} is read ${pyWord(sy)} and means “${w.m}”. Tones: ${names}. If the voice sounded different, the phone voice may not speak this word’s tones exactly.`,answered:false,correct:false,sel:null,input:"",explain:null,word:null};
 }
 function startSounds(){
   const l=S.lang,ws=soundsWords(l);
