@@ -16,7 +16,9 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run lint
-      - name: Phone tests (real browser engine at phone sizes)
+      - name: Phone tests (iPhone 15 Pro and Pixel 9 Pro in Chromium)
         run: |
-          npx playwright install --with-deps chromium
+          npx playwright install --with-deps chromium webkit
           npm run test:phone
+      - name: Phone tests (iPhone 15 Pro in WebKit, the engine of Safari)
+        run: PW_WEBKIT=1 npm run test:phone
