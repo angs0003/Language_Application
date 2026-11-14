@@ -54,12 +54,12 @@ function tileHTML(q,t){return q.mode==="toEn"?esc(t.text):`<span class="cjk2" la
 function exHTML(q,opts){
   const l=q.lang;let h="";
   if(q.type==="match"){
-    h=`<p class="q">🧩 Match the pairs</p><p class="small muted">Tap a word, then tap its meaning. 🔊 plays when you tap a word.</p><div class="mgrid"><div class="stack">`;
+    h=`<p class="q">🧩 Match the pairs</p><p class="small muted">Tap a word, then tap its meaning. 🔊 plays when you tap a word.</p><div class="mgrid" style="--n:${q.pairs.length}"><div class="stack">`;
     q.left.forEach(i=>{const w=q.pairs[i],d=q.done.includes(i),wr=q.wrong&&q.wrong.L===i,pk=q.pick&&q.pick.side==="L"&&q.pick.i===i;
-      h+=`<button class="opt${d?" right":wr?" wrong":pk?" sel":""}" ${d||q.answered?"disabled":""} data-a="${A(()=>matchTap(q,"L",i))}">${d?'<span class="tag">✅</span>':wr?'<span class="tag">❌</span>':""}<span class="cjk2" lang="${L[l].hl}">${esc(w.w)}</span>${S.settings.showReading?`<span class="tr2">${esc(w.r)}</span>`:""}</button>`;});
+      h+=`<button class="opt ml${d?" right":wr?" wrong":pk?" sel":""}" ${d||q.answered?"disabled":""} data-a="${A(()=>matchTap(q,"L",i))}">${d?'<span class="tag">✅</span>':wr?'<span class="tag">❌</span>':""}<span class="cjk2" lang="${L[l].hl}">${esc(w.w)}</span>${S.settings.showReading?`<span class="tr2">${esc(w.r)}</span>`:""}</button>`;});
     h+=`</div><div class="stack">`;
     q.right.forEach(i=>{const w=q.pairs[i],d=q.done.includes(i),wr=q.wrong&&q.wrong.R===i,pk=q.pick&&q.pick.side==="R"&&q.pick.i===i;
-      h+=`<button class="opt${d?" right":wr?" wrong":pk?" sel":""}" ${d||q.answered?"disabled":""} data-a="${A(()=>matchTap(q,"R",i))}">${d?'<span class="tag">✅</span>':wr?'<span class="tag">❌</span>':""}${esc(w.m)}</button>`;});
+      h+=`<button class="opt mr${d?" right":wr?" wrong":pk?" sel":""}" ${d||q.answered?"disabled":""} data-a="${A(()=>matchTap(q,"R",i))}">${d?'<span class="tag">✅</span>':wr?'<span class="tag">❌</span>':""}${esc(w.m)}</button>`;});
     h+=`</div></div>`;
     if(q.answered)h+=`<div class="fb ${q.correct?"ok":"no"}" role="status"><strong>${q.correct?"✅ All pairs matched with no mistakes.":`🟡 All pairs matched. Mistakes: ${q.mistakes}.`}</strong></div>`;
     return h;

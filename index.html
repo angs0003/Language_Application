@@ -204,7 +204,14 @@ body{--tint:var(--zhT)}body[data-lang="ja"]{--tint:var(--jaT)}
 .bank,.ansrow{display:flex;flex-wrap:wrap;gap:8px}
 .ansrow{min-height:64px;border-bottom:2px dashed var(--line);padding:6px 0 10px;margin:10px 0 12px;align-items:flex-start}
 .mgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.mgrid .opt{text-align:center;margin:0;min-height:56px}
+.mgrid{grid-auto-flow:column;grid-template-rows:repeat(var(--n,5),1fr)}
+.mgrid .stack{display:contents}
+.mgrid .opt{text-align:center;margin:0;min-height:68px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.mgrid .opt.ml{background:var(--tint);border-color:var(--acc)}
+.mgrid .opt.mr{background:var(--fill);border-color:var(--line)}
+.mgrid .opt.sel{box-shadow:inset 0 0 0 3px var(--acc)}
+.mgrid .opt.right{border-color:var(--ok);background:var(--okbg)}
+.mgrid .opt.wrong{border-color:var(--bad);background:var(--badbg)}
 .blank{color:var(--acc);font-weight:700;border-bottom:2px solid var(--acc);padding:0 4px}
 .units.path li.now{background:var(--tint);border-radius:8px;padding-left:8px}
 .contc{border:2px solid var(--acc)}
