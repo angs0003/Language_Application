@@ -344,6 +344,15 @@ const check = (ok, msg) => { if (!ok) failures.push(msg); else console.log("ok:"
     W.eval("goHome()");
   }
   check(W.eval("normalize({v:1,ja:{real:null}}).ja.real") !== null && Object.keys(W.eval("normalize({v:1}).zh.real")).length === 0, "old saved state without real loads with an empty log");
+  // Review timing: a correct answer before the due date does not raise the box (docs/research/learning-methods.md)
+  W.eval("window.__e={b:2,d:Date.now()+2*864e5,u:0}"); W.eval("srsStep(__e,true)");
+  check(W.eval("__e.b") === 2 && W.eval("__e.d > Date.now() + 86400000") && W.eval("__e.u") > 0, "a correct answer before the due date keeps the box and the due date");
+  W.eval("__e.d=Date.now()-1000"); W.eval("srsStep(__e,true)");
+  check(W.eval("__e.b") === 3 && Math.abs(W.eval("__e.d - Date.now()") - 4 * 864e5) < 5000, "a correct answer on a due item raises the box and sets the next due date");
+  W.eval("__e.d=Date.now()+5*864e5"); W.eval("srsStep(__e,false)");
+  check(W.eval("__e.b") === 1 && W.eval("__e.d") <= W.eval("Date.now()"), "a wrong answer before the due date goes to box 1 and is due now");
+  W.eval("window.__e={b:0,d:0}"); W.eval("srsStep(__e,true)");
+  check(W.eval("__e.b") === 1, "a new item (not yet scheduled) goes to box 1 on its first correct answer");
   failures.forEach(f => console.log("FAIL:", f));
   console.log(failures.length ? failures.length + " failure(s)." : "Feature test OK.");
   process.exit(failures.length ? 1 : 0);
