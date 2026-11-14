@@ -37,6 +37,7 @@
     window.LS_DB = db;
     const { data } = await db.auth.getSession();
     if (!data || !data.session) return signIn(db, "");
+    window.LS_STORE = { cache: "ok", persisted: null }; // read by Settings > Device check
     let cached = null; try { cached = JSON.parse(localStorage.getItem(CACHE_KEY) || "null"); } catch (e) {}
     let G = cached;
     try {
@@ -47,12 +48,15 @@
       if (!version) throw new Error("The database has no content yet. Run tools/upload-content.js (README step 3).");
       if (!cached || cached.version !== version) {
         G = LSContentRows.buildContent(await fetchAllContent(db));
-        try { localStorage.setItem(CACHE_KEY, JSON.stringify(G)); } catch (e) {}
+        try { localStorage.setItem(CACHE_KEY, JSON.stringify(G)); } catch (e) { window.LS_STORE.cache = "failed"; }
       }
     } catch (e) {
       if (!cached) return screen(`<div class="card"><h2>Content could not be loaded</h2><p>${esc(e.message || e)}</p><p class="small muted">Check the internet connection, then reload the page.</p></div>`);
     }
     apply(G); window.LS_CONTENT_SOURCE = "database";
+    try { if (window.LS_STORE.cache === "ok") { const t = localStorage.getItem(CACHE_KEY); window.LS_STORE.kb = t ? Math.round(t.length / 1024) : 0; if (!t) window.LS_STORE.cache = "failed"; } } catch (e) { window.LS_STORE.cache = "failed"; }
+    // Ask the browser not to remove the offline copy (Safari and Chrome answer from usage history; no prompt is shown).
+    try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist().then(p => { window.LS_STORE.persisted = !!p; if (window.view && view.s === "settings" && window.render) render(); }, () => {}); } catch (e) {}
     return loadApp();
   }
   start().catch(e => screen(`<div class="card"><h2>The app could not start</h2><p>${esc(e.message || e)}</p></div>`));

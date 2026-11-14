@@ -17,6 +17,15 @@ const check = (ok, msg) => { if (!ok) failures.push(msg); else console.log("ok:"
   const a = makeDom({ db: mockDB(store, user), failures }); await ready(a); await wait(100);
   const A = tools(a, failures);
   check(A.W.eval("LS_CONTENT_SOURCE") === "database", "device A loads content from the database");
+  // Device check lines about the offline copy of the lessons
+  check(A.W.eval("LS_STORE.cache") === "ok" && A.W.eval("LS_STORE.kb") > 0, "the offline copy of the content is saved and its size is known");
+  const dev = () => A.W.eval("screenSettings().main");
+  check(dev().includes("Offline copy of the lessons: saved on this device ("), "Settings says the offline copy is saved");
+  check(dev().includes("Checking whether the browser keeps this copy"), "Settings says the protection is still being checked");
+  A.W.eval("LS_STORE.persisted=true"); check(dev().includes("The browser keeps this copy"), "Settings says the browser keeps the copy when persistent storage is granted");
+  A.W.eval("LS_STORE.persisted=false"); check(dev().includes("may remove this copy") && dev().includes("Home Screen"), "Settings warns that the browser may remove the copy when persistent storage is refused");
+  A.W.eval("LS_STORE.cache='failed'"); check(dev().includes("could not be saved on this device"), "Settings says when the offline copy could not be saved");
+  A.W.eval("LS_STORE.cache='ok';LS_STORE.persisted=null");
   A.lang("ja"); A.click("Skip and start"); A.startNext(); await wait(5); await A.doLesson();
   A.W.eval("const t=themes('ja')[0];startLesson(t.words.slice(0,5),t.title)"); A.d.querySelector(".starbtn").click(); A.W.eval("goHome()");
   A.W.eval("S.ja.chRead.push(0);save()");

@@ -102,6 +102,7 @@ names defined in earlier files (inside functions, any file's names can be used).
 3. Session → read `meta:version` from `content`. If it differs from the device copy (`localStorage["ls-content-cache"]`),
    download all content rows and rebuild the globals with `buildContent`. Then load the app files
    (`LS_CONTENT_SOURCE="database"`). Offline → use the device copy.
+3a. **Offline copy protection** (`window.LS_STORE` in js/loader.js, `storageLines` in js/lessons.js): after the content is loaded the loader checks that the device copy was saved (`cache` ok or failed, size in `kb`) and asks the browser not to remove it (`navigator.storage.persist()`, `persisted` true, false or null while unknown). Settings > Device check shows these as literal lines. Safari answers `persist()` from usage history and shows no prompt; a refusal is shown with the advice to add the app to the Home Screen.
 4. Content globals: `ZH, JA, GR, STORY_ZH, STORY_JA, STORY, TRIP_ZH, TRIP_JA, PARTS, LEVELS, VIDS`.
 
 ### Database tables (supabase.sql)
