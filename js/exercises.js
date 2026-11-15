@@ -3,7 +3,7 @@
    Files load in the order listed in js/loader.js (APP_FILES); they share one global scope. */
 /* ---------- Questions ---------- */
 function mkQ(type,w,l){
-  if(type==="speak"&&!S.settings.speaking)type="listen";
+  if(type==="speak"&&(!S.settings.speaking||view.noSpeak))type="listen";
   const q={type,word:w,lang:l,answered:false,correct:false,sel:null,input:"",explain:null};
   if(type==="meaning"||type==="listen"){
     const used=new Set([w.m]);const dis=[];
@@ -12,8 +12,28 @@ function mkQ(type,w,l){
   }
   return q;
 }
+/* Recall question (lesson Quiz): a "type" question that shows only the English meaning; the learner types the reading or says the word. */
+function mkRecall(w,l){const q=mkQ("type",w,l);q.recall=true;return q;}
+function recallMatch(q){const l=q.lang;return allWords(l).some(x=>x.m===q.word.m&&readingMatch(l,q.input,x));}
+/* The speak option of a recall question needs speech recognition (the other speak modes play the word, which would give the answer away). */
+function recallCanSpeak(){return speakMode()==="recognize";}
+function recallSpeakOn(q){return !!q.recall&&!q.answered&&!!S.settings.speaking&&!view.noSpeak&&recallCanSpeak();}
+/* "I can’t speak right now": a flag of the open lesson only (no clock, not saved). Unanswered speak questions become listen or type questions. */
+function setNoSpeak(on){
+  view.noSpeak=!!on;
+  if(on&&view.quiz)view.quiz.forEach((q,i)=>{if(q.type==="speak"&&!q.answered){const n=mkQ(i%2?"type":"listen",q.word,q.lang);if(q.again)n.again=true;if(q.earlier)n.earlier=true;view.quiz[i]=n;}});
+  render();
+}
+/* A fresh copy of a question for the repeat at the end of the Quiz step (same rule as Mistakes: again=true). */
+function mkAgain(q){
+  let n;const fresh={answered:false,correct:false,sel:null,input:"",dk:false};
+  if(q.type==="type"||q.type==="meaning"||q.type==="listen"){n=mkQ(q.type,q.word,q.lang);if(q.recall)n.recall=true;}
+  else if(q.type==="blank"){const opts=shuffle(q.opts.map(o=>Object.assign({},o)));n=Object.assign({},q,fresh,{opts,ans:opts.findIndex(o=>o.text===q.word.w)});}
+  else n=Object.assign({},q,fresh,{placed:[],tiles:shuffle(q.tiles.map(t=>Object.assign({},t)))});
+  n.again=true;if(q.earlier)n.earlier=true;return n;
+}
 function canCheck(q){if(q.answered)return false;if(q.type==="build")return q.placed.length>0;if(q.type==="meaning"||q.type==="listen"||q.type==="gram"||q.type==="blank")return q.sel!==null;if(q.type==="type")return q.input.trim().length>0;return false;}
-function checkQ(q){if(q.type==="build")checkBuild(q);else if(q.type==="type")q.correct=readingMatch(q.lang,q.input,q.word);else q.correct=q.sel===q.ans;q.answered=true;onAnswer(q);}
+function checkQ(q){if(q.type==="build")checkBuild(q);else if(q.type==="type")q.correct=q.recall?recallMatch(q):readingMatch(q.lang,q.input,q.word);else q.correct=q.sel===q.ans;q.answered=true;onAnswer(q);}
 function dontKnow(q){q.dk=true;q.sel=-1;q.answered=true;q.correct=false;onAnswer(q);}
 /* ---------- Mistakes (sentence and grammar questions answered wrongly) ---------- */
 const MIS_MAX=50;
@@ -54,7 +74,14 @@ function qHTML(q,opts){
   if(q.type==="meaning"){
     h+=`<p class="q">What does this word mean?</p>${glyph(l,w)}${readingHTML(l,w)}<p class="center">${playBtn}</p>`;
   }else if(q.type==="listen"){
-    h+=`<p class="q">Listen. Which word did you hear?</p><p class="center" style="margin:10px 0"><button class="btn pri" data-a="${A(()=>say(w.w,l))}">${PLAY.replace('aria-hidden','style="width:16px;height:16px;fill:currentColor;vertical-align:-2px;margin-right:8px" aria-hidden')}Play audio</button></p>`;
+    h+=`<p class="q">Listen. Which word did you hear?</p><p class="center" style="margin:10px 0"><button class="btn sec" data-a="${A(()=>say(w.w,l))}">${PLAY.replace('aria-hidden','style="width:16px;height:16px;fill:currentColor;vertical-align:-2px;margin-right:8px" aria-hidden')}Play audio</button></p>`;
+  }else if(q.type==="type"&&q.recall){
+    const sp=recallSpeakOn(q);
+    h+=`<p class="q">Remember the word</p><p class="meaning">${esc(w.m)}</p>
+    <p class="small muted">Type the reading in ${L[l].rd}${l==="ja"?" or hiragana":""}.${q.again?"":` ${l==="zh"?"Tone marks are not required.":"Long vowels can be typed as “ou”, “oo” or “o”."} Spaces are ignored.`}</p>
+    <label class="sr" for="tin">Your answer</label><input id="tin" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" ${q.answered?"disabled":""} value="${esc(q.input)}" placeholder="Type here">`;
+    if(sp)h+=recallSpeakHTML(q);
+    else if(!q.answered&&view.noSpeak)h+=`<p class="center" style="margin:6px 0 0"><button class="btn link" aria-label="I can speak now" data-a="${A(()=>setNoSpeak(false))}">I can speak now</button></p>`;
   }else if(q.type==="type"){
     h+=`<p class="q">Type the reading of this word in ${L[l].rd}${l==="ja"?" or hiragana":""}.</p>${glyph(l,w)}<p class="meaning">${esc(w.m)}</p>
     <p class="small muted">${l==="zh"?"Tone marks are not required. Spaces are ignored.":"Long vowels can be typed as “ou”, “oo” or “o”. Spaces are ignored."}</p>
@@ -76,7 +103,12 @@ function qHTML(q,opts){
   }
   if(q.type==="type"&&!q.answered)h+=`<button class="opt dk" data-a="${A(()=>{dontKnow(q);render();})}">I do not know</button>`;
   h+=fbHTML(q,opts||{});
-  return h;
+  return (q.earlier?`<p class="small muted" style="margin:0 0 4px">Earlier word</p>`:"")+h;
+}
+function recallSpeakHTML(q){
+  return `<div style="margin-top:12px"><p class="small muted" style="margin:0 0 6px">Or say the word aloud. The first attempt counts.</p>${q.srMsg?`<p class="small"><strong>${esc(q.srMsg)}</strong></p>`:""}`
+    +(q.listening?`<button class="btn sec full" disabled>Listening. Say the word now.</button>`:`<button class="btn sec full" data-a="${A(()=>startListen(q))}">Say the word</button>`)
+    +`<p class="center" style="margin:6px 0 0"><button class="btn link" aria-label="I can’t speak right now" data-a="${A(()=>setNoSpeak(true))}">I can’t speak right now</button></p></div>`;
 }
 function speakHTML(q){
   const m=speakMode();let h=`<div style="margin-top:14px">`;
@@ -108,8 +140,9 @@ function fbHTML(q,o){
     else if(!q.correct)ps.push(q.type==="meaning"?`You chose “${esc(q.opts[q.sel].m)}”.`:`You chose ${cjk(l,q.opts[q.sel].w)}.`);
     if(!q.correct)ps.push(q.type==="meaning"?`The correct answer is “${esc(w.m)}”.`:`The correct answer is ${cjk(l,w.w)}.`);
   }else if(q.type==="type"){
-    if(q.dk)ps.push("You chose “I do not know”.");else ps.push(`You typed “${esc(q.input)}”.`);
-    ps.push(`The correct reading is “${esc(w.r)}”${l==="ja"&&w.k?" or “"+esc(w.k)+"”":""}.`);
+    if(q.dk)ps.push("You chose “I do not know”.");else if(q.heard!==undefined&&!q.input)ps.push(`The app heard “${esc(q.heard)}”.`);else ps.push(`You typed “${esc(q.input)}”.`);
+    if(q.recall&&q.correct&&!q.dk&&q.heard===undefined&&!readingMatch(l,q.input,w))ps.push("Your answer is another word with the same meaning.");
+    if(!q.recall||!q.correct)ps.push(`The correct reading is “${esc(w.r)}”${l==="ja"&&w.k?" or “"+esc(w.k)+"”":""}.`);
   }else if(q.type==="speak"){
     if(q.self)ps.push(q.correct?"You marked your pronunciation as matched.":"You marked your pronunciation as not matched.");
     else{ps.push(`The app heard “${esc(q.heard)}”.`);if(!q.correct)ps.push(`The expected word is ${cjk(l,w.w)}. Speech recognition can mishear words. Play the audio to compare. The first attempt is the one that counts. You can try again for practice.`);}
