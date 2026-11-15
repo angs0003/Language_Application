@@ -2,7 +2,6 @@
 
 Moved from CLAUDE.md section 3. The approved design is on the owner's design canvas ("Language Steps app mockups", row "Full-detail screens"). Match it for any new screen.
 
-Match it for any new screen.
 
 1. **Navigation:** a bottom tab bar with 4 tabs: **Learn**, **Practise**, **Listen**, **Travel**. The tabs share one colour (see rule 6).
    The language drop-down (Japanese or Chinese) and the profile button (Settings) are in the top bar of a tab screen.
