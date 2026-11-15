@@ -280,9 +280,9 @@ readings from KANJI_JA sources), `validate-content.js` (everything, also run by 
 Commands (`.claude/commands/`): `/add-part`, `/check-content`, `/design-check`, `/release`, `/add-video`, `/curate-videos`,
 `/retro`, `/maintain`, `/ux-review`, `/content-report` (local only), `/content-gaps` (safe for public logs), `/ship` (pull request, CI, merge after the owner says so, cleanup),
 `/shot` (screenshots of any screen at the phone sizes).
-Subagents (`.claude/agents/`, 11, each with a `model:` line: opus for `planner`, `researcher`, `coach`; haiku for `test-runner`, `release-manager`; sonnet for the rest): `planner` (read-only; writes the plan before any change), `researcher` (web research with sources; writes only `docs/research/`), `content-writer`, `content-reviewer`,
-`ui-engineer`, `test-runner`, `release-manager`, `coach`, `security-reviewer` (runs inside `/release`), `video-curator`
-(VIDS and TVREC only), `data-engineer` (owns supabase.sql, js/sync.js, normalize() defaults and the sync tests).
+Subagents (`.claude/agents/`, 13, each with a `model:` line: opus for `planner`, `researcher`, `coach`, `content-reviewer`; haiku for `test-runner`, `pr-watcher`, `content-checker`; sonnet for the rest): `planner` (read-only; writes the plan before any change), `researcher` (web research with sources; writes only `docs/research/`), `content-writer`, `content-checker` (runs the automatic content checks), `content-reviewer` (naturalness and consistency on a sample, at most 2 rounds), `screen-verifier` (screenshots against the design rules),
+`ui-engineer`, `test-runner`, `pr-watcher` (opens a draft pull request and reports checks; never merges), `coach`, `security-reviewer` (runs inside `/release`), `video-curator`
+(checks videos and writes the VIDS entry text; read-only, the content-writer adds approved entries), `data-engineer` (owns supabase.sql, js/sync.js, normalize() defaults and the sync tests).
 Hooks (`.claude/settings.json`, scripts in `.claude/hooks/`): the content validator runs after edits to `content/content.js`.
 Safety rails (tested in `tests/hooks.test.js`): `guard-release.js` blocks a push to `main` or `master` (also by refspec, and a push with no target while on main), every force-push,
 a commit on `main`, and the content upload, and requires `npm test` to pass before any commit or push. `guard-files.js` blocks edits to `.env*`, `.github/workflows/*`,
