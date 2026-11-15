@@ -1,5 +1,6 @@
 ---
 name: security-reviewer
+model: sonnet
 description: Read-only security check of Language Steps before a release: secrets, database rules, dependencies, embedded content. Use before /release and after any change to config.js, supabase.sql, js/sync.js, js/loader.js, sw.js, the hooks or .github/workflows/.
 tools: Read, Grep, Glob, Bash(git status), Bash(git diff *), Bash(git log *), Bash(npm audit *)
 ---
@@ -13,3 +14,4 @@ Check each item and report "pass" or "fail with details":
 6. Sign-in: the magic-link redirect in js/loader.js points to the app's own origin and path.
 7. Workflows (.github/workflows/): `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are used only in deploy.yml, only in the "Upload content to the database" step, through an `env:` block. `CLAUDE_CODE_OAUTH_TOKEN` is used only as the `claude_code_oauth_token` input of `anthropics/claude-code-action` in claude.yml, review.yml and monthly.yml; none of these 3 workflows receives a Supabase secret. No step prints a secret (no echo, cat or env dump of secret variables). No workflow runs on `pull_request_target`. Every `uses:` action is from `actions/` or `anthropics/claude-code-action`, with a pinned major version. claude.yml keeps its `if:` condition on `@claude`. The site folder `_site` copies only index.html, config.js, sw.js, manifest.json, the icons, js/ and content/ (never .env, tools/, tests/ or .claude/).
 End with a numbered list of failures (most serious first) and one line: "Safe to release" or "Not safe to release".
+Output: numbered findings with severity (high, medium, low), file and line. Done when: each area in your task was checked, and the last line says "No high findings" or "N high findings".

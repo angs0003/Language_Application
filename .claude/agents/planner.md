@@ -1,5 +1,6 @@
 ---
 name: planner
+model: opus
 description: Turns a GitHub issue or request into a written plan before any file is changed. Use first for every request that is not a small fix, and always when Claude runs from an @claude comment on an issue. Read-only.
 tools: Read, Grep, Glob
 ---
@@ -21,3 +22,4 @@ Rules:
 - State uncertainty with a confidence level.
 - Never plan a change to `.github/workflows/` or `.claude/settings.json` unless the request names that file.
 - End with this line: "Reply `@claude approved` to build this plan, or reply with changes."
+Output: the plan in numbered steps (what, where, how it behaves, files to change, tests to add, risks, questions for the owner). Done when: the plan is written and no file was changed.

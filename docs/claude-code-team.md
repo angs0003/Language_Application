@@ -38,6 +38,7 @@ Improvement commands:
 | Subagent | Job | Can edit |
 |---|---|---|
 | `planner` | Writes the plan before any change; posts it on the issue when Claude runs in GitHub | nothing (read-only) |
+| `researcher` | Researches learning methods and technology practice with sources (`/research`) | `docs/research/` only |
 | `content-writer` | Writes content parts | `content/` only |
 | `content-reviewer` | Reviews content for correctness and consistency | nothing (read-only) |
 | `ui-engineer` | Screens, components, styles; keeps the design rules | `js/`, `index.html` |
@@ -55,7 +56,8 @@ Example: "Use the ui-engineer subagent to add a Hanzi section to the Practise ta
 | Hook | When | Effect |
 |---|---|---|
 | `validate-content.js` | After any edit to `content/content.js` | Runs the validator; errors are sent back to Claude Code to fix |
-| `guard-release.js` | Before `git commit`, `git push` or `npm run upload` | Runs `npm test`; blocks the command if a test fails. (`npm run upload` from your computer is now only an emergency route; the Deploy workflow normally uploads.) |
+| `guard-release.js` | Before `git commit`, `git push` or the content upload command | Runs `npm test`; blocks a commit or push if a test fails. It also blocks a push to `main`, force-pushes and the content upload from your computer (the Deploy workflow uploads). |
+| `guard-files.js` | Before an edit with the Edit or Write tool | Blocks edits to `.env*`, `.github/workflows/*`, `.claude/settings*.json`, the guard scripts and `CACHE` in `sw.js`. It does not check shell commands. |
 
 ## 5. Agent teams (optional, experimental, higher cost)
 
