@@ -69,8 +69,8 @@ Example: "Use the ui-engineer subagent to add a Hanzi section to the Practise ta
 Use only for parallel content work, for example Japanese Level 2 Part 2 and Chinese Level 3 at the same time.
 1. Enable: in `~/.claude/settings.json`, add `"env": { "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1" }`. Needs Claude Code v2.1.32 or later.
 2. The content is already split into parts (`content/parts/`), so each teammate owns a different part file (docs/parallel-work.md).
-3. Ask for the team: "Create an agent team: one teammate writes Japanese Level 4 Part 6 in content/parts/ja-part-15.js, one writes
-   Chinese Level 4 Part 5 in content/parts/zh-part-5.js, one checks both with the content-checker and content-reviewer rules. Use Sonnet for teammates."
+3. Ask for the team: "Create an agent team: one teammate writes Japanese Level 4 Part 6 in a new part file (for example content/parts/ja-part-15.js), one writes
+   Chinese Level 4 Part 5 in a new part file (for example content/parts/zh-level4-part5.js), one checks both with the content-checker and content-reviewer rules. Use Sonnet for teammates."
 4. Review the shared task list with Ctrl+T, then run `/release` yourself and merge the pull request.
 
 ## 6. Files the team reads and writes
