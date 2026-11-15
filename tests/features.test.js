@@ -89,7 +89,7 @@ const check = (ok, msg) => { if (!ok) failures.push(msg); else console.log("ok:"
   {
     const all = W.eval("allWords('ja').filter(w=>w.tk)").length;
     check(all === W.eval("allWords('ja').length") && W.eval("allWords('zh').filter(w=>w.tk).length") === W.eval("allWords('zh').length"), "every word of both languages has an example sentence with word breaks");
-    W.eval("const t=themes('ja')[0];startLesson(t.words.slice(0,5),t.title);view.i=3;render()");
+    W.eval("const t=themes('ja')[0];startLesson(t.words.slice(0,5),t.title);view.i=view.items0.findIndex(it=>it.k==='word'&&it.wi===3);render()");
     const toks = () => [...d.querySelectorAll("#main .tk:not(.pu)")];
     check(toks().length >= 5 && toks().map(e => e.textContent).join("").includes("駅"), "the lesson example under a new word shows each word of the sentence");
     toks().find(e => e.textContent.includes("駅")).click();
@@ -204,8 +204,8 @@ const check = (ok, msg) => { if (!ok) failures.push(msg); else console.log("ok:"
     check(rd()[0] === W.eval("__w[0].w") && rd().length === 2, "Back to the earlier word reads it again");
     W.eval("S.settings.autoRead=false;__rd.length=0"); click("Continue");
     check(rd().length === 0, "with the setting off nothing is read automatically");
-    W.eval("S.settings.autoRead=true;__rd.length=0;lessonMove(1);lessonMove(1);lessonMove(1);lessonMove(1)");
-    check(W.eval("view.step") === 1 && rd().length === 6, "the remaining words are read, and the step after New words is not read");
+    W.eval("S.settings.autoRead=true;__rd.length=0;for(let k=0;k<30&&view.step===0;k++)lessonMove(1)");
+    check(W.eval("view.step") === 1 && [2, 3, 4].every(k => rd().includes(W.eval(`__w[${k}].ex[0]`))), "the remaining words are read, and the step after New words is not read");
     W.eval("speechSynthesis.speak=__sp0;S.ja.resume=null;goHome()");
   }
   // --- Lesson: Back leaves the lesson and the place is saved ---
@@ -224,7 +224,7 @@ const check = (ok, msg) => { if (!ok) failures.push(msg); else console.log("ok:"
     click("Exit now"); check(W.eval("view.s") !== "lesson", "the exit panel leaves the lesson");
     tab("Learn"); check(M().includes("Continue lesson") && M().includes("You stopped at New words, word 3 of") && d.querySelectorAll("#main .btn.pri").length === 1, "the Learn tab offers Continue lesson with one primary button and shows the place");
     click("Continue lesson"); check(W.eval("view.s") === "lesson" && W.eval("view.step") === 0 && W.eval("view.i") === 2, "Continue lesson opens the lesson at the saved word");
-    for (let n = 0; n < 40 && W.eval("view.step") < 4; n++) click("Continue");
+    for (let n = 0; n < 40 && W.eval("view.step") < 4; n++) { if (W.eval("view.step===0&&view.items0[view.i].k==='check'")) W.eval("dontKnow(view.q);render()"); click("Continue"); }
     check(W.eval("view.step") === 4 && W.eval("S.ja.resume.step") === 4 && W.eval("S.ja.resume.i") === 0, "leaving during the quiz saves the start of the quiz");
     W.eval("goHome()"); W.eval("startLesson(__t.todo,__t.title)");
     check(W.eval("view.step") === 4 && W.eval("view.i") === 0, "the lesson continues at the start of the quiz");

@@ -60,7 +60,7 @@ function tools(dom, failures) {
     q.sel=q.ans;render();}`);
   async function answerUntil(cond) { for (let k = 0; k < 80 && !cond(); k++) { W.eval("solve(view.q)"); if (!W.eval("view.q.answered")) click("Check answer"); if (!W.eval("view.q.correct")) failures.push("solved answer marked wrong: " + W.eval("view.q.type")); click("Continue"); } }
   async function doLesson() {
-    for (let k = 0; k < 60 && W.eval("view.step") < 4; k++) { if (W.eval("view.step===1&&view.i>0")) { W.eval("solve(view.q)"); click("Check answer"); click("Continue"); } else click("Continue"); }
+    for (let k = 0; k < 60 && W.eval("view.step") < 4; k++) { if (W.eval("view.step===1&&view.i>0||view.step===0&&view.items0[view.i].k==='check'")) { W.eval("solve(view.q)"); click("Check answer"); click("Continue"); } else click("Continue"); }
     await answerUntil(() => W.eval("view.step===5")); click("Go to home");
   }
   const startNext = () => { const b = d.querySelector(".card.hero .btn.pri"); if (!b) throw new Error("no next-step button | " + M().slice(0, 150)); b.click(); };
