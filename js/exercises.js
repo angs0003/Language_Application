@@ -74,7 +74,7 @@ function qHTML(q,opts){
   if(q.type==="meaning"){
     h+=`<p class="q">What does this word mean?</p>${glyph(l,w)}${readingHTML(l,w)}<p class="center">${playBtn}</p>`;
   }else if(q.type==="listen"){
-    h+=`<p class="q">Listen. Which word did you hear?</p><p class="center" style="margin:10px 0"><button class="btn pri" data-a="${A(()=>say(w.w,l))}">${PLAY.replace('aria-hidden','style="width:16px;height:16px;fill:currentColor;vertical-align:-2px;margin-right:8px" aria-hidden')}Play audio</button></p>`;
+    h+=`<p class="q">Listen. Which word did you hear?</p><p class="center" style="margin:10px 0"><button class="btn sec" data-a="${A(()=>say(w.w,l))}">${PLAY.replace('aria-hidden','style="width:16px;height:16px;fill:currentColor;vertical-align:-2px;margin-right:8px" aria-hidden')}Play audio</button></p>`;
   }else if(q.type==="type"&&q.recall){
     const sp=recallSpeakOn(q);
     h+=`<p class="q">Remember the word</p><p class="meaning">${esc(w.m)}</p>

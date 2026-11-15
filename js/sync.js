@@ -15,8 +15,8 @@ function stateRows(st,uid){
     const s=st[l],saved={};(s.saved||[]).forEach(x=>{saved[x.w]=x;});
     const keys=new Set([...Object.keys(s.srs||{}),...Object.keys(saved)]);
     keys.forEach(w=>{const e=(s.srs||{})[w],x=saved[w];
-      words.push({user_id:uid,lang:l,word:w,box:e?e.b:(x?x.b||0:0),due:iso(e?e.d:(x?x.d:0)),saved:!!x,reading:x?x.r||"":"",meaning:x?x.m||"":"",sentence:x?x.s||"":"",source:x?x.src||"":"",saved_box:x?x.b||0:0,saved_due:iso(x?x.d:0),saved_at:iso(x?x.t:0),sentence_tokens:x&&x.tk?x.tk:null,updated_at:iso(Math.max(e?(e.u||e.d||1):0,x?(x.u||x.t||1):0))});});
-    if(l==="ja")for(const store of ["kana","kanji"])Object.entries(s[store]||{}).forEach(([k,e])=>words.push({user_id:uid,lang:"ja-"+store,word:k,box:e.b||0,due:iso(e.d),saved:false,reading:"",meaning:"",sentence:"",source:"",saved_box:0,saved_due:null,saved_at:null,sentence_tokens:null,updated_at:iso(e.u||e.d||1)}));
+      words.push({user_id:uid,lang:l,word:w,box:e?e.b:(x?x.b||0:0),due:iso(e?e.d:(x?x.d:0)),saved:!!x,reading:x?x.r||"":"",meaning:x?x.m||"":"",sentence:x?x.s||"":"",source:x?x.src||"":"",saved_box:x?x.b||0:0,saved_due:iso(x?x.d:0),lapses:e?e.lp||0:0,saved_lapses:x?x.lp||0:0,saved_at:iso(x?x.t:0),sentence_tokens:x&&x.tk?x.tk:null,updated_at:iso(Math.max(e?(e.u||e.d||1):0,x?(x.u||x.t||1):0))});});
+    if(l==="ja")for(const store of ["kana","kanji"])Object.entries(s[store]||{}).forEach(([k,e])=>words.push({user_id:uid,lang:"ja-"+store,word:k,box:e.b||0,due:iso(e.d),saved:false,reading:"",meaning:"",sentence:"",source:"",saved_box:0,saved_due:null,saved_at:null,lapses:e.lp||0,saved_lapses:0,sentence_tokens:null,updated_at:iso(e.u||e.d||1)}));
     (s.chRead||[]).forEach(n=>acts.push({user_id:uid,lang:l,kind:"chapter",key:String(n)}));
     Object.keys(s.tripDone||{}).filter(k=>s.tripDone[k]).forEach(k=>acts.push({user_id:uid,lang:l,kind:"trip",key:String(k)}));
     Object.keys(s.tripOpen||{}).filter(k=>s.tripOpen[k]).forEach(k=>acts.push({user_id:uid,lang:l,kind:"trip_open",key:String(k)}));
@@ -33,12 +33,12 @@ function mergeRemote(st,rw,ra,rs){
   const out=normalize(JSON.parse(JSON.stringify(st)));
   if(rs&&rs.data&&ms(rs.updated_at)>(st.updatedAt||0)){const d=rs.data;out.lang=d.lang||out.lang;out.tab=d.tab||out.tab;out.settings=Object.assign({},out.settings,d.settings||{});out.lastActive=Math.max(out.lastActive||0,d.lastActive||0);
     for(const l of ["zh","ja"])if(d.per&&d.per[l])Object.assign(out[l],d.per[l]);}
-  (rw||[]).forEach(r=>{if(r.lang==="ja-kana"||r.lang==="ja-kanji"){const store=r.lang.slice(3),st=out.ja[store]||(out.ja[store]={}),e=st[r.word],ru=ms(r.updated_at);if(!e||ru>=(e.u||e.d||0))st[r.word]={b:r.box||0,d:ms(r.due),u:ru};return;}const s=out[r.lang];if(!s)return;const e=s.srs[r.word],lu=e?(e.u||e.d||1):0,ru=ms(r.updated_at);
+  (rw||[]).forEach(r=>{if(r.lang==="ja-kana"||r.lang==="ja-kanji"){const store=r.lang.slice(3),st=out.ja[store]||(out.ja[store]={}),e=st[r.word],ru=ms(r.updated_at);if(!e||ru>=(e.u||e.d||0))st[r.word]={b:r.box||0,d:ms(r.due),u:ru,lp:r.lapses||0};return;}const s=out[r.lang];if(!s)return;const e=s.srs[r.word],lu=e?(e.u||e.d||1):0,ru=ms(r.updated_at);
     const sv=(s.saved||[]).find(x=>x.w===r.word),su=sv?(sv.u||sv.t||1):0;
     if(ru>=Math.max(lu,su)){
-      if(r.due||r.box){s.srs[r.word]={b:r.box||0,d:ms(r.due),u:ru};}
+      if(r.due||r.box){s.srs[r.word]={b:r.box||0,d:ms(r.due),u:ru,lp:r.lapses||0};}
       s.saved=(s.saved||[]).filter(x=>x.w!==r.word);
-      if(r.saved)s.saved.push({w:r.word,r:r.reading,m:r.meaning,s:r.sentence,src:r.source,b:r.saved_box||0,d:ms(r.saved_due),t:ms(r.saved_at),u:ru,tk:r.sentence_tokens||null});
+      if(r.saved)s.saved.push({w:r.word,r:r.reading,m:r.meaning,s:r.sentence,src:r.source,b:r.saved_box||0,d:ms(r.saved_due),t:ms(r.saved_at),u:ru,lp:r.saved_lapses||0,tk:r.sentence_tokens||null});
     }});
   for(const l of ["zh","ja"])out[l].saved=(out[l].saved||[]).sort((a,b)=>(b.t||0)-(a.t||0));
   (ra||[]).forEach(r=>{const s=out[r.lang];if(!s)return;
@@ -61,7 +61,7 @@ async function dbPull(){
     await dbPush();
   }catch(e){dbMsg="Could not load progress from your account: "+(e.message||e)+". The copy on this device is used.";}
 }
-const cmpW=r=>[r.box,r.due,r.saved,r.reading,r.meaning,r.sentence,r.source,r.saved_box,r.saved_due,r.sentence_tokens||null];
+const cmpW=r=>[r.box,r.due,r.saved,r.reading,r.meaning,r.sentence,r.source,r.saved_box,r.saved_due,r.lapses||0,r.saved_lapses||0,r.sentence_tokens||null];
 function dbQueue(){if(!DB||!dbUser)return;clearTimeout(dbT);dbT=setTimeout(dbPush,1500);}
 async function dbPush(){
   if(!DB||!dbUser)return;if(syBusy){syAgain=true;return;}syBusy=true;

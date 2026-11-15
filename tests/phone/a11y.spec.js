@@ -15,6 +15,7 @@ for (const lang of ["zh", "ja"]) {
     if (sc.langs && !sc.langs.includes(lang)) continue;
     test(`a11y ${lang} ${sc.name}`, async ({ page }, testInfo) => {
       test.skip(testInfo.project.name !== "iPhone 15 Pro", "runs once, on the iPhone project");
+      if (sc.name === "Kanji list") test.setTimeout(90000); // the Japanese kanji list takes about 27 to 35 s in axe; the default 30 s fails on a loaded machine
       await page.route("**/config.js", r => r.fulfill({ contentType: "text/javascript", body: "window.LS_CONFIG={};" }));
       await page.route(/^https?:\/\/(?!localhost)/, r => r.abort());
       await page.goto("/");
