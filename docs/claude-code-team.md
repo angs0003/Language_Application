@@ -38,6 +38,7 @@ Improvement commands:
 | Subagent | Job | Can edit |
 |---|---|---|
 | `planner` | Writes the plan before any change; posts it on the issue when Claude runs in GitHub | nothing (read-only) |
+| `docs-keeper` | Applies doc notes to CLAUDE.md and the shared docs; keeps terms and the size limit | `CLAUDE.md`, `docs/*.md`, `docs/features/` |
 | `researcher` | Researches learning methods and technology practice with sources (`/research`) | `docs/research/` only |
 | `content-writer` | Writes content parts | `content/` only |
 | `content-checker` | Runs every automatic content check and lists findings (haiku) | nothing (read-only) |
