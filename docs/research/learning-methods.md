@@ -101,7 +101,8 @@ Each finding has: source, evidence kind, confidence.
 8. Kanji with step-by-step strokes and fading furigana (js/kanji.js).
 9. Reading aloud of new words and questions (setting autoRead).
 10. No streaks, timers, leaderboards or animation. Sessions are small (review of 10, mixed of up to 16).
-11. Not found in the code: any dedicated tone or pitch accent training (searches of js/ for tone, pitch and accent found only typing hints and speaker voice pitch); any shadowing mode; any per-word difficulty in scheduling; any "early review" rule.
+11. Not found in the code: any dedicated tone or pitch accent training (searches of js/ for tone, pitch and accent found only typing hints and speaker voice pitch); any shadowing mode.
+12. Per-word difficulty and early review (built by feature/hard-words-sooner, merged as #57; facts in docs/features/review-timing.md): each entry has a lapse count `lp` (times the word was forgotten); when `lp` is 2 or more, the gap of the new box is halved, never shorter than 1 day (`gapDays`, `HARD` in js/core.js). A correct answer before the due date keeps the box and the due date (`srsStep` in js/core.js), except for new kana and kanji below box 2. Before #57: the code had no per-word difficulty in scheduling and no "early review" rule.
 
 ## 4. Gaps
 
@@ -146,7 +147,7 @@ Status: built (feature/hard-words-sooner, merged as #57).
 3. Change: in `srsSet` and `srsStep`, if the word is not yet due, record the answer but keep the same box and due date when correct (and still reset when wrong). Confirm first with a test that "Practise anyway" can touch not-due words.
 4. Screen: none.
 5. Effort: small.
-6. Design rules touched: none. This also removes four copies of the same rule if refactored into one function (optional).
+6. Design rules touched: none. The four copies of the box rule were replaced by one function, `srsStep` in js/core.js, called by `srsSet`, `kSet` (js/kanji.js), `onAnswer` (js/exercises.js) and `gradeCard` (js/listen.js) (done in #57).
 
 ### Proposal 4: "mostly known words" label and a Listen filter for easy input
 
