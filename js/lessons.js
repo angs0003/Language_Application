@@ -98,26 +98,45 @@ function screenTest(){
 }
 
 /* Placement */
+/* Placement: an adaptive search instead of one theme after another (docs/research/placement-test.md).
+   The learner knows the first s themes, s from 0 to the number of themes. v.post[s] is the probability of each s. Each question is one word from the theme in the middle of
+   the probability (so each answer halves the range). The answer chances for a known and an unknown theme: correct 0.9 and 0.16 (a guess of 1 in 4, made by about 2 in 3 of the learners who do not know the word), "I do not know" 0.03 and 0.42, wrong 0.07 and 0.42. It stops after at least 6 questions when 90% of the probability lies within 7% of the themes (at least 10), after 20 questions, or when the learner chooses "Finish now".
+   The starting theme is the 10th percentile, so a wrong placement errs towards easier themes. */
+const PLACE={min:6,max:20,about:12,width:n=>Math.max(10,Math.round(n*0.07))};
+const placeQuant=(p,x)=>{let c=0;for(let s=0;s<p.length;s++){c+=p[s];if(c>=x-1e-9)return s;}return p.length-1;};
+function placeUpdate(v,q){
+  if(q.upd||q.unit==null||!q.answered)return;q.upd=true;
+  const lk=q.correct?[0.9,0.16]:q.dk?[0.03,0.42]:[0.07,0.42];let tot=0;
+  v.post=v.post.map((pr,s)=>{const x=pr*(s>q.unit?lk[0]:lk[1]);tot+=x;return x;});v.post=v.post.map(x=>x/tot);
+}
+function placeProbe(v){
+  const l=S.lang,n=CUR[l].length,t=Math.min(placeQuant(v.post,0.5),n-1),ws=CUR[l][t].words,seen=new Set(v.qs.map(q=>q.word&&q.word.w));
+  const pool=ws.filter(w=>!seen.has(w.w)),w=shuffle(pool.length?pool:ws)[0],q=mkQ("meaning",w,l);q.unit=t;return q;
+}
+function placeDone(v){
+  const n=v.qs.filter(q=>q.answered).length;if(n>=PLACE.max)return true;
+  return n>=PLACE.min&&placeQuant(v.post,0.95)-placeQuant(v.post,0.05)<=PLACE.width(CUR[S.lang].length);
+}
+function placeFinish(v,q){placeUpdate(v,q);v.res={start:placeQuant(v.post,0.10),lo:placeQuant(v.post,0.05),hi:placeQuant(v.post,0.95),n:v.qs.filter(x=>x.answered).length};v.finished=true;}
 function startPlacement(){
-  const l=S.lang,qs=[];
-  CUR[l].forEach((u,ui)=>{[0,3].forEach(wi=>{const q=mkQ("meaning",u.words[wi],l);q.unit=ui;qs.push(q);});});
-  view={s:"place",qs,i:0,streak:0,finished:false};render();window.scrollTo(0,0);
+  const l=S.lang,n=CUR[l].length;
+  view={s:"place",qs:[],i:0,streak:0,finished:false,post:new Array(n+1).fill(1/(n+1))};view.qs.push(placeProbe(view));
+  render();window.scrollTo(0,0);
 }
 function screenPlace(){
   const l=S.lang,v=view;
   if(v.finished){
-    const passed=[];for(let u=0;u<CUR[l].length;u++){const qs=v.qs.filter(q=>q.unit===u);if(qs.every(q=>q.answered&&q.correct))passed.push(u);else break;}
-    const start=passed.length;
-    return {row:"title",title:"Placement quiz",prog:`<div class="ptext">Placement quiz: finished</div><div class="psub">Correct answers: ${v.qs.filter(q=>q.correct).length} of ${v.qs.filter(q=>q.answered).length}</div><div class="bar"><i style="width:100%"></i></div>`,
-      main:`<div class="card"><h2>Result</h2><p>Your starting theme is Theme ${start+1}${start<CUR[l].length?", "+esc(CUR[l][start].title):", "+esc(AI_THEMES[0])}.</p>${start?`<p>Themes 1 to ${start} are marked as learned. Their words are added to your review list.</p>`:"<p>No themes are marked as learned.</p>"}</div>`,
-      back:{label:"Back",dis:true},next:{label:"Save and go to home",fn:()=>{const st=S[l];st.placed=true;passed.forEach((u,ui)=>CUR[l][u].words.forEach((w,wi)=>{if(!S[l].srs[w.w])S[l].srs[w.w]={b:3,d:Date.now()+((ui+wi)%4)*DAY,u:Date.now()};}));save();goHome();}}};
+    const {start,lo,hi,n}=v.res,nt=CUR[l].length,lvn=t=>{const x=LEVELS[l][lvOfTheme(l,Math.min(t,nt-1))-1];return x?x[0]:"";};
+    return {row:"title",title:"Placement quiz",prog:`<div class="ptext">Placement quiz: finished</div><div class="psub">Questions answered: ${n}</div><div class="bar"><i style="width:100%"></i></div>`,
+      main:`<div class="card"><h2>Result</h2><p>Your starting theme is Theme ${start+1}${start<nt?", "+esc(CUR[l][start].title):", "+esc(AI_THEMES[0])}.</p><p class="small muted">About 90% sure that your level is between Theme ${lo+1} and Theme ${hi+1}${lvn(start)?" ("+esc(lvn(start))+")":""}. ${n<PLACE.min?"You finished early, so this is a rough estimate.":""} You can start at any theme later from All themes.</p>${start?`<p>Themes 1 to ${start} are marked as learned. Their words are added to your review list, spread over the next 4 weeks.</p>`:"<p>No themes are marked as learned.</p>"}</div>`,
+      back:{label:"Back",dis:true},next:{label:"Save and go to home",fn:()=>{const st=S[l];st.placed=true;for(let u=0;u<start;u++)CUR[l][u].words.forEach((w,wi)=>{if(!S[l].srs[w.w])S[l].srs[w.w]={b:3,d:Date.now()+((u*7+wi*3)%28)*DAY,u:Date.now()};});save();goHome();}}};
   }
-  const q=v.qs[v.i];view.q=q;
+  const q=v.qs[v.i];view.q=q;const est=Math.min(PLACE.max,Math.max(PLACE.about,v.i+3));
   const r={row:"title",title:"Placement quiz",exit:true,
-    prog:`<div class="ptext">Placement quiz: question ${v.i+1} of up to ${v.qs.length}</div><div class="psub">Incorrect answers in a row: ${v.streak} of 3</div><div class="bar"><i style="width:${Math.round(v.i/v.qs.length*100)}%"></i></div>`,
-    main:`<div class="card">${qHTML(q,{noAI:true})}</div>`,back:{label:"Back",fn:()=>{if(v.i===0){view.confirm=true;render();window.scrollTo(0,0);}else{v.i--;render();window.scrollTo(0,0);}}}};
+    prog:`<div class="ptext">Placement quiz: question ${v.i+1} of about ${est}</div><div class="psub">At most ${PLACE.max} questions. No timer.</div><div class="bar"><i style="width:${Math.round((v.i+1)/est*100)}%"></i></div>`,
+    main:`<p style="text-align:right;margin:-8px 0 -6px"><button class="btn link" style="min-height:44px;padding:4px 8px;width:auto" data-a="${A(()=>{placeFinish(v,q);render();window.scrollTo(0,0);})}">Finish now</button></p><div class="card">${qHTML(q,{noAI:true})}</div>`,back:{label:"Back",fn:()=>{if(v.i===0){view.confirm=true;render();window.scrollTo(0,0);}else{v.i--;render();window.scrollTo(0,0);}}}};
   if(!q.answered)r.next={label:"Check answer",fn:()=>{checkQ(q);render();},dis:!canCheck(q)};
-  else r.next={label:"Continue",fn:()=>{if(v.streak>=3||v.i>=v.qs.length-1)v.finished=true;else v.i++;render();window.scrollTo(0,0);}};
+  else r.next={label:"Continue",fn:()=>{placeUpdate(v,q);if(v.i<v.qs.length-1)v.i++;else if(placeDone(v))placeFinish(v,q);else{v.qs.push(placeProbe(v));v.i++;}render();window.scrollTo(0,0);}};
   return r;
 }
 

@@ -87,7 +87,7 @@ function stepPreview(l,x){
 function homeLearn(l,r){
   const st=S[l];let h="";
   if(!st.placed){
-    h+=uiCard(`${uiLabel("START HERE")}<h2>Placement quiz</h2><p>The quiz finds your starting point in ${L[l].name}. It asks for the meaning of one word at a time and stops after 3 incorrect answers in a row. Choose “I do not know” instead of guessing.</p>${uiBtn("Start placement quiz",startPlacement)}<button class="btn link" data-a="${A(()=>{st.placed=true;save();render();})}">Skip and start at Theme 1</button>`,"hero");
+    h+=uiCard(`${uiLabel("START HERE")}<h2>Placement quiz</h2><p>The quiz finds your starting point in ${L[l].name}. It asks for the meaning of one word at a time: about 12 questions, at most 20. There is no timer, and you can press “Finish now” at any time. Choose “I do not know” instead of guessing.</p>${uiBtn("Start placement quiz",startPlacement)}<button class="btn link" data-a="${A(()=>{st.placed=true;save();render();})}">Skip and start at Theme 1</button>`,"hero");
     r.main=h;return;
   }
   const ths=themes(l),lv=viewLevel(l),idx=ths.map((t,i)=>i).filter(i=>lvOfTheme(l,i)===lv);

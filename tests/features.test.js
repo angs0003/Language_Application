@@ -344,6 +344,25 @@ const check = (ok, msg) => { if (!ok) failures.push(msg); else console.log("ok:"
     W.eval("goHome()");
   }
   check(W.eval("normalize({v:1,ja:{real:null}}).ja.real") !== null && Object.keys(W.eval("normalize({v:1}).zh.real")).length === 0, "old saved state without real loads with an empty log");
+  // Placement quiz: an adaptive search, at most 20 questions (docs/research/placement-test.md)
+  W.eval('setLang("zh")');
+  const simPlace = tr => JSON.parse(W.eval('JSON.stringify((()=>{startPlacement();const tr=' + tr + ';while(!view.finished){const q=view.qs[view.i];if(q.unit<tr&&Math.random()<0.95){q.sel=q.ans;checkQ(q);}else if(q.unit<tr){q.sel=(q.ans+1)%q.opts.length;checkQ(q);}else dontKnow(q);screenPlace().next.fn();}return view.res;})())'));
+  const runs = [0, 6, 40, 100, 124].map(tr => [tr, Array.from({ length: 12 }, () => simPlace(tr))]);
+  check(runs.every(([, rs]) => rs.every(r => r.n >= 1 && r.n <= 20)), "the placement quiz asks at most 20 questions (before: up to 248)");
+  check(runs.every(([tr, rs]) => rs.filter(r => r.lo <= tr && tr <= r.hi).length >= 10), "the 90% range of the placement result contains the real level in at least 10 of 12 simulated learners at each of 5 levels");
+  check(runs.every(([tr, rs]) => rs.filter(r => r.start <= tr).length >= 11), "the starting theme is at or below the real level for nearly all simulated learners");
+  check(runs.flatMap(([, rs]) => rs).reduce((a, r) => a + r.n, 0) / 60 <= 14, "the placement quiz asks 14 questions or fewer on average");
+  W.eval("startPlacement()");
+  check(W.eval("view.qs.length") === 1 && M().includes("Finish now") && M().includes("What does this word mean"), "placement shows one question at a time with a Finish now button");
+  check(d.getElementById("prog").textContent.includes("of about 12") && d.getElementById("prog").textContent.includes("At most 20"), "placement states the number of questions and the maximum");
+  W.eval("(()=>{const q=view.qs[0];dontKnow(q);})()"); click("Finish now");
+  check(W.eval("view.finished") === true && W.eval("view.res.n") === 1 && M().includes("rough estimate"), "Finish now ends the quiz with a rough estimate");
+  W.eval("S.zh.srs={};view.res={start:20,lo:15,hi:30,n:12}");
+  W.eval("screenPlace().next.fn()");
+  const dues = JSON.parse(W.eval("JSON.stringify(Object.values(S.zh.srs).map(e=>Math.round((e.d-Date.now())/864e5)))"));
+  check(W.eval("Object.keys(S.zh.srs).length") === W.eval("CUR.zh.slice(0,20).reduce((a,t)=>a+t.words.length,0)") && Math.max(...dues) >= 20 && Math.max(...dues) <= 28, "the themes before the starting theme are marked as learned and their reviews are spread over 4 weeks");
+  W.eval("S.zh.srs={};goHome()");
+  W.eval('setLang("ja")');
   // Sounds (tone practice, Chinese)
   W.eval('setLang("zh")');
   check(W.eval('JSON.stringify(pySyllables("nǐ hǎo").map(x=>x.t))') === "[3,3]" && W.eval('pyWord(pySyllables("duìbuqǐ"))') === "duìbuqǐ", "pinyin is split into syllables with their tones");
