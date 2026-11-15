@@ -363,9 +363,18 @@ function startLesson(words,title,repeat,fresh){
   readWordCard();readQuestion();
 }
 function lessonItemCount(v){const n=v.words.length;return [n,1+v.gq.length,1,1,v.quiz.length,1][v.step];}
+/* End of the Quiz step: every question answered wrongly (also "I do not know") is asked once more, at most 5, as a new question with again=true.
+   Speak questions and Match the pairs are not repeated, and a wrong repeat is not repeated again. Built once per lesson view (v.rq). */
+function lessonRepeatStart(v){
+  if(v.rq)return false;
+  const bad=v.quiz.filter(q=>q.answered&&!q.correct&&!q.again&&q.type!=="speak"&&q.type!=="match").slice(0,5);
+  v.rq={first:v.quiz.length,n:bad.length};
+  bad.forEach(q=>v.quiz.push(mkAgain(q)));
+  return bad.length>0;
+}
 function lessonMove(d){
   const v=view;const n=lessonItemCount(v);
-  if(d>0){if(v.i<n-1)v.i++;else{v.step++;v.i=0;}}
+  if(d>0){if(v.i<n-1)v.i++;else if(v.step===4&&lessonRepeatStart(v))v.i++;else{v.step++;v.i=0;}}
   else{if(v.i>0)v.i--;else if(v.step>0){v.step--;v.i=lessonItemCount(v)-1;}}
   if(v.step===2&&!v.sents.length){v.step+=d>0?1:-1;v.i=d>0?0:lessonItemCount(v)-1;}
   lessonSave(v);
@@ -377,9 +386,11 @@ function screenLesson(){
   const v=view,l=S.lang,ws=v.words,n=lessonItemCount(v);
   const unitLabel=(v.repeat?"Repeat: ":"Lesson: ")+v.title;
   const itemNames=["Word","Grammar item","","","Question",""];
+  const inRep=!!(v.rq&&v.rq.n&&v.step===4&&v.i>=v.rq.first),nq=v.rq&&v.rq.n?v.rq.first:v.quiz.length;
   const counts=[ws.length,1+v.gq.length,1,1,v.quiz.length,1];let pos=0;for(let k=0;k<v.step;k++)pos+=counts[k];pos+=v.i;const total=counts.reduce((a,b)=>a+b,0);
+  let pct=Math.round(pos/total*100);if(v.rq&&v.rq.n)pct=Math.max(v.shown||0,pct);v.shown=pct;/* the bar never moves backwards once the repeats have started */
   const r={row:"title",title:unitLabel,exit:true,
-    prog:`<div class="ptext">Step ${v.step+1-(!v.sents.length&&v.step>2?1:0)} of ${v.sents.length?6:5}: ${STEPS[v.step]}</div><div class="psub">${itemNames[v.step]&&n>1?itemNames[v.step]+" "+(v.i+1)+" of "+n:""}</div><div class="bar"><i style="width:${Math.round(pos/total*100)}%"></i></div>`,
+    prog:`<div class="ptext">Step ${v.step+1-(!v.sents.length&&v.step>2?1:0)} of ${v.sents.length?6:5}: ${STEPS[v.step]}</div><div class="psub">${inRep?"Repeat: question "+(v.i-v.rq.first+1)+" of "+v.rq.n:itemNames[v.step]&&n>1?itemNames[v.step]+" "+(v.i+1)+" of "+(v.step===4?nq:n):""}</div><div class="bar"><i style="width:${pct}%"></i></div>`,
     back:{label:"Back",fn:()=>{if(v.step===0&&v.i===0)goHome();else lessonMove(-1);}},next:{label:"Continue",fn:()=>lessonMove(1)}};
   let h="";
   const retry=(fn,label)=>`<p><button class="btn sec full" data-a="${A(fn)}">${label}</button></p>`;
@@ -410,16 +421,19 @@ function screenLesson(){
     }
   }else if(v.step===4){
     const q=v.quiz[v.i];view.q=q;
-    h=`<div class="card">${qHTML(q)}</div>`;
+    h=`<div class="card">${inRep&&v.i===v.rq.first?`<p class="small muted" style="margin:0 0 6px">${v.rq.n} question${v.rq.n>1?"s":""} to repeat. The first answer counts for your review.</p>`:""}${qHTML(q)}</div>`;
     r.back={label:"Back",fn:()=>lessonMove(-1)};
     if(!q.answered){if(q.type==="speak")r.next={label:"Continue",dis:true};else r.next={label:"Check answer",fn:()=>{checkQ(q);render();},dis:!canCheck(q)};}
   }else{
-    const res=ws.map(w=>({w,ok:v.quiz.filter(q=>q.word===w).every(q=>q.correct)}));
-    const correct=v.quiz.filter(q=>q.correct).length,gc=v.gq.filter(q=>q.correct).length;
-    h=`<div class="card"><h2>Summary</h2><p>You finished ${esc(unitLabel)}.</p><p>Quiz result: ${correct} of ${v.quiz.length} correct.</p>${v.gq.length?`<p>Grammar questions: ${gc} of ${v.gq.length} correct.</p>`:""}<p>Grammar point: ${esc(v.g[0])}.</p></div>
+    /* Only the first answers count (questions without again); a repeat never changes the result. */
+    const firsts=v.quiz.filter(q=>!q.again),own=firsts.filter(q=>!q.earlier),ear=firsts.filter(q=>q.earlier);
+    const res=ws.map(w=>({w,ok:own.filter(q=>q.word===w).every(q=>q.correct)}));
+    const correct=own.filter(q=>q.correct).length,gc=v.gq.filter(q=>q.correct).length,ec=ear.filter(q=>q.correct).length;
+    const earMsg=!ear.length?"":ec===ear.length?(ear.length>1?"They moved":"It moved")+" to a longer review interval.":ec===0?(ear.length>1?"They are":"It is")+" due again now.":"The correct ones moved to a longer review interval. The others are due again now.";
+    h=`<div class="card"><h2>Summary</h2><p>You finished ${esc(unitLabel)}.</p><p>Quiz result: ${correct} of ${own.length} correct.</p>${ear.length?`<p>Earlier words: ${ec} of ${ear.length} correct. ${earMsg}</p>`:""}${v.gq.length?`<p>Grammar questions: ${gc} of ${v.gq.length} correct.</p>`:""}<p>Grammar point: ${esc(v.g[0])}.</p></div>
     <div class="card"><h2>Words</h2><ul class="units">${res.map(x=>`<li><span>${cjk(l,x.w.w)} ${esc(x.w.r)}<br><span class="status">${esc(x.w.m)}</span></span><span class="status">${x.ok?"Correct":"Incorrect: added to today’s review"}</span></li>`).join("")}</ul></div>
     <div class="card"><p class="small muted" style="margin:0">✅ Progress saved in ${storeWhere}.</p></div>`;
-    if(!v.saved){v.saved=true;res.forEach(x=>{const e=S[l].srs[x.w.w];if(!e||!x.ok)srsSet(l,x.w.w,x.ok);});if(!v.repeat){S[l].gi++;{const gd=S[l].grDone||(S[l].grDone=[]),gx=GR[l].indexOf(v.g);if(!gd.includes(gx))gd.push(gx);}S[l].lc=(S[l].lc||0)+1;S[l].lst=(S[l].lst||0)+1;S[l].lastLesson=ws.map(w=>w.w);histPush(l,"🆕 Lesson: "+v.title);}S[l].resume=null;save();}
+    if(!v.saved){v.saved=true;res.forEach(x=>{const e=S[l].srs[x.w.w];if(!e||!x.ok)srsSet(l,x.w.w,x.ok);});ear.forEach(q=>srsSet(l,q.word.w,q.correct));if(!v.repeat){S[l].gi++;{const gd=S[l].grDone||(S[l].grDone=[]),gx=GR[l].indexOf(v.g);if(!gd.includes(gx))gd.push(gx);}S[l].lc=(S[l].lc||0)+1;S[l].lst=(S[l].lst||0)+1;S[l].lastLesson=ws.map(w=>w.w);histPush(l,"🆕 Lesson: "+v.title);}S[l].resume=null;save();}
     h+=recsHTML(l,{k:"lesson",ti:themeIdxOf(l,ws[0]),g:GR[l].indexOf(v.g)});
     r.back={label:"Back",fn:()=>lessonMove(-1)};
     r.next={label:"Go to home",fn:goHome};

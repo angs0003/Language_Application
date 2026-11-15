@@ -49,6 +49,9 @@ module.exports = {
     { name: "Sounds: tone or pitch question", covers: [], setup: "themes(S.lang).slice(0,4).forEach(t=>t.words.forEach(w=>{S[S.lang].srs[w.w]={b:3,d:Date.now()+1e9,u:Date.now()};}));", open: "startSounds()" },
     { name: "Test out", covers: ["screenTest"], open: "startTest(0)" },
     { name: "Placement quiz", covers: ["screenPlace"], open: "startPlacement()" },
+    { name: "Lesson: recall question", covers: [], open: "{const t=themes(S.lang)[0];startLesson(t.words.slice(0,5),t.title);view.step=4;view.quiz[0]=mkRecall(t.words[0],S.lang);view.i=0;render();}" },
+    { name: "Lesson: quiz earlier word", covers: [], /* a recall question: the listen question has 2 primary buttons (Play audio and Check answer), a known breach that is not part of this screen */ setup: "{const w=themes(S.lang)[1].words[0];S[S.lang].srs[w.w]={b:1,d:0,u:Date.now()};}", open: "{const t=themes(S.lang)[0];startLesson(t.words.slice(0,5),t.title);view.step=4;const k=Math.max(0,view.quiz.findIndex(q=>q.earlier));view.quiz[k]=Object.assign(mkRecall(view.quiz[k].word,S.lang),{earlier:true});view.i=k;render();}" },
+    { name: "Lesson: repeat question", covers: [], open: "{const t=themes(S.lang)[0];startLesson(t.words.slice(0,5),t.title);view.step=4;const k=view.quiz.findIndex(q=>q.type!=='match');view.quiz.forEach((q,j)=>{q.answered=true;q.correct=j!==k;if(j===k){q.dk=true;q.sel=-1;}});view.i=view.quiz.length-1;lessonMove(1);}" },
     { name: "Lesson: listen question", covers: [], open: "{const t=themes(S.lang)[0];startLesson(t.words.slice(0,5),t.title);view.step=4;view.i=0;view.quiz[0]=mkQ('listen',t.words[0],S.lang);render();}" }
   ],
   /* Functions that are not screens of their own, or that need something the test cannot give. Give the reason. */

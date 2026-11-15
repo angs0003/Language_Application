@@ -37,17 +37,25 @@ function matchTap(q,side,i){
   if(q.done.length===q.pairs.length){q.answered=true;q.correct=q.mistakes===0;onAnswer(q);}
   render();
 }
-function buildQuiz(l,words,k){
+function buildQuiz(l,words,k,opts){
+  opts=opts||{};
   const pool=poolFor(l,words),qs=[];
   if(words.length>=3)qs.push(mkMatch(l,shuffle(words).slice(0,5)));
-  const types=["meaning","blank","listen","type","speak"];
-  words.forEach((w,i)=>{let t=types[i%types.length];if(t==="blank"){const s=pool.find(x=>x.tokens.some(z=>z[0]===w.w));const b=s&&mkBlank(l,s,w,pool);if(b){qs.push(b);return;}t="meaning";}qs.push(mkQ(t,w,l));});
+  /* One question per lesson word, in a mixed order: recall (type or say the reading from the meaning), meaning, listen and fill the blank. */
+  const types=["recall","meaning","recall","listen","recall","blank"];
+  shuffle(words).forEach((w,i)=>{let t=types[i%types.length];if(t==="blank"){const s=pool.find(x=>x.tokens.some(z=>z[0]===w.w));const b=s&&mkBlank(l,s,w,pool);if(b){qs.push(b);return;}t="meaning";}qs.push(t==="recall"?mkRecall(w,l):mkQ(t,w,l));});
   const cands=pool.filter(s=>{const n=contentToks(s).length;return n>=2&&n<=7;});
   const own=[...new Set(words.map(w=>themeIdxOf(l,w)))].flatMap(i=>(CUR[l][i]||{}).sents||[]).filter(s=>{const n=contentToks(s).length;return n>=2&&n<=8;});
-  if(own.length){const modes=["build","listen","toEn","build"];shuffle(own).slice(0,4).forEach((s,j)=>qs.push(mkBuild(l,s,modes[j],pool)));return qs;}
-  const pick=shuffle(cands.length?cands:pool).slice(0,2);
-  if(pick[0])qs.push(mkBuild(l,pick[0],"build",pool));
-  if(pick[1])qs.push(mkBuild(l,pick[1],(k||0)%2?"toEn":"listen",pool));
+  if(own.length){const modes=["build","listen","toEn","build"];shuffle(own).slice(0,4).forEach((s,j)=>qs.push(mkBuild(l,s,modes[j],pool)));}
+  else{
+    const pick=shuffle(cands.length?cands:pool).slice(0,2);
+    if(pick[0])qs.push(mkBuild(l,pick[0],"build",pool));
+    if(pick[1])qs.push(mkBuild(l,pick[1],(k||0)%2?"toEn":"listen",pool));
+  }
+  /* Up to 2 earlier words that are due for review and are not words of this lesson. */
+  const mine=new Set(words.map(w=>w.w));
+  const due=(opts.earlier||shuffle(dueList(l).filter(x=>!mine.has(x.w)))).slice(0,2),kinds=shuffle(["recall","listen","meaning"]);
+  due.forEach((w,i)=>{const q=kinds[i]==="recall"?mkRecall(w,l):mkQ(kinds[i],w,l);q.earlier=true;qs.push(q);});
   return qs;
 }
 function tileHTML(q,t){return q.mode==="toEn"?esc(t.text):`<span class="cjk2" lang="${L[q.lang].hl}">${esc(t.text)}</span>${S.settings.showReading&&t.reading?`<span class="tr2">${esc(t.reading)}</span>`:""}`;}
