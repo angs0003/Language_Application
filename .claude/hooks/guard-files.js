@@ -1,4 +1,4 @@
-/* Hook (before Edit, Write, MultiEdit and Bash): protected files.   PROPOSED hardened version (see docs/proposed/README.md).
+/* Hook (before Edit, Write, MultiEdit and Bash): protected files.
    Some files change only when the owner asks for that file by name (CLAUDE.md section 12, rule 4), and secrets must never be written by an agent:
      .env and .env.* (not .env.example)   secrets (the service role key)
      .github/workflows/*                  what runs in GitHub with the owner's secrets

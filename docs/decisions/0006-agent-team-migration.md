@@ -16,8 +16,8 @@ Make the agent team cheaper, narrower and able to work in parallel, in 8 small p
 8. Harder guards: `git -C`, `bash -c`, `sh -c`, `eval`, `$(...)`, `--all`, `--mirror` and `+branch` pushes are blocked; Bash writes to protected files are blocked; the test result is remembered for the exact working tree. Cases are in `tests/hooks.test.js`.
 
 ## Limits and open points
-1. The real protection of `main` is a GitHub ruleset (require a pull request and the `test` check, block force-pushes). The owner has not confirmed that it is on.
-2. A script that changes a protected file without naming it in the command is not seen by `guard-files.js`.
-3. The guard scripts' first comment line still says "PROPOSED hardened version (see docs/proposed/README.md)". The text is out of date; remove it when the files are next edited with `ALLOW_PROTECTED_EDIT=1`.
-4. 21 GitHub Action references are pinned by tag, not by commit ID (supply-chain risk); `tests/workflows.test.js` reports the count.
-5. The agents `pr-watcher`, `content-checker`, `screen-verifier`, `docs-keeper`, `a11y-checker`, `dep-scanner` are written but have not been used in a real task yet; check them on the first task.
+1. The real protection of `main` is a GitHub ruleset. Checked on 15 November 2026 through the API: "Protect main" is active on the default branch, has no bypass actor, blocks deletion and force-pushes and requires the `test` check.
+2. A script that changes a protected file without naming it in the command is not seen by `guard-files.js`. Running `node tools/pin-actions.js --write` is such a case; the owner ran it in a terminal.
+3. Done: the "PROPOSED hardened version" wording is removed from the two guard scripts and `docs/proposed/` is deleted.
+4. Done: all 21 GitHub Action references are pinned by commit ID (`tools/pin-actions.js`; the tag stays in a comment). `tests/workflows.test.js` reports the number that are still pinned by tag (now 0). To move a pin to a newer release, run `node tools/pin-actions.js` after changing the tag in the workflow.
+5. Done: the agents `pr-watcher`, `content-checker`, `screen-verifier`, `docs-keeper`, `a11y-checker` and `dep-scanner` were used on read-only trial tasks on 15 November 2026; their definitions were corrected from the findings.
