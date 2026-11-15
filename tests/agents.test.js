@@ -1,6 +1,6 @@
-/* Checks the subagent definitions in .claude/agents/: required fields, a model line, an output and done line, tools that exist, and the count in CLAUDE.md.
+/* Checks the subagent definitions in .claude/agents/: front matter that parses as YAML (Claude Code skips a file that does not), required fields, a model line, an output and done line, tools that exist, and the count in CLAUDE.md.
    Run: node tests/agents.test.js */
-const fs = require("fs"), path = require("path");
+const fs = require("fs"), path = require("path"), yaml = require("js-yaml");
 const root = path.join(__dirname, "..");
 let bad = 0;
 const check = (ok, msg) => { if (ok) console.log("ok:", msg); else { bad++; console.log("FAIL:", msg); } };
@@ -8,7 +8,8 @@ const dir = path.join(root, ".claude", "agents"), files = fs.readdirSync(dir).fi
 for (const f of files) {
   const s = fs.readFileSync(path.join(dir, f), "utf8").replace(/\r\n/g, "\n"), m = s.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
   if (!m) { check(false, f + " has front matter"); continue; }
-  const fm = Object.fromEntries(m[1].split("\n").map(l => { const i = l.indexOf(":"); return [l.slice(0, i).trim(), l.slice(i + 1).trim()]; }));
+  let fm; try { fm = yaml.load(m[1]); } catch (e) { check(false, `${f}: front matter is valid YAML (${e.reason}; quote a description that contains ": ")`); continue; }
+  check(fm && typeof fm === "object", `${f}: front matter is valid YAML`);
   const name = f.replace(/\.md$/, "");
   check(fm.name === name, `${f}: name matches the file name`);
   check(["opus", "sonnet", "haiku"].includes(fm.model), `${f}: model is opus, sonnet or haiku (${fm.model})`);

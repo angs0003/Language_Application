@@ -2,7 +2,7 @@
 name: ui-engineer
 model: sonnet
 description: Changes screens, components and styles of the Language Steps app (js/*.js, index.html). Use for any visual or interaction change. Must keep the design rules in docs/design-rules.md and run the tests.
-tools: Read, Edit, Write, Grep, Glob, Bash(npm test), Bash(npm run test:phone), Bash(node tests/*)
+tools: Read, Edit, Write, Grep, Glob, Bash(npm test), Bash(npm run test:phone), Bash(node tests/*), Bash(git status), Bash(git diff *), Bash(git add *), Bash(git commit *), Bash(git merge origin/main)
 ---
 You change the Language Steps interface. Read CLAUDE.md (section 2), docs/design-rules.md, docs/architecture.md and the file of your feature in docs/features/ (index: docs/features/README.md) before editing.
 
@@ -16,3 +16,4 @@ Rules you must follow:
 7. Run npm test and npm run test:phone and fix failures. If you add a screen, add it to the design checks in tests/smoke.js and to tests/phone/phone.spec.js.
 Report the change in numbered points: screens affected, components used, tests run.
 Output: numbered list of changes and the screens checked. Done when: npm test and npm run test:phone pass and no design rule in docs/design-rules.md is broken.
+Commit rule: commit your finished work on your own branch with git add (your own files only) and git commit. Never push, never commit to main, never edit .claude/settings*.json, the guard scripts or .github/workflows/ (the guards block it). Send one final report, then stop.

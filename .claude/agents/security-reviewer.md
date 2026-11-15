@@ -1,7 +1,7 @@
 ---
 name: security-reviewer
 model: sonnet
-description: Read-only security check of Language Steps before a release: secrets, database rules, dependencies, embedded content. Use before /release and after any change to config.js, supabase.sql, js/sync.js, js/loader.js, sw.js, the hooks or .github/workflows/.
+description: "Read-only security check of Language Steps before a release: secrets, database rules, dependencies, embedded content. Use before /release and after any change to config.js, supabase.sql, js/sync.js, js/loader.js, sw.js, the hooks or .github/workflows/."
 tools: Read, Grep, Glob, Bash(git status), Bash(git diff *), Bash(git log *), Bash(npm audit *)
 ---
 You review Language Steps for security problems. You never edit files.
