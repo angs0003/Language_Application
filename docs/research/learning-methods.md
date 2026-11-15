@@ -91,7 +91,7 @@ Each finding has: source, evidence kind, confidence.
 
 ## 3. What the app does today (from code and CLAUDE.md)
 
-1. Fixed review intervals by box: `INTERVAL=[0,1,2,4,8,16]` days (js/core.js line 22, `srsSet` line 161). A correct answer raises the box by 1 (maximum 5); a wrong answer resets to box 1 and the word is due again immediately. The same rule is copied in `onAnswer` (js/exercises.js), `kSet` (js/kanji.js) and `gradeCard` (js/listen.js).
+1. Review intervals by box: `INTERVAL=[0,1,2,4,8,16]` days (js/core.js). A correct answer when the word is due raises the box by 1 (maximum 5). A wrong answer resets to box 1, the word is due again immediately, and the lapse count `lp` rises by 1 (two wrong answers in a row count once). When `lp` is 2 or more (`HARD.lapses`), the gap of the new box is multiplied by 0.5 (`HARD.factor`) and is never shorter than 1 day (`gapDays`). A correct answer before the due date changes nothing, except for kana and kanji below box 2. The rule exists once, in `srsStep` (js/core.js): `onAnswer` (js/exercises.js), `kSet` (js/kanji.js) and `gradeCard` (js/listen.js) all call `srsStep`. Details: docs/features/review-timing.md.
 2. Items due: `dueList` (js/core.js) lists words with `d <= now`. The Practise tab mixes up to 8 words, 4 kanji and 4 saved words in one session (`startMixed`, js/ui.js).
 3. Retrieval: meaning, listen, type, speak, match, build sentence, listen and build, fill the blank, grammar choice, flashcards (js/exercises.js, js/exercise-types.js, js/listen.js).
 4. Mistakes list for sentence and grammar questions, repeated once at the end of a session (misTrack, startMistakes).
@@ -101,12 +101,13 @@ Each finding has: source, evidence kind, confidence.
 8. Kanji with step-by-step strokes and fading furigana (js/kanji.js).
 9. Reading aloud of new words and questions (setting autoRead).
 10. No streaks, timers, leaderboards or animation. Sessions are small (review of 10, mixed of up to 16).
-11. Not found in the code: any dedicated tone or pitch accent training (searches of js/ for tone, pitch and accent found only typing hints and speaker voice pitch); any shadowing mode; any per-word difficulty in scheduling; any "early review" rule.
+11. Not found in the code: any dedicated tone or pitch accent training (searches of js/ for tone, pitch and accent found only typing hints and speaker voice pitch); any shadowing mode.
+12. Per-word difficulty and early review (built by feature/hard-words-sooner, merged as #57; facts in docs/features/review-timing.md): each entry has a lapse count `lp` (times the word was forgotten); when `lp` is 2 or more, the gap of the new box is halved, never shorter than 1 day (`gapDays`, `HARD` in js/core.js). A correct answer before the due date keeps the box and the due date (`srsStep` in js/core.js), except for new kana and kanji below box 2. Before #57: the code had no per-word difficulty in scheduling and no "early review" rule.
 
 ## 4. Gaps
 
-1. Scheduling ignores how hard a word is for this learner. A word answered wrong many times and an easy word follow the same table.
-2. Practising early (Practise anyway, `startMixed(true)`) may raise the box of words that are not due. Early successes give less spacing benefit than successes at the due time. (Unconfirmed in the code; needs a test. Confidence about 60%.)
+1. Scheduling ignores how hard a word is for this learner. A word answered wrong many times and an easy word follow the same table. Built: feature/hard-words-sooner, merged as #57 (lapse count `lp`, half gap at 2 or more lapses).
+2. Practising early (Practise anyway, `startMixed(true)`) may raise the box of words that are not due. Early successes give less spacing benefit than successes at the due time. (Unconfirmed in the code; needs a test. Confidence about 60%.) Built: feature/hard-words-sooner, merged as #57 (a correct answer before the due date changes nothing).
 3. No tone training for Chinese and no pitch accent training for Japanese, although tone errors can change meaning, and the trip goal is real conversations.
 4. No shadowing mode (repeat after the audio with the text, then without). Evidence for it is unconfirmed here.
 5. Retrieval is mostly recognition (choose from options) in some exercises; recall (typing or saying) is stronger. The app has typing, but the mixed session may favour choice types.
@@ -128,6 +129,8 @@ Ranking uses: strength of evidence, benefit to this learner (trip, tones, kanji)
 
 ### Proposal 2: adaptive review interval using the answer history (no new tab)
 
+Status: small version built (feature/hard-words-sooner, merged as #57). The medium version (FSRS-like model) is not built.
+
 1. Problem: fixed table; no difficulty.
 2. Evidence: adaptive models predict recall better (section 2.1 items 5 and 6). Confidence about 65% for benefit; about 50% that the benefit is large.
 3. Change, small version: store per word a count of wrong answers (`l` for lapses) and use a shorter step after 2 or more lapses (for example the interval is multiplied by 0.5 when lapses are 2 or more, and by 1.0 otherwise). Count also how late the answer was: if a word is answered after its due date, keep the box. Medium version: replace the table with a simple FSRS-like stability value and a "target retention" setting (default 90 percent) in Settings. Keep the visible text literal: "Words you find hard come back sooner."
@@ -137,12 +140,14 @@ Ranking uses: strength of evidence, benefit to this learner (trip, tones, kanji)
 
 ### Proposal 3: do not advance the box for answers given before the due time
 
+Status: built (feature/hard-words-sooner, merged as #57).
+
 1. Problem: possible early-practice inflation of intervals (gap 2).
 2. Evidence: spacing meta-analysis (the gap should grow with the retention goal, section 2.1 items 1 and 2). Confidence about 60%.
-3. Change: in `srsSet` and the three copies, if the word is not yet due, record the answer but keep the same box and due date when correct (and still reset when wrong). Confirm first with a test that "Practise anyway" can touch not-due words.
+3. Change: in `srsSet` and `srsStep`, if the word is not yet due, record the answer but keep the same box and due date when correct (and still reset when wrong). Confirm first with a test that "Practise anyway" can touch not-due words.
 4. Screen: none.
 5. Effort: small.
-6. Design rules touched: none. This also removes four copies of the same rule if refactored into one function (optional).
+6. Design rules touched: none. The four copies of the box rule were replaced by one function, `srsStep` in js/core.js, called by `srsSet`, `kSet` (js/kanji.js), `onAnswer` (js/exercises.js) and `gradeCard` (js/listen.js) (done in #57).
 
 ### Proposal 4: "mostly known words" label and a Listen filter for easy input
 

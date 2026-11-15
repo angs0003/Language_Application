@@ -5,8 +5,8 @@ Date: 2026-11-15. Author: researcher agent. No app files were changed.
 ## Answer in 3 lines
 
 1. The current quiz is too long because it is a linear scan: 2 questions per theme from theme 1, so up to 248 questions (Chinese, 124 themes) or 458 (Japanese, 229 themes). A simulation of the current rules (my model, section "Simulation") gives a mean of about 126 questions (Chinese) and 226 (Japanese), and it places the learner about 53 and 105 themes too low on average.
-2. Adaptive search over the ordered themes needs far fewer questions: published evidence says adaptive tests reach the same reliability with about half the items (about 70% confidence), and a simulated Bayesian search over the 124/229 themes ends in 9 to 12 questions on average, never more than 20, with a stated 90% range.
-3. Recommendation: replace the linear scan with a Bayesian search over themes, at most 20 questions with the count always visible, "I do not know" as a first-class answer, a "Finish now" button on every question, and a result that says "about 90% sure your starting theme is between X and Y" and starts at the low end of that range.
+2. Adaptive search over the ordered themes needs far fewer questions: published evidence says adaptive tests reach the same reliability with about half the items (about 70% confidence), and a simulated Bayesian search over the 124/229 themes ends in 9 to 12 questions on average, never more than 20, with a stated 90% range. (That simulation used the first design with a cap of 20. The built quiz, feature/placement-sentences, merged as #59, has a cap of 14 questions: at most 8 word questions and 6 sentence questions, 11.4 to 11.5 questions on average in its own simulation.)
+3. Recommendation: replace the linear scan with a Bayesian search over themes, at most 14 questions (at most 8 word questions and 6 sentence questions; changed from 20 by #59) with the count always visible, "I do not know" as a first-class answer, a "Finish now" button on every question, and a result that says "about 90% sure your starting theme is between X and Y" and starts at the low end of that range.
 
 ## Findings
 
@@ -73,7 +73,7 @@ Change (in `startPlacement` and `screenPlace`, `js/lessons.js`):
 1. Keep a probability for each possible starting position 0..N (N = number of themes; "position s" means themes before s are known).
 2. Start with a flat probability. Ask about the theme at the middle (median) of the current probabilities; the first question is therefore near theme 62 (Chinese) or 114 (Japanese).
 3. For a question at theme t: P(correct) = 0.95 if t is before s (known); P(correct) = 0.25 x (1 - share of "I do not know" answers) if t is at or after s. In the simulation the unknown-case value was 0.075 and the known-case value was 0.95. After the answer, update all probabilities (Bayes rule). A correct answer moves the estimate up; "I do not know" or a wrong answer moves it down.
-4. Stop when the 90% range is 8 themes wide or less (at least 6 questions asked), or at 20 questions, or when the learner presses "Finish now".
+4. Stop when the 90% range is 8 themes wide or less (at least 6 questions asked), or at 14 questions (at most 8 word questions and 6 sentence questions; changed from 20 by feature/placement-sentences, merged as #59), or when the learner presses "Finish now".
 5. Choose a random word of the theme each time (not fixed indexes) and never repeat a word in the same session.
 6. Result start theme = the 10th percentile of the probabilities (conservative). Placing too low costs a short repeat; placing too high skips unknown words.
 Screen: existing placement screen. Effort: medium (about 60 lines; new unit test for the update rule and for the cap). Design rules touched: 8 (no timer: none added), 9 (literal feedback, "I do not know", Check answer, Back), 2 (one primary action stays).
@@ -86,14 +86,15 @@ Change:
 2. Roughly every third question: "listen" (audio, choose meaning) so that a learner who knows sounds but not characters is not placed too low; both use the same probability update. For the first version, "meaning" only is acceptable.
 3. Last 2 questions (only when the range is still wider than 8): the "type" question if it checks the English meaning or the reading in a way a beginner can do; recall has no 25% guess floor, so one correct answer is stronger evidence. Open question 3 below.
 4. Not used: "build" and "blank" (they need grammar and several words; they confuse vocabulary position), and no non-word items (a nonsense word in a language the learner is just starting would be confusing and unkind).
+   Note: Replaced by the owner's decision (feature/placement-sentences, merged as #59): the quiz has a second part with sentence questions (fill the blank, build the English, listen and build, build the sentence); at most 14 questions in total.
 Effort: small to medium. Rules touched: none new.
 
 ### 3. Always-visible length, stop button, confidence statement
 
 Evidence: finding 13 (about 65%), finding 7.
 Change:
-1. Header: "Question 5 of about 12, at most 20" (the "about" number is the expected remaining questions from the current range; the cap is exact). Remove the "Incorrect answers in a row" line (it frames mistakes as a countdown to failure).
-2. Intro card before the quiz, literal: "This quiz has at most 20 questions and takes about 5 minutes. There is no timer. You can press Finish now at any time. Choose I do not know instead of guessing. Skipped themes are marked as learned; you can change this later."
+1. Header: "Question 5 of about 12, at most 14" (cap changed from 20 to 14: at most 8 word questions and 6 sentence questions, feature/placement-sentences, merged as #59) (the "about" number is the expected remaining questions from the current range; the cap is exact). Remove the "Incorrect answers in a row" line (it frames mistakes as a countdown to failure).
+2. Intro card before the quiz. Built text (js/ui.js, Placement quiz card): “The quiz finds your starting point in [language name]. It asks about words and sentences, one question at a time: about 12 questions, at most 14. There is no timer, and you can press “Finish now” at any time. Choose “I do not know” instead of guessing.” Before #59 this proposal said: "This quiz has at most 20 questions and takes about 5 minutes. There is no timer. You can press Finish now at any time. Choose I do not know instead of guessing. Skipped themes are marked as learned; you can change this later." The built card does not contain the duration sentence or the sentence about skipped themes.
 3. "Finish now" as a link-style button (style `link`, so the primary action rule holds) on every question; it uses the result so far, with a wider range.
 4. Result text: "Your starting point is Theme 41, [title] (Level 2, Part 3). I am about 90% sure that your correct starting point is between Theme 41 and Theme 48. Themes 1 to 40 are marked as learned and added to your review list. You can change this: Start earlier / Start later." One primary button "Save and go to home" (as today).
 5. A manual "Choose my starting theme" picker (list of Levels/Parts, then themes) as the alternative to the quiz, since self-ratings are less valid than a test (finding 9) but are fast and give control.
@@ -112,7 +113,7 @@ Effort: small. Rules touched: 1 (Settings is not a tab; fine).
 
 ## Open questions for the owner (one at a time)
 
-1. Is a cap of 20 questions and a result "about 90% sure, between X and Y" acceptable, or do you want a smaller cap (for example 15, with a wider range)?
+1. Superseded (answered by #59): the cap is 14 questions (at most 8 word questions and 6 sentence questions), and the result shows a 90% range. Original question: "Is a cap of 20 questions and a result "about 90% sure, between X and Y" acceptable, or do you want a smaller cap (for example 15, with a wider range)?"
 2. Should the result start at the low end of the range (safer, a few themes of repeat) or at the middle?
 3. Does the existing "type" exercise ask for something a beginner can do (English meaning typed from the word)? I did not read `js/exercises.js` beyond `mkQ`. If not, the first version uses "meaning" and "listen" only.
 4. Is it acceptable to add a manual "Choose my starting theme" picker, in the same card as "Skip and start at Theme 1"?
