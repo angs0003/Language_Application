@@ -38,7 +38,7 @@ Read this file first. Then read only what the task needs (each file is short):
 | Research, plans, agent team | docs/research/, docs/claude-code-team.md, docs/decisions/ |
 | Several agents or branches at once | docs/parallel-work.md (file leases, docs notes, tests by file, merge queue) |
 | Planned work | docs/roadmap.md |
-| Changes waiting for the owner (protected files: guards, workflows, settings) | docs/proposed/README.md |
+| Why the agent team looks as it does, and open points | docs/decisions/0006-agent-team-migration.md |
 
 ## 3. Design rules (summary; full text in docs/design-rules.md)
 
@@ -93,9 +93,10 @@ Subagents (`.claude/agents/`, 16, each with a `model:` line: opus for `planner`,
 `ui-engineer`, `test-runner`, `pr-watcher` (opens a draft pull request and reports checks; never merges), `coach`, `security-reviewer` (runs inside `/release`), `video-curator`
 (checks videos and writes the VIDS entry text; read-only, the content-writer adds approved entries), `data-engineer` (owns supabase.sql, js/sync.js, normalize() defaults and the sync tests).
 Hooks (`.claude/settings.json`, scripts in `.claude/hooks/`): the content validator runs after edits to a content part (`content/parts/*.js`) or `content/manifest.js`.
-Safety rails (tested in `tests/hooks.test.js`): `guard-release.js` blocks a push to `main` or `master` (also by refspec, and a push with no target while on main), every force-push,
-a commit on `main`, and the content upload, and requires `npm test` to pass before any commit or push. `guard-files.js` blocks edits to `.env*`, `.github/workflows/*`,
-`.claude/settings*.json`, the guard scripts and any change to `CACHE` in `sw.js`. The owner can allow one protected edit by setting `ALLOW_PROTECTED_EDIT=1` for the session.
+Safety rails (tested in `tests/hooks.test.js`): `guard-release.js` blocks a push to `main` or `master` (also by refspec, behind git options such as `git -C`, inside `bash -c`, `sh -c`, `eval` or `$(...)`,
+and a push with no target while on main), `git push --all` and `--mirror`, every force-push (also `+branch`), a commit on `main`, and the content upload, and requires `npm test` to pass before any commit or push
+(the result is remembered for the exact working tree, so a commit followed by a push runs the suite once). `guard-files.js` blocks edits with the Edit or Write tool, and Bash commands that could write, to `.env*`,
+`.github/workflows/*`, `.claude/settings*.json`, the guard scripts and any change to `CACHE` in `sw.js`. The owner can allow one protected edit by starting Claude Code with `ALLOW_PROTECTED_EDIT=1`.
 Changing the guards or `.claude/settings.json` needs the owner to name the file.
 Improvement loop: `/retro` after every release (coach subagent proposes edits to this file, the agents, the commands and the
 tests, with evidence), `/maintain` and `/content-gaps` monthly (automatic, see section 12), `/ux-review` quarterly,

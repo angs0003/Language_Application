@@ -61,8 +61,8 @@ Example: "Use the ui-engineer subagent to add a Hanzi section to the Practise ta
 | Hook | When | Effect |
 |---|---|---|
 | `validate-content.js` | After any edit to a content part (`content/parts/*.js`) or `content/manifest.js` | Runs the validator; errors are sent back to Claude Code to fix |
-| `guard-release.js` | Before `git commit`, `git push` or the content upload command | Runs `npm test`; blocks a commit or push if a test fails. It also blocks a push to `main`, force-pushes and the content upload from your computer (the Deploy workflow uploads). |
-| `guard-files.js` | Before an edit with the Edit or Write tool | Blocks edits to `.env*`, `.github/workflows/*`, `.claude/settings*.json`, the guard scripts and `CACHE` in `sw.js`. It does not check shell commands. |
+| `guard-release.js` | Before every shell command | Runs `npm test` before a commit or push (the result is remembered for the exact working tree, so a commit and a push of the same files run it once); blocks a failing suite. It also blocks a push to `main` (also behind `git -C`, `bash -c`, `sh -c`, `eval`, `$(...)`), `git push --all` and `--mirror`, force-pushes, a commit on `main`, and the content upload from your computer (the Deploy workflow uploads). |
+| `guard-files.js` | Before an edit with the Edit or Write tool, and before every shell command | Blocks edits to `.env*`, `.github/workflows/*`, `.claude/settings*.json`, the guard scripts and `CACHE` in `sw.js`, and shell commands that name one of them and could write (redirect, `tee`, `sed -i`, `cp`, `mv`, `rm`, a script with `writeFile`, `git checkout`, and similar). Reading, `git diff`, `git add` and `git commit` stay allowed. You allow one edit by starting Claude Code with `ALLOW_PROTECTED_EDIT=1`. |
 
 ## 5. Agent teams (optional, experimental, higher cost)
 
