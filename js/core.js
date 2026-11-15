@@ -25,7 +25,7 @@ const DAY=864e5, INTERVAL=[0,1,2,4,8,16];
 const KEY="language-steps-v1";
 const blank=()=>({placed:false,unit:0,done:[],srs:{},custom:[],gen:{},gi:0,ref:{},lc:0,chRead:[],talkDone:{},tripDone:{},tripOpen:{},podDone:{},hist:[],lst:0,lastLesson:[],saved:[],videos:[],videosWatched:{},kana:{},kanji:{},mis:[],real:{},casualDone:{},resume:null});
 const DEF={showReading:true,showEnglish:true,slow:false,speaking:true,speakMode:"",size:5,gloss:false,vib:true,speed:1,sub:"both",autoPause:false,furi:"fade",hlWord:true,autoRead:true};
-function normalize(d){const s={v:1,updatedAt:d.updatedAt||0,lang:d.lang==="ja"?"ja":"zh",tab:d.tab||"path",lastActive:d.lastActive||0,settings:Object.assign({},DEF,d.settings||{}),zh:Object.assign(blank(),d.zh||{}),ja:Object.assign(blank(),d.ja||{})};for(const l of ["zh","ja"])if(!s[l].real||typeof s[l].real!=="object"||Array.isArray(s[l].real))s[l].real={};for(const l of ["zh","ja"])if(!s[l].casualDone||typeof s[l].casualDone!=="object"||Array.isArray(s[l].casualDone))s[l].casualDone={};for(const l of ["zh","ja"])if(!s[l].resume||typeof s[l].resume!=="object"||!Array.isArray(s[l].resume.words))s[l].resume=null;return s;}
+function normalize(d){const s={v:1,updatedAt:d.updatedAt||0,lang:d.lang==="ja"?"ja":"zh",tab:d.tab||"path",lastActive:d.lastActive||0,settings:Object.assign({},DEF,d.settings||{}),zh:Object.assign(blank(),d.zh||{}),ja:Object.assign(blank(),d.ja||{})};for(const l of ["zh","ja"])if(!s[l].real||typeof s[l].real!=="object"||Array.isArray(s[l].real))s[l].real={};for(const l of ["zh","ja"])if(!s[l].casualDone||typeof s[l].casualDone!=="object"||Array.isArray(s[l].casualDone))s[l].casualDone={};const okLp=e=>{if(e&&typeof e==="object"&&"lp"in e&&!(Number.isInteger(e.lp)&&e.lp>=0))delete e.lp;};for(const l of ["zh","ja"]){Object.values(s[l].srs||{}).forEach(okLp);(s[l].saved||[]).forEach(okLp);if(l==="ja")for(const k of ["kana","kanji"])Object.values(s.ja[k]||{}).forEach(okLp);}for(const l of ["zh","ja"])if(!s[l].resume||typeof s[l].resume!=="object"||!Array.isArray(s[l].resume.words))s[l].resume=null;return s;}
 let S=normalize({});
 try{const t=localStorage.getItem(KEY);if(t){const d=JSON.parse(t);if(d&&d.v===1)S=normalize(d);}}catch(e){}
 let dbRef=null,dbBusy=false,dbPending=false,storeWhere="this browser";
@@ -160,7 +160,10 @@ async function previewCall(prompt,json){
 /* ---------- Spaced repetition ---------- */
 /* One review answer for an item {b:box, d:due, u:updated}. A wrong answer goes to box 1 and is due now. A correct answer raises the box and sets the next due date only when the item was due;
    a correct answer before the due date (for example in "Practise anyway") leaves the schedule as it is, because spaced practice works through recall after a delay (docs/research/learning-methods.md). */
-function srsStep(e,ok){const now=Date.now();e.u=now;if(!ok){e.b=1;e.d=0;return;}if((e.d||0)>now)return;e.b=Math.min(5,(e.b||0)+1);e.d=now+INTERVAL[e.b]*DAY;}
+const HARD={lapses:2,factor:0.5};
+const gapDays=e=>(e.lp||0)>=HARD.lapses?Math.max(1,Math.round(INTERVAL[e.b]*HARD.factor)):INTERVAL[e.b];
+/* learn: boxes below this value always rise on a correct answer, even before the due date (kana and kanji use 2) */
+function srsStep(e,ok,learn){const now=Date.now();e.u=now;if(!ok){if(!(e.b===1&&!e.d))e.lp=(e.lp||0)+1;e.b=1;e.d=0;return;}if((e.d||0)>now&&(e.b||0)>=(learn||0))return;e.b=Math.min(5,(e.b||0)+1);e.d=now+gapDays(e)*DAY;}
 function srsSet(l,w,ok){const e=S[l].srs[w]||{b:0,d:0};srsStep(e,ok);S[l].srs[w]=e;}
 function dueList(l){const now=Date.now();return allWords(l).filter(w=>S[l].srs[w.w]&&S[l].srs[w.w].d<=now);}
 function nextDue(l){const ds=Object.values(S[l].srs).map(e=>e.d);return ds.length?Math.min(...ds):0;}
