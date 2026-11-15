@@ -1,0 +1,5 @@
+# System Back
+
+Moved from CLAUDE.md section 5. Update this file when the feature changes.
+
+**System Back** (Android back gesture or button, browser back; `syncHistory`, the `popstate` listener and `lastBack` in js/lessons.js, called from `render()`): while a screen that is not a tab screen is open, one history entry is pushed; going back runs the same Back as the bottom bar (or goes to the tab screen when that Back is disabled). An open word callout, Exit panel or bottom sheet is closed first. On a tab screen there is no extra entry, so the system Back leaves the app (for an installed app: to the phone home screen). Chrome skips history entries that a page adds without a tap, so one entry pushed inside the back handler was skipped by the next swipe and the app closed on the second swipe. Now `histFill` pushes 8 spare entries (`HIST_BUF`) while a tap is handled and a click listener refills them; `histDepth` counts the entries behind the current one, and leaving to a tab screen goes back over the rest with `history.go(-n)`.
