@@ -91,7 +91,7 @@ function screenTest(){
   }
   const q=v.qs[v.i];view.q=q;
   const r={row:"title",title:"Test out: "+v.title,exit:true,prog:`<div class="ptext">Test out: question ${v.i+1} of ${v.qs.length}</div><div class="psub">Pass mark: ${need} correct</div><div class="bar"><i style="width:${Math.round(v.i/v.qs.length*100)}%"></i></div>`,
-    main:`<div class="card">${qHTML(q,{noAI:true})}</div>`,back:{label:"Back",fn:()=>{if(v.i===0){view.confirm=true;render();window.scrollTo(0,0);}else{v.i--;render();window.scrollTo(0,0);}}}};
+    main:`<div class="card">${qHTML(q,{noAI:true})}</div></div>`,back:{label:"Back",fn:()=>{if(v.i===0){view.confirm=true;render();window.scrollTo(0,0);}else{v.i--;render();window.scrollTo(0,0);}}}};
   if(!q.answered)r.next={label:"Check answer",fn:()=>{checkQ(q);render();},dis:!canCheck(q)};
   else r.next={label:"Continue",fn:()=>{if(v.i>=v.qs.length-1)v.finished=true;else v.i++;render();window.scrollTo(0,0);}};
   return r;
@@ -180,7 +180,7 @@ function screenPlace(){
   const q=v.qs[v.i];view.q=q;const est=Math.min(PLACE.max,Math.max(PLACE.about,v.i+3)),pt=q.part===2?"part 2 of 2: sentences":"part 1 of 2: words";
   const r={row:"title",title:"Placement quiz",exit:true,
     prog:`<div class="ptext">Placement quiz, ${pt}. Question ${v.i+1} of about ${est}</div><div class="psub">At most ${PLACE.max} questions. No timer.</div><div class="bar"><i style="width:${Math.round((v.i+1)/est*100)}%"></i></div>`,
-    main:`<p style="text-align:right;margin:-8px 0 -6px"><button class="btn link" style="min-height:44px;padding:4px 8px;width:auto" data-a="${A(()=>{placeFinish(v,q);render();window.scrollTo(0,0);})}">Finish now</button></p><div class="card">${qHTML(q,{noAI:true})}</div>`,back:{label:"Back",fn:()=>{if(v.i===0){view.confirm=true;render();window.scrollTo(0,0);}else{v.i--;render();window.scrollTo(0,0);}}}};
+    main:`<style>.plq .qarea{min-height:calc(100svh - 365px)}@media (max-height:720px){.plq .qarea{min-height:calc(100svh - 350px)}}</style><div class="plq"><p style="text-align:right;margin:-8px 0 -6px"><button class="btn link" style="min-height:44px;padding:4px 8px;width:auto" data-a="${A(()=>{placeFinish(v,q);render();window.scrollTo(0,0);})}">Finish now</button></p><div class="card">${qHTML(q,{noAI:true})}</div>`,back:{label:"Back",fn:()=>{if(v.i===0){view.confirm=true;render();window.scrollTo(0,0);}else{v.i--;render();window.scrollTo(0,0);}}}};
   if(!q.answered)r.next={label:"Check answer",fn:()=>{checkQ(q);render();},dis:!canCheck(q)};
   else r.next={label:"Continue",fn:()=>{placeUpdate(v,q);if(v.i<v.qs.length-1)v.i++;else if(placeDone(v))placeFinish(v,q);else{v.qs.push(placeProbe(v));v.i++;}render();window.scrollTo(0,0);}};
   return r;
