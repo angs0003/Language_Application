@@ -77,8 +77,8 @@ function qHTML(q,opts){
     h+=`<p class="q">Listen. Which word did you hear?</p><p class="center" style="margin:10px 0"><button class="btn pri" data-a="${A(()=>say(w.w,l))}">${PLAY.replace('aria-hidden','style="width:16px;height:16px;fill:currentColor;vertical-align:-2px;margin-right:8px" aria-hidden')}Play audio</button></p>`;
   }else if(q.type==="type"&&q.recall){
     const sp=recallSpeakOn(q);
-    h+=`<p class="q">Remember the word</p><p class="meaning">${esc(w.m)}</p><p>Type the reading of the ${L[l].name} word for this meaning in ${L[l].rd}${l==="ja"?" or hiragana":""}${sp?", or say the word aloud":""}.</p>
-    <p class="small muted">${l==="zh"?"Tone marks are not required. Spaces are ignored.":"Long vowels can be typed as “ou”, “oo” or “o”. Spaces are ignored."}</p>
+    h+=`<p class="q">Remember the word</p><p class="meaning">${esc(w.m)}</p>
+    <p class="small muted">Type the reading in ${L[l].rd}${l==="ja"?" or hiragana":""}. ${l==="zh"?"Tone marks are not required.":"Long vowels can be typed as “ou”, “oo” or “o”."} Spaces are ignored.</p>
     <label class="sr" for="tin">Your answer</label><input id="tin" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" ${q.answered?"disabled":""} value="${esc(q.input)}" placeholder="Type here">`;
     if(sp)h+=recallSpeakHTML(q);
     else if(!q.answered&&view.noSpeak)h+=`<p class="center" style="margin:6px 0 0"><button class="btn link" aria-label="I can speak now" data-a="${A(()=>setNoSpeak(false))}">I can speak now</button></p>`;
@@ -106,7 +106,7 @@ function qHTML(q,opts){
   return (q.earlier?`<p class="small muted" style="margin:0 0 4px">Earlier word</p>`:"")+h;
 }
 function recallSpeakHTML(q){
-  return `<div style="margin-top:12px"><p class="small muted" style="margin:0 0 6px">Or say the word aloud. The first attempt is the one that counts.</p>${q.srMsg?`<p class="small"><strong>${esc(q.srMsg)}</strong></p>`:""}`
+  return `<div style="margin-top:12px"><p class="small muted" style="margin:0 0 6px">Or say the word aloud. The first attempt counts.</p>${q.srMsg?`<p class="small"><strong>${esc(q.srMsg)}</strong></p>`:""}`
     +(q.listening?`<button class="btn sec full" disabled>Listening. Say the word now.</button>`:`<button class="btn sec full" data-a="${A(()=>startListen(q))}">Say the word</button>`)
     +`<p class="center" style="margin:6px 0 0"><button class="btn link" aria-label="I can’t speak right now" data-a="${A(()=>setNoSpeak(true))}">I can’t speak right now</button></p></div>`;
 }

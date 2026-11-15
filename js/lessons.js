@@ -421,7 +421,7 @@ function screenLesson(){
     }
   }else if(v.step===4){
     const q=v.quiz[v.i];view.q=q;
-    h=(inRep&&v.i===v.rq.first?`<p class="small" style="margin:0 0 8px">${v.rq.n} question${v.rq.n>1?"s":""} to repeat. The first answer counts for your review.</p>`:"")+`<div class="card">${qHTML(q)}</div>`;
+    h=`<div class="card">${inRep&&v.i===v.rq.first?`<p class="small muted" style="margin:0 0 6px">${v.rq.n} question${v.rq.n>1?"s":""} to repeat. The first answer counts for your review.</p>`:""}${qHTML(q)}</div>`;
     r.back={label:"Back",fn:()=>lessonMove(-1)};
     if(!q.answered){if(q.type==="speak")r.next={label:"Continue",dis:true};else r.next={label:"Check answer",fn:()=>{checkQ(q);render();},dis:!canCheck(q)};}
   }else{
