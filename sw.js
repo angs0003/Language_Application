@@ -2,7 +2,7 @@
    replaces it with "ls-" plus the commit ID on every release, so phones download the new version.
    The value below is only used when you open the app from your own computer. */
 const CACHE = "ls-v13";
-const CORE = ["./", "./index.html", "./js/core.js", "./js/exercises.js", "./js/lessons.js", "./js/sections.js", "./js/exercise-types.js", "./js/path.js", "./js/listen.js", "./js/kanji.js", "./js/sync.js", "./js/ui.js", "./js/loader.js", "./js/content-rows.js", "./content/content.js",
+const CORE = ["./", "./index.html", "./js/core.js", "./js/exercises.js", "./js/lessons.js", "./js/sections.js", "./js/exercise-types.js", "./js/path.js", "./js/listen.js", "./js/kanji.js", "./js/sync.js", "./js/ui.js", "./js/loader.js", "./js/content-rows.js",
   "./config.js", "./manifest.json", "./icon-192.png", "./icon-512.png"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE))); self.skipWaiting(); });
 self.addEventListener("activate", e => {

@@ -32,7 +32,7 @@
   }
   async function start() {
     const hasDB = !!(CFG.supabaseUrl && CFG.supabaseAnonKey && window.supabase);
-    if (!hasDB) { await loadScript("content/content.js"); window.LS_DB = null; window.LS_CONTENT_SOURCE = "bundled"; return loadApp(); }
+    if (!hasDB) { await loadScript("content/manifest.js"); for (const p of window.LS_CONTENT_PARTS) await loadScript("content/parts/" + p + ".js"); window.LS_DB = null; window.LS_CONTENT_SOURCE = "bundled"; return loadApp(); }
     const db = window.supabase.createClient(CFG.supabaseUrl, CFG.supabaseAnonKey);
     window.LS_DB = db;
     const { data } = await db.auth.getSession();

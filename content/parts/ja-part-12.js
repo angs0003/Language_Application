@@ -1,0 +1,462 @@
+/*@part ja-part-12*/
+/* JA-PART-12-BEGIN */
+/* Japanese Level 3, Part 12 (themes 1 to 5): education and science. */
+const JA_P12A=[
+ ["University life",
+  [["研究","けんきゅう","kenkyuu","research","大学で研究をします。","Daigaku de kenkyuu o shimasu.","I do research at university.","大学|daigaku|university / で|de|(at) / 研究|kenkyuu|research / を|o|(object) / します|shimasu|to do (polite) / 。 = I do research at university."],
+  ["専門","せんもん","senmon","specialty, major","専門は日本語です。","Senmon wa nihongo desu.","My major is the Japanese language.","専門|senmon|major / は|wa|(topic) / 日本語|nihongo|Japanese language / です|desu|is / 。 = My major is the Japanese language."],
+  ["学位","がくい","gakui","academic degree","兄は学位を取ります。","Ani wa gakui o torimasu.","My older brother earns a degree.","兄|ani|my older brother / は|wa|(topic) / 学位|gakui|academic degree / を|o|(object) / 取ります|torimasu|to take (polite) / 。 = My older brother earns a degree."],
+  ["進学","しんがく","shingaku","going on to higher education","兄は去年、大学に進学しました。","Ani wa kyonen, daigaku ni shingaku shimashita.","My older brother went on to university last year.","兄|ani|my older brother / は|wa|(topic) / 去年|kyonen|last year / 、 / 大学|daigaku|university / に|ni|(to) / 進学|shingaku|going on to higher education / しました|shimashita|did / 。 = My older brother went on to university last year."],
+  ["留学","りゅうがく","ryuugaku","studying abroad","来年、アメリカに留学します。","Rainen, amerika ni ryuugaku shimasu.","I will study abroad in America next year.","来年|rainen|next year / 、 / アメリカ|amerika|America / に|ni|(to) / 留学|ryuugaku|studying abroad / します|shimasu|to do (polite) / 。 = I will study abroad in America next year."],
+  ["論文","ろんぶん","ronbun","thesis, academic paper","論文を書きます。","Ronbun o kakimasu.","I write a thesis.","論文|ronbun|thesis / を|o|(object) / 書きます|kakimasu|to write (polite) / 。 = I write a thesis."],
+  ["講義","こうぎ","kougi","lecture","講義は十時に始まります。","Kougi wa juuji ni hajimarimasu.","The lecture begins at ten o’clock.","講義|kougi|lecture / は|wa|(topic) / 十時|juuji|ten o’clock / に|ni|(at) / 始まります|hajimarimasu|to begin (polite) / 。 = The lecture begins at ten o’clock."],
+  ["教授","きょうじゅ","kyouju","professor","あの教授は有名です。","Ano kyouju wa yuumei desu.","That professor is famous.","あの|ano|that (over there) / 教授|kyouju|professor / は|wa|(topic) / 有名|yuumei|famous / です|desu|is / 。 = That professor is famous."],
+  ["単位","たんい","tan’i","credit (at a university)","単位を取ります。","Tan’i o torimasu.","I earn credits.","単位|tan’i|credits / を|o|(object) / 取ります|torimasu|to take (polite) / 。 = I earn credits."],
+  ["学部","がくぶ","gakubu","faculty, department of a university","学部は大きいです。","Gakubu wa ookii desu.","My faculty is big.","学部|gakubu|faculty / は|wa|(topic) / 大きい|ookii|big / です|desu|is / 。 = My faculty is big."]],
+  [
+   "大学|daigaku|university / で|de|at / 研究|kenkyuu|research / を|o|(object) / します|shimasu|do / 。 = I do research at university.",
+   "この|kono|this / 講義|kougi|lecture / は|wa|(topic) / 先週|senshuu|last week / ほど|hodo|as much as / 難しくない|muzukashikunai|is not difficult / です|desu|is / 。 = This lecture is not as difficult as last week.",
+   "兄|ani|my older brother / は|wa|(topic) / 去年|kyonen|last year / 、 / 大学|daigaku|university / に|ni|to / 進学|shingaku|going on to higher education / しました|shimashita|did / 。 = My older brother went on to university last year.",
+   "来年|rainen|next year / 、 / アメリカ|amerika|America / に|ni|to / 留学|ryuugaku|studying abroad / します|shimasu|will do / 。 = I will study abroad in America next year.",
+   "あの|ano|that over there / 教授|kyouju|professor / は|wa|(topic) / 有名|yuumei|famous / です|desu|is / 。 = That professor is famous.",
+   "専門|senmon|major / は|wa|(topic) / 日本語|nihongo|Japanese language / です|desu|is / 。 = My major is the Japanese language."
+  ]],
+ ["School subjects",
+  [["数学","すうがく","suugaku","mathematics","数学は難しいです。","Suugaku wa muzukashii desu.","Mathematics is difficult.","数学|suugaku|mathematics / は|wa|(topic) / 難しい|muzukashii|difficult / です|desu|is / 。 = Mathematics is difficult."],
+  ["科学","かがく","kagaku","science","科学の本を読みます。","Kagaku no hon o yomimasu.","I read a science book.","科学|kagaku|science / の|no|(of) / 本|hon|book / を|o|(object) / 読みます|yomimasu|to read (polite) / 。 = I read a science book."],
+  ["物理","ぶつり","butsuri","physics","物理の授業は十時です。","Butsuri no jugyou wa juuji desu.","The physics class is at ten o’clock.","物理|butsuri|physics / の|no|(of) / 授業|jugyou|class / は|wa|(topic) / 十時|juuji|ten o’clock / です|desu|is / 。 = The physics class is at ten o’clock."],
+  ["地理","ちり","chiri","geography","地理の本があります。","Chiri no hon ga arimasu.","There is a geography book.","地理|chiri|geography / の|no|(of) / 本|hon|book / が|ga|(subject) / あります|arimasu|to be (things, polite) / 。 = There is a geography book."],
+  ["理科","りか","rika","science (school subject)","理科の授業は楽しいです。","Rika no jugyou wa tanoshii desu.","The science class is fun.","理科|rika|science (school subject) / の|no|(of) / 授業|jugyou|class / は|wa|(topic) / 楽しい|tanoshii|fun / です|desu|is / 。 = The science class is fun."],
+  ["国語","こくご","kokugo","national language (school subject)","国語の先生は優しいです。","Kokugo no sensei wa yasashii desu.","The national language teacher is kind.","国語|kokugo|national language (school subject) / の|no|(of) / 先生|sensei|teacher / は|wa|(topic) / 優しい|yasashii|kind / です|desu|is / 。 = The national language teacher is kind."],
+  ["生物","せいぶつ","seibutsu","biology, living things","生物の授業は月曜日です。","Seibutsu no jugyou wa getsuyoubi desu.","The biology class is on Monday.","生物|seibutsu|biology / の|no|(of) / 授業|jugyou|class / は|wa|(topic) / 月曜日|getsuyoubi|Monday / です|desu|is / 。 = The biology class is on Monday."],
+  ["哲学","てつがく","tetsugaku","philosophy","兄は大学で哲学を勉強します。","Ani wa daigaku de tetsugaku o benkyou shimasu.","My older brother studies philosophy at university.","兄|ani|my older brother / は|wa|(topic) / 大学|daigaku|university / で|de|(at) / 哲学|tetsugaku|philosophy / を|o|(object) / 勉強|benkyou|study / します|shimasu|to do (polite) / 。 = My older brother studies philosophy at university."],
+  ["教育","きょういく","kyouiku","education","姉は教育の仕事をします。","Ane wa kyouiku no shigoto o shimasu.","My older sister works in education.","姉|ane|my older sister / は|wa|(topic) / 教育|kyouiku|education / の|no|(of) / 仕事|shigoto|job / を|o|(object) / します|shimasu|to do (polite) / 。 = My older sister works in education."],
+  ["算数","さんすう","sansuu","arithmetic (elementary school)","弟は算数が好きです。","Otouto wa sansuu ga suki desu.","My younger brother likes arithmetic.","弟|otouto|my younger brother / は|wa|(topic) / 算数|sansuu|arithmetic / が|ga|(subject) / 好き|suki|liked / です|desu|is / 。 = My younger brother likes arithmetic."]],
+  [
+   "物理|butsuri|physics / は|wa|(topic) / 数学|suugaku|mathematics / くらい|kurai|about as / 難しい|muzukashii|difficult / です|desu|is / 。 = Physics is about as difficult as mathematics.",
+   "科学|kagaku|science / の|no|’s / 本|hon|book / を|o|(object) / 読みます|yomimasu|read / 。 = I read a science book.",
+   "理科|rika|science / の|no|of / 授業|jugyou|class / は|wa|(topic) / 楽しい|tanoshii|fun / です|desu|is / 。 = The science class is fun.",
+   "兄|ani|my older brother / は|wa|(topic) / 大学|daigaku|university / で|de|at / 哲学|tetsugaku|philosophy / を|o|(object) / 勉強します|benkyou shimasu|studies / 。 = My older brother studies philosophy at university.",
+   "弟|otouto|my younger brother / は|wa|(topic) / 算数|sansuu|arithmetic / が|ga|(subject) / 好き|suki|liked / です|desu|is / 。 = My younger brother likes arithmetic.",
+   "国語|kokugo|national language / の|no|of / 先生|sensei|teacher / は|wa|(topic) / 母|haha|my mother / くらい|kurai|about as / 優しい|yasashii|kind / です|desu|is / 。 = The national language teacher is about as kind as my mother."
+  ]],
+ ["Experiments",
+  [["実験","じっけん","jikken","experiment","実験を始めます。","Jikken o hajimemasu.","We start the experiment.","実験|jikken|experiment / を|o|(object) / 始めます|hajimemasu|to start (polite) / 。 = We start the experiment."],
+  ["結果","けっか","kekka","result","結果は明日分かります。","Kekka wa ashita wakarimasu.","We will know the result tomorrow.","結果|kekka|result / は|wa|(topic) / 明日|ashita|tomorrow / 分かります|wakarimasu|to become clear (polite) / 。 = We will know the result tomorrow."],
+  ["仮説","かせつ","kasetsu","hypothesis","仮説は何ですか。","Kasetsu wa nan desu ka.","What is the hypothesis?","仮説|kasetsu|hypothesis / は|wa|(topic) / 何|nan|what / です|desu|is / か|ka|(question) / 。 = What is the hypothesis?"],
+  ["手順","てじゅん","tejun","procedure, steps","この手順は便利です。","Kono tejun wa benri desu.","This procedure is convenient.","この|kono|this / 手順|tejun|procedure / は|wa|(topic) / 便利|benri|convenient / です|desu|is / 。 = This procedure is convenient."],
+  ["根拠","こんきょ","konkyo","grounds, basis","根拠を言ってください。","Konkyo o itte kudasai.","Please say the grounds.","根拠|konkyo|grounds / を|o|(object) / 言って|itte|to say (and) / ください|kudasai|please / 。 = Please say the grounds."],
+  ["器具","きぐ","kigu","equipment, apparatus","器具を買います。","Kigu o kaimasu.","I buy the equipment.","器具|kigu|equipment / を|o|(object) / 買います|kaimasu|to buy (polite) / 。 = I buy the equipment."],
+  ["測定","そくてい","sokutei","measurement","測定は難しいです。","Sokutei wa muzukashii desu.","The measurement is difficult.","測定|sokutei|measurement / は|wa|(topic) / 難しい|muzukashii|difficult / です|desu|is / 。 = The measurement is difficult."],
+  ["精査","せいさ","seisa","close examination, to scrutinize","器具を精査します。","Kigu o seisa shimasu.","I examine the equipment closely.","器具|kigu|equipment / を|o|(object) / 精査|seisa|close examination / します|shimasu|to do (polite) / 。 = I examine the equipment closely."],
+  ["分類","ぶんるい","bunrui","classification, to classify","二つを分類します。","Futatsu o bunrui shimasu.","I classify the two.","二つ|futatsu|two things / を|o|(object) / 分類|bunrui|classification / します|shimasu|to do (polite) / 。 = I classify the two."],
+  ["検証","けんしょう","kenshou","verification, to verify","結果を検証します。","Kekka o kenshou shimasu.","I verify the result.","結果|kekka|result / を|o|(object) / 検証|kenshou|verification / します|shimasu|to do (polite) / 。 = I verify the result."]],
+  [
+   "実験|jikken|experiment / を|o|(object) / すれば|sureba|if do / する|suru|do / ほど|hodo|the more / 、 / 分かります|wakarimasu|understand / 。 = The more I experiment, the more I understand.",
+   "結果|kekka|result / は|wa|(topic) / 明日|ashita|tomorrow / 分かります|wakarimasu|will be known / 。 = We will know the result tomorrow.",
+   "仮説|kasetsu|hypothesis / を|o|(object) / 調べます|shirabemasu|look into / 。 = I look into the hypothesis.",
+   "先生|sensei|teacher / は|wa|(topic) / 器具|kigu|equipment / を|o|(object) / 精査|seisa|close examination / します|shimasu|does / 。 = The teacher examines the equipment closely.",
+   "測定|sokutei|measurement / を|o|(object) / すれば|sureba|if do / する|suru|do / ほど|hodo|the more / 、 / 速く|hayaku|fast / なります|narimasu|become / 。 = The more I measure, the faster I get.",
+   "二つ|futatsu|two / の|no|of / 手順|tejun|procedure / を|o|(object) / 分類|bunrui|classification / します|shimasu|do / 。 = I classify the two procedures."
+  ]],
+ ["Discoveries and proof",
+  [["発見","はっけん","hakken","discovery, to discover","新しい星を発見しました。","Atarashii hoshi o hakken shimashita.","They discovered a new star.","新しい|atarashii|new / 星|hoshi|star / を|o|(object) / 発見|hakken|discovery / しました|shimashita|did / 。 = They discovered a new star."],
+  ["特許","とっきょ","tokkyo","patent","これは日本の特許です。","Kore wa nihon no tokkyo desu.","This is a Japanese patent.","これ|kore|this / は|wa|(topic) / 日本|nihon|Japan / の|no|(of) / 特許|tokkyo|patent / です|desu|is / 。 = This is a Japanese patent."],
+  ["証明","しょうめい","shoumei","proof, to prove","先生はそれを証明しました。","Sensei wa sore o shoumei shimashita.","The teacher proved it.","先生|sensei|teacher / は|wa|(topic) / それ|sore|that / を|o|(object) / 証明|shoumei|proof / しました|shimashita|did / 。 = The teacher proved it."],
+  ["原稿","げんこう","genkou","manuscript","原稿を見せます。","Genkou o misemasu.","I show the manuscript.","原稿|genkou|manuscript / を|o|(object) / 見せます|misemasu|to show (polite) / 。 = I show the manuscript."],
+  ["事実","じじつ","jijitsu","fact","それは事実です。","Sore wa jijitsu desu.","That is a fact.","それ|sore|that / は|wa|(topic) / 事実|jijitsu|fact / です|desu|is / 。 = That is a fact."],
+  ["目的","もくてき","mokuteki","purpose, aim","旅行の目的は何ですか。","Ryokou no mokuteki wa nan desu ka.","What is the purpose of the trip?","旅行|ryokou|trip / の|no|(of) / 目的|mokuteki|purpose / は|wa|(topic) / 何|nan|what / です|desu|is / か|ka|(question) / 。 = What is the purpose of the trip?"],
+  ["調査","ちょうさ","chousa","survey, investigation","調査をします。","Chousa o shimasu.","We do a survey.","調査|chousa|survey / を|o|(object) / します|shimasu|to do (polite) / 。 = We do a survey."],
+  ["理論","りろん","riron","theory","理論は難しいです。","Riron wa muzukashii desu.","The theory is difficult.","理論|riron|theory / は|wa|(topic) / 難しい|muzukashii|difficult / です|desu|is / 。 = The theory is difficult."],
+  ["効果","こうか","kouka","effect","この薬は効果があります。","Kono kusuri wa kouka ga arimasu.","This medicine has an effect.","この|kono|this / 薬|kusuri|medicine / は|wa|(topic) / 効果|kouka|effect / が|ga|(subject) / あります|arimasu|to be (things, polite) / 。 = This medicine has an effect."],
+  ["結論","けつろん","ketsuron","conclusion","結論は来週です。","Ketsuron wa raishuu desu.","The conclusion is next week.","結論|ketsuron|conclusion / は|wa|(topic) / 来週|raishuu|next week / です|desu|is / 。 = The conclusion is next week."]],
+  [
+   "この|kono|this / 原稿|genkou|manuscript / は|wa|(topic) / 古い|furui|old / わりに|wari ni|for how / 、 / きれい|kirei|clean / です|desu|is / 。 = This manuscript is clean for how old it is.",
+   "新しい|atarashii|new / 星|hoshi|star / を|o|(object) / 発見|hakken|discovery / しました|shimashita|did / 。 = They discovered a new star.",
+   "これ|kore|this / は|wa|(topic) / 日本|nihon|Japan / の|no|of / 特許|tokkyo|patent / です|desu|is / 。 = This is a Japanese patent.",
+   "先生|sensei|teacher / は|wa|(topic) / 理論|riron|theory / を|o|(object) / 説明します|setsumei shimasu|explains / 。 = The teacher explains the theory.",
+   "調査|chousa|survey / の|no|of / 目的|mokuteki|purpose / は|wa|(topic) / 何|nan|what / です|desu|is / か|ka|(question) / 。 = What is the purpose of the survey?",
+   "この|kono|this / 薬|kusuri|medicine / は|wa|(topic) / 安い|yasui|cheap / わりに|wari ni|for how / 、 / 効果|kouka|effect / が|ga|(subject) / あります|arimasu|has / 。 = This medicine is effective for how cheap it is."
+  ]],
+ ["Statistics and numbers",
+  [["統計","とうけい","toukei","statistics","統計を見ます。","Toukei o mimasu.","I look at the statistics.","統計|toukei|statistics / を|o|(object) / 見ます|mimasu|to see (polite) / 。 = I look at the statistics."],
+  ["平均","へいきん","heikin","average","今年の平均は去年の平均より高いです。","Kotoshi no heikin wa kyonen no heikin yori takai desu.","This year’s average is higher than last year’s average.","今年|kotoshi|this year / の|no|(of) / 平均|heikin|average / は|wa|(topic) / 去年|kyonen|last year / の|no|(of) / 平均|heikin|average / より|yori|than / 高い|takai|high / です|desu|is / 。 = This year’s average is higher than last year’s average."],
+  ["割合","わりあい","wariai","proportion, ratio","学生の割合は多いです。","Gakusei no wariai wa ooi desu.","The proportion of students is large.","学生|gakusei|student / の|no|(of) / 割合|wariai|proportion / は|wa|(topic) / 多い|ooi|many / です|desu|is / 。 = The proportion of students is large."],
+  ["全体","ぜんたい","zentai","the whole","全体を見ます。","Zentai o mimasu.","I look at the whole.","全体|zentai|the whole / を|o|(object) / 見ます|mimasu|to see (polite) / 。 = I look at the whole."],
+  ["合計","ごうけい","goukei","total","合計はいくらですか。","Goukei wa ikura desu ka.","How much is the total?","合計|goukei|total / は|wa|(topic) / いくら|ikura|how much / です|desu|is / か|ka|(question) / 。 = How much is the total?"],
+  ["以上","いじょう","ijou","or more, above","十人以上います。","Juunin ijou imasu.","There are ten people or more.","十人|juunin|ten people / 以上|ijou|or more / います|imasu|to be (people, polite) / 。 = There are ten people or more."],
+  ["以下","いか","ika","or less, below","百円以下です。","Hyaku en ika desu.","It is 100 yen or less.","百円|hyaku en|100 yen / 以下|ika|or less / です|desu|is / 。 = It is 100 yen or less."],
+  ["パーセント","パーセント","paasento","percent","十パーセントです。","Juu paasento desu.","It is ten percent.","十|juu|ten / パーセント|paasento|percent / です|desu|is / 。 = It is ten percent."],
+  ["最高","さいこう","saikou","the best, the highest","最高の天気です。","Saikou no tenki desu.","The weather is the best.","最高|saikou|the best / の|no|(of) / 天気|tenki|weather / です|desu|is / 。 = The weather is the best."],
+  ["最低","さいてい","saitei","the lowest, at least","料金は最低千円です。","Ryoukin wa saitei sen en desu.","The fee is at least 1,000 yen.","料金|ryoukin|fee / は|wa|(topic) / 最低|saitei|at least / 千円|sen en|1,000 yen / です|desu|is / 。 = The fee is at least 1,000 yen."]],
+  [
+   "この|kono|this / 統計|toukei|statistics / は|wa|(topic) / 日本|nihon|Japan / だけでなく|dake de naku|not only / 、 / 中国|chuugoku|China / も|mo|also / 調べます|shirabemasu|looks into / 。 = This statistic covers not only Japan but also China.",
+   "今年|kotoshi|this year / の|no|of / 平均|heikin|average / は|wa|(topic) / 去年|kyonen|last year / より|yori|than / 高い|takai|high / です|desu|is / 。 = This year’s average is higher than last year.",
+   "学生|gakusei|student / の|no|of / 割合|wariai|proportion / は|wa|(topic) / 多い|ooi|large / です|desu|is / 。 = The proportion of students is large.",
+   "合計|goukei|total / は|wa|(topic) / いくら|ikura|how much / です|desu|is / か|ka|(question) / 。 = How much is the total?",
+   "教室|kyoushitsu|classroom / に|ni|in / 十|juu|ten / 人|nin|people / 以上|ijou|or more / います|imasu|there are / 。 = There are ten people or more in the classroom.",
+   "学生|gakusei|student / の|no|of / 十|juu|ten / パーセント|paasento|percent / は|wa|(topic) / 留学|ryuugaku|studying abroad / します|shimasu|do / 。 = Ten percent of the students study abroad."
+  ]]
+];
+const GR_P12A=[
+ ["Not as much as with ほど〜ない","Noun or plain form + ほど + negative","ほど (hodo) with a negative ending means “not as … as”. A は B ほど adjective-negative です says that A has less of the quality than B. It is the opposite side of より: B has more.",[["今日","kyou","today"],["は","wa","(topic)"],["昨日","kinou","yesterday"],["ほど","hodo","as much as"],["寒くない","samukunai","is not cold"],["です","desu","is"],["。","",""]],"Today is not as cold as yesterday."],
+ ["About as much as with くらい and ぐらい","Plain form or noun + くらい","くらい (kurai) and ぐらい (gurai) are the same word. After a noun or a plain form they show a degree: “about as … as” or “to the degree that …”. A は B くらい adjective です means that A and B are about equal. 泣きたいくらい悲しいです means “so sad that I want to cry”.",[["この","kono","this"],["部屋","heya","room"],["は","wa","(topic)"],["私","watashi","I"],["の","no","’s"],["部屋","heya","room"],["くらい","kurai","about as"],["広い","hiroi","spacious"],["です","desu","is"],["。","",""]],"This room is about as spacious as my room."],
+ ["The more, the more with ば〜ほど","ば-form + dictionary form + ほど","The ば-form means “if”. For る-verbs, change る to れば: 食べる becomes 食べれば. For other verbs, change the last sound to the matching え-row sound and add ば: 読む becomes 読めば, 行く becomes 行けば. For い-adjectives, change い to ければ: 高い becomes 高ければ. する becomes すれば and 来る becomes くれば. Then repeat the dictionary form and add ほど: “the more …, the more …”.",[["読めば","yomeba","if read"],["読む","yomu","read"],["ほど","hodo","the more"],["好き","suki","liked"],["に","ni","(change)"],["なります","narimasu","become"],["。","",""]],"The more I read, the more I like it."],
+ ["More than expected with わりに","Plain form + わりに","わりに (wari ni) shows that the result is different from what you would expect from the first part. 安いわりにおいしいです means “it is tasty for how cheap it is”. After a noun use の (子供のわりに), and after a な-adjective use な (静かなわりに).",[["この","kono","this"],["店","mise","shop"],["は","wa","(topic)"],["安い","yasui","cheap"],["わりに","wari ni","for how"],["おいしい","oishii","tasty"],["です","desu","is"],["。","",""]],"This shop is tasty for how cheap it is."],
+ ["Not only with だけでなく","Noun or plain form + だけでなく、も","だけでなく (dake de naku) means “not only”. The next part adds more with も (also). 英語だけでなく中国語も means “not only English but also Chinese”.",[["彼","kare","he"],["は","wa","(topic)"],["英語","eigo","English"],["だけでなく","dake de naku","not only"],["中国語","chuugokugo","Chinese language"],["も","mo","also"],["話します","hanashimasu","speaks"],["。","",""]],"He speaks not only English but also Chinese."]
+];
+const STORY_P12A=[
+ {"t":"A visit to the university","l":[
+  "今日|kyou|today / 、 / ゆい|Yui|Yui (name) / と|to|and / けん|Ken|Ken (name) / は|wa|(topic) / 大学|daigaku|university / に|ni|to / 行きます|ikimasu|go / 。 = Today Yui and Ken go to the university.",
+  "けん|Ken|Ken (name) / の|no|’s / 友達|tomodachi|friend / は|wa|(topic) / 大学|daigaku|university / で|de|at / 研究|kenkyuu|research / を|o|(object) / します|shimasu|does / 。 = Ken’s friend does research at the university.",
+  "友達|tomodachi|friend / ： / 専門|senmon|major / は|wa|(topic) / 日本語|nihongo|Japanese language / だ|da|is / よ|yo|(friendly ending) / 。 = Friend: My major is the Japanese language.",
+  "友達|tomodachi|friend / ： / 来年|rainen|next year / 、 / アメリカ|amerika|America / に|ni|to / 留学する|ryuugaku suru|study abroad / んだ|nda|(explaining) / 。 / 今|ima|now / 、 / 論文|ronbun|thesis / を|o|(object) / 書いてる|kaiteru|am writing / 。 = Friend: I will study abroad in America next year. Now I am writing my thesis.",
+  "ゆい|Yui|Yui (name) / ： / この|kono|this / 大学|daigaku|university / に|ni|to / 進学|shingaku|going on to higher education / したい|shitai|want to do / な|na|(feeling) / 。 = Yui: I want to go on to this university too.",
+  "友達|tomodachi|friend / ： / あの|ano|that / 教授|kyouju|professor / は|wa|(topic) / 有名|yuumei|famous / だ|da|is / よ|yo|(friendly ending) / 。 / 講義|kougi|lecture / は|wa|(topic) / 十時|juuji|ten o’clock / に|ni|at / 始まる|hajimaru|begin / よ|yo|(friendly ending) / 。 = Friend: That professor is famous. The lecture begins at ten o’clock.",
+  "三人|sannin|three people / は|wa|(topic) / 一緒に|issho ni|together / 講義|kougi|lecture / に|ni|to / 行きます|ikimasu|go / 。 = The three of them go to the lecture together."
+ ],"q":[[1,"What does Ken’s friend do at the university?",["Research","Cooking","Sports"],0,"Line 2: 研究をします means “does research”."],[3,"When will Ken’s friend study abroad?",["Next year","Last year","Today"],0,"Line 4: 来年、アメリカに留学するんだ."]]},
+ {"t":"Favourite subjects","l":[
+  "ゆい|Yui|Yui (name) / は|wa|(topic) / 数学|suugaku|mathematics / が|ga|(subject) / 好き|suki|liked / です|desu|is / 。 = Yui likes mathematics.",
+  "けん|Ken|Ken (name) / は|wa|(topic) / 国語|kokugo|national language / が|ga|(subject) / 好き|suki|liked / です|desu|is / 。 = Ken likes the national language class.",
+  "けん|Ken|Ken (name) / ： / 物理|butsuri|physics / は|wa|(topic) / 数学|suugaku|mathematics / くらい|kurai|about as / 難しい|muzukashii|difficult / よ|yo|(friendly ending) / 。 = Ken: Physics is about as difficult as mathematics.",
+  "ゆい|Yui|Yui (name) / ： / 理科|rika|science / も|mo|also / 好き|suki|liked / だ|da|is / よ|yo|(friendly ending) / 。 / 生物|seibutsu|biology / は|wa|(topic) / 楽しい|tanoshii|fun / ね|ne|(agreement) / 。 = Yui: I like science too. Biology is fun.",
+  "田中|Tanaka|Tanaka (family name) / 先生|sensei|teacher / ： / 私|watashi|I / は|wa|(topic) / 大学|daigaku|university / で|de|at / 哲学|tetsugaku|philosophy / を|o|(object) / 勉強しました|benkyou shimashita|studied / 。 = Tanaka sensei: I studied philosophy at university.",
+  "けん|Ken|Ken (name) / の|no|’s / 妹|imouto|younger sister / は|wa|(topic) / 算数|sansuu|arithmetic / が|ga|(subject) / 好き|suki|liked / です|desu|is / 。 = Ken’s younger sister likes arithmetic.",
+  "田中|Tanaka|Tanaka (family name) / 先生|sensei|teacher / は|wa|(topic) / 科学|kagaku|science / の|no|of / 本|hon|book / を|o|(object) / 読みます|yomimasu|reads / 。 / 地理|chiri|geography / の|no|of / 授業|jugyou|class / は|wa|(topic) / 午後|gogo|afternoon / です|desu|is / 。 = Tanaka sensei reads a science book. The geography class is in the afternoon."
+ ],"q":[[0,"What does Yui like?",["Mathematics","Philosophy","Geography"],0,"Line 1: 数学が好きです means “likes mathematics”."],[4,"What did Tanaka sensei study at university?",["Philosophy","Physics","Biology"],0,"Line 5: 哲学を勉強しました."]]},
+ {"t":"The experiment","l":[
+  "今日|kyou|today / の|no|of / 授業|jugyou|class / で|de|in / 、 / ゆい|Yui|Yui (name) / と|to|and / けん|Ken|Ken (name) / は|wa|(topic) / 実験|jikken|experiment / を|o|(object) / します|shimasu|do / 。 = In today’s class Yui and Ken do an experiment.",
+  "先生|sensei|teacher / ： / 器具|kigu|equipment / は|wa|(topic) / この|kono|this / 箱|hako|box / の|no|of / 中|naka|inside / に|ni|in / あります|arimasu|is / 。 = Teacher: The equipment is in this box.",
+  "ゆい|Yui|Yui (name) / は|wa|(topic) / 器具|kigu|equipment / を|o|(object) / よく|yoku|well / 調べます|shirabemasu|look up / 。 / けん|Ken|Ken (name) / は|wa|(topic) / 測定|sokutei|measurement / を|o|(object) / します|shimasu|do / 。 = Yui examines the equipment closely. Ken does the measurement.",
+  "けん|Ken|Ken (name) / ： / 結果|kekka|result / は|wa|(topic) / 悪い|warui|bad / 。 / 仮説|kasetsu|hypothesis / は|wa|(topic) / 何|nan|what / ？ = Ken: The result is bad. What is the hypothesis?",
+  "先生|sensei|teacher / ： / 手順|tejun|procedure / を|o|(object) / もう|mou|once more / 一度|ichido|one time / 検証|kenshou|verification / して|shite|do and / ください|kudasai|please / 。 = Teacher: Please verify the procedure once more.",
+  "ゆい|Yui|Yui (name) / は|wa|(topic) / 二つ|futatsu|two / の|no|of / 結果|kekka|result / を|o|(object) / 分類|bunrui|classification / します|shimasu|does / 。 = Yui classifies the two results.",
+  "先生|sensei|teacher / ： / 根拠|konkyo|grounds / が|ga|(subject) / 分かりました|wakarimashita|understood / か|ka|(question) / 。 = Teacher: Do you understand the grounds?",
+  "ゆい|Yui|Yui (name) / ： / はい|hai|yes / 。 = Yui: Yes."
+ ],"q":[[2,"What does Yui do in the experiment?",["She examines the equipment","She measures the time","She does the calculation"],0,"Line 3: ゆいは器具をよく調べます means “Yui examines the equipment closely”."],[3,"Is the result good?",["No, it is bad","Yes, it is good","Nobody knows"],0,"Line 4: 結果は悪い means “the result is bad”."]]},
+ {"t":"Old and new inventions","l":[
+  "ゆい|Yui|Yui (name) / は|wa|(topic) / 図書館|toshokan|library / で|de|at / 原稿|genkou|manuscripts / を|o|(object) / 調べます|shirabemasu|looks up / 。 = Yui looks up manuscripts at the library.",
+  "けん|Ken|Ken (name) / ： / 何|nan|what / を|o|(object) / 調べてる|shirabeteru|looking up / ？ = Ken: What are you looking up?",
+  "ゆい|Yui|Yui (name) / ： / 調査|chousa|survey / の|no|’s / 目的|mokuteki|purpose / は|wa|(topic) / 日本|nihon|Japan / の|no|’s / 古い|furui|old / 特許|tokkyo|patents / だ|da|is / よ|yo|(friendly ending) / 。 = Yui: The purpose of my survey is old Japanese patents.",
+  "ゆい|Yui|Yui (name) / ： / この|kono|this / 原稿|genkou|manuscript / は|wa|(topic) / 古い|furui|old / わりに|wari ni|for how / 、 / きれい|kirei|clean / だ|da|is / よ|yo|(friendly ending) / 。 = Yui: This manuscript is clean for how old it is.",
+  "田中|Tanaka|Tanaka (family name) / 先生|sensei|teacher / ： / それ|sore|that / は|wa|(topic) / 事実|jijitsu|fact / です|desu|is / か|ka|(question) / 。 / 私|watashi|I / は|wa|(topic) / 検証|kenshou|verification / します|shimasu|do / 。 = Tanaka sensei: Is that a fact? I will verify it.",
+  "けん|Ken|Ken (name) / ： / 新しい|atarashii|new / 発見|hakken|discovery / ？ = Ken: Is it a new discovery?",
+  "ゆい|Yui|Yui (name) / ： / まだ|mada|still / 理論|riron|theory / だ|da|is / よ|yo|(friendly ending) / 。 / 結論|ketsuron|conclusion / は|wa|(topic) / 来週|raishuu|next week / 。 = Yui: It is still a theory. The conclusion is next week."
+ ],"q":[[2,"What is the purpose of Yui’s survey?",["Old Japanese patents","A new star","Medicine"],0,"Line 3: 日本の古い特許だよ."],[6,"When is the conclusion?",["Next week","Today","Last year"],0,"Line 7: 結論は来週."]]},
+ {"t":"Numbers at school","l":[
+  "ゆい|Yui|Yui (name) / は|wa|(topic) / 学校|gakkou|school / の|no|of / 統計|toukei|statistics / を|o|(object) / 調べます|shirabemasu|looks into / 。 = Yui looks into the school’s statistics.",
+  "学校|gakkou|school / に|ni|at / 学生|gakusei|student / が|ga|(subject) / 百|hyaku|hundred / 人|nin|people / 以上|ijou|or more / います|imasu|there are / 。 = There are a hundred students or more at the school.",
+  "外国人|gaikokujin|foreigner / の|no|of / 割合|wariai|proportion / は|wa|(topic) / 十|juu|ten / パーセント|paasento|percent / です|desu|is / 。 = The proportion of foreigners is ten percent.",
+  "けん|Ken|Ken (name) / ： / 中国|chuugoku|China / の|no|’s / 学生|gakusei|student / だけでなく|dake de naku|not only / 、 / アメリカ|amerika|America / の|no|’s / 学生|gakusei|student / も|mo|also / いる|iru|there are / よ|yo|(friendly ending) / 。 = Ken: There are not only students from China but also students from America.",
+  "先生|sensei|teacher / ： / 合計|goukei|total / は|wa|(topic) / 何人|nannin|how many people / です|desu|is / か|ka|(question) / 。 = Teacher: What is the total number of people?",
+  "ゆい|Yui|Yui (name) / ： / 合計|goukei|total / は|wa|(topic) / 百|hyaku|hundred / 十|juu|ten / 人|nin|people / です|desu|is / 。 = Yui: The total is 110 people.",
+  "ゆい|Yui|Yui (name) / ： / 平均|heikin|average / は|wa|(topic) / 去年|kyonen|last year / より|yori|than / 高い|takai|high / です|desu|is / 。 = Yui: The average is higher than last year."
+ ],"q":[[2,"What is the proportion of foreigners at the school?",["Ten percent","Twenty percent","One percent"],0,"Line 3: 十パーセントです."],[5,"What is the total number of people?",["110 people","10 people","100 people"],0,"Line 6: 百十人です means “110 people”."]]}
+];
+/* Japanese Level 3, Part 12 (themes 6 to 10): the body, medicine, health habits, history and technology. */
+const JA_P12B=[
+ ["The body in detail",
+  [["血管","けっかん","kekkan","blood vessel","血管は体の中にあります。","Kekkan wa karada no naka ni arimasu.","Blood vessels are inside the body.","血管|kekkan|blood vessel / は|wa|(topic) / 体|karada|body / の|no|(of) / 中|naka|inside / に|ni|(at) / あります|arimasu|to be (things, polite) / 。 = Blood vessels are inside the body."],
+  ["骨","ほね","hone","bone","足の骨が痛いです。","Ashi no hone ga itai desu.","The bone in my leg hurts.","足|ashi|leg / の|no|(of) / 骨|hone|bone / が|ga|(subject) / 痛い|itai|painful / です|desu|is / 。 = The bone in my leg hurts."],
+  ["筋肉","きんにく","kinniku","muscle","兄は筋肉があります。","Ani wa kinniku ga arimasu.","My older brother has muscles.","兄|ani|my older brother / は|wa|(topic) / 筋肉|kinniku|muscles / が|ga|(subject) / あります|arimasu|to have (polite) / 。 = My older brother has muscles."],
+  ["心臓","しんぞう","shinzou","heart (organ)","心臓は体の中にあります。","Shinzou wa karada no naka ni arimasu.","The heart is inside the body.","心臓|shinzou|heart / は|wa|(topic) / 体|karada|body / の|no|(of) / 中|naka|inside / に|ni|(at) / あります|arimasu|to be (things, polite) / 。 = The heart is inside the body."],
+  ["胃","い","i","stomach (organ)","胃が痛いです。","I ga itai desu.","My stomach hurts.","胃|i|stomach / が|ga|(subject) / 痛い|itai|painful / です|desu|is / 。 = My stomach hurts."],
+  ["皮膚","ひふ","hifu","skin","皮膚が痛いです。","Hifu ga itai desu.","My skin hurts.","皮膚|hifu|skin / が|ga|(subject) / 痛い|itai|painful / です|desu|is / 。 = My skin hurts."],
+  ["脳","のう","nou","brain","脳は頭の中にあります。","Nou wa atama no naka ni arimasu.","The brain is inside the head.","脳|nou|brain / は|wa|(topic) / 頭|atama|head / の|no|(of) / 中|naka|inside / に|ni|(at) / あります|arimasu|to be (things, polite) / 。 = The brain is inside the head."],
+  ["呼吸","こきゅう","kokyuu","breathing, to breathe","ゆっくり呼吸します。","Yukkuri kokyuu shimasu.","I breathe slowly.","ゆっくり|yukkuri|slowly / 呼吸|kokyuu|breathing / します|shimasu|to do (polite) / 。 = I breathe slowly."],
+  ["脈","みゃく","myaku","pulse","脈が速いです。","Myaku ga hayai desu.","My pulse is fast.","脈|myaku|pulse / が|ga|(subject) / 速い|hayai|fast / です|desu|is / 。 = My pulse is fast."],
+  ["腕","うで","ude","arm","腕が痛いです。","Ude ga itai desu.","My arm hurts.","腕|ude|arm / が|ga|(subject) / 痛い|itai|painful / です|desu|is / 。 = My arm hurts."]],
+  [
+   "子供|kodomo|child / さえ|sae|even / 、 / 心臓|shinzou|heart / の|no|of / 場所|basho|place / を|o|(object) / 知って|shitte|know / います|imasu|do / 。 = Even children know where the heart is.",
+   "今日|kyou|today / は|wa|(topic) / 腕|ude|arm / さえ|sae|even / 動きません|ugokimasen|does not move / 。 = Today I cannot even move my arm.",
+   "胃|i|stomach / が|ga|(subject) / 痛い|itai|painful / です|desu|is / 。 = My stomach hurts.",
+   "脳|nou|brain / は|wa|(topic) / 頭|atama|head / の|no|of / 中|naka|inside / に|ni|in / あります|arimasu|is / 。 = The brain is inside the head.",
+   "骨|hone|bone / さえ|sae|even / 痛い|itai|painful / です|desu|is / 。 = Even my bones hurt.",
+   "ゆっくり|yukkuri|slowly / 呼吸|kokyuu|breathing / します|shimasu|do / 。 = I breathe slowly."
+  ]],
+ ["Medicine and treatment",
+  [["手術","しゅじゅつ","shujutsu","surgery","兄は来週、手術をします。","Ani wa raishuu, shujutsu o shimasu.","My older brother has surgery next week.","兄|ani|my older brother / は|wa|(topic) / 来週|raishuu|next week / 、 / 手術|shujutsu|surgery / を|o|(object) / します|shimasu|to do (polite) / 。 = My older brother has surgery next week."],
+  ["採血","さいけつ","saiketsu","blood draw","明日、病院で採血をします。","Ashita, byouin de saiketsu o shimasu.","Tomorrow I have blood drawn at the hospital.","明日|ashita|tomorrow / 、 / 病院|byouin|hospital / で|de|(at) / 採血|saiketsu|blood draw / を|o|(object) / します|shimasu|to do (polite) / 。 = Tomorrow I have blood drawn at the hospital."],
+  ["治療","ちりょう","chiryou","medical treatment","治療は長いです。","Chiryou wa nagai desu.","The treatment is long.","治療|chiryou|medical treatment / は|wa|(topic) / 長い|nagai|long / です|desu|is / 。 = The treatment is long."],
+  ["症状","しょうじょう","shoujou","symptom","症状は軽いです。","Shoujou wa karui desu.","The symptoms are mild.","症状|shoujou|symptoms / は|wa|(topic) / 軽い|karui|mild / です|desu|is / 。 = The symptoms are mild."],
+  ["消毒","しょうどく","shoudoku","disinfection","手を消毒します。","Te o shoudoku shimasu.","I disinfect my hands.","手|te|hands / を|o|(object) / 消毒|shoudoku|disinfection / します|shimasu|to do (polite) / 。 = I disinfect my hands."],
+  ["感染","かんせん","kansen","infection, to be infected","この病気は感染します。","Kono byouki wa kansen shimasu.","This illness is infectious.","この|kono|this / 病気|byouki|illness / は|wa|(topic) / 感染|kansen|infection / します|shimasu|to do (polite) / 。 = This illness is infectious."],
+  ["診察","しんさつ","shinsatsu","medical examination","医者が診察します。","Isha ga shinsatsu shimasu.","The doctor examines me.","医者|isha|doctor / が|ga|(subject) / 診察|shinsatsu|medical examination / します|shimasu|to do (polite) / 。 = The doctor examines me."],
+  ["副作用","ふくさよう","fukusayou","side effect","この薬は副作用があります。","Kono kusuri wa fukusayou ga arimasu.","This medicine has a side effect.","この|kono|this / 薬|kusuri|medicine / は|wa|(topic) / 副作用|fukusayou|side effect / が|ga|(subject) / あります|arimasu|to have (polite) / 。 = This medicine has a side effect."],
+  ["免疫","めんえき","men’eki","immunity","免疫が弱いです。","Men’eki ga yowai desu.","My immunity is weak.","免疫|men’eki|immunity / が|ga|(subject) / 弱い|yowai|weak / です|desu|is / 。 = My immunity is weak."],
+  ["回復","かいふく","kaifuku","recovery, to recover","体が回復します。","Karada ga kaifuku shimasu.","My body recovers.","体|karada|body / が|ga|(subject) / 回復|kaifuku|recovery / します|shimasu|to do (polite) / 。 = My body recovers."]],
+  [
+   "医者|isha|doctor / は|wa|(topic) / 子供|kodomo|child / に対して|ni taishite|towards / 、 / ゆっくり|yukkuri|slowly / 診察|shinsatsu|examination / します|shimasu|does / 。 = The doctor examines children slowly.",
+   "この|kono|this / 病気|byouki|illness / は|wa|(topic) / 感染|kansen|infection / します|shimasu|does / 。 = This illness is infectious.",
+   "明日|ashita|tomorrow / 、 / 病院|byouin|hospital / で|de|at / 採血|saiketsu|blood draw / を|o|(object) / します|shimasu|do / 。 = Tomorrow I have blood drawn at the hospital.",
+   "兄|ani|my older brother / は|wa|(topic) / 来週|raishuu|next week / 、 / 手術|shujutsu|surgery / を|o|(object) / します|shimasu|has / 。 = My older brother has surgery next week.",
+   "症状|shoujou|symptom / は|wa|(topic) / 軽い|karui|light / です|desu|is / 。 = The symptoms are mild.",
+   "薬|kusuri|medicine / を|o|(object) / 飲めば|nomeba|if drink / 、 / 体|karada|body / が|ga|(subject) / 回復|kaifuku|recovery / します|shimasu|does / 。 = If you take the medicine, your body recovers."
+  ]],
+ ["Healthy habits",
+  [["日課","にっか","nikka","daily routine","運動は私の日課です。","Undou wa watashi no nikka desu.","Exercise is my daily routine.","運動|undou|exercise / は|wa|(topic) / 私|watashi|I / の|no|(of) / 日課|nikka|daily routine / です|desu|is / 。 = Exercise is my daily routine."],
+  ["昼寝","ひるね","hirune","nap","毎日、昼寝をします。","Mainichi, hirune o shimasu.","I take a nap every day.","毎日|mainichi|every day / 、 / 昼寝|hirune|nap / を|o|(object) / します|shimasu|to do (polite) / 。 = I take a nap every day."],
+  ["脂肪","しぼう","shibou","fat (in the body or in food)","肉は脂肪があります。","Niku wa shibou ga arimasu.","Meat has fat.","肉|niku|meat / は|wa|(topic) / 脂肪|shibou|fat / が|ga|(subject) / あります|arimasu|to have (polite) / 。 = Meat has fat."],
+  ["体力","たいりょく","tairyoku","physical strength, stamina","兄は体力があります。","Ani wa tairyoku ga arimasu.","My older brother has stamina.","兄|ani|my older brother / は|wa|(topic) / 体力|tairyoku|stamina / が|ga|(subject) / あります|arimasu|to have (polite) / 。 = My older brother has stamina."],
+  ["体重","たいじゅう","taijuu","body weight","体重を見ます。","Taijuu o mimasu.","I check my weight.","体重|taijuu|body weight / を|o|(object) / 見ます|mimasu|to see (polite) / 。 = I check my weight."],
+  ["喫煙","きつえん","kitsuen","smoking","兄は喫煙をしません。","Ani wa kitsuen o shimasen.","My older brother does not smoke.","兄|ani|my older brother / は|wa|(topic) / 喫煙|kitsuen|smoking / を|o|(object) / しません|shimasen|to not do (polite) / 。 = My older brother does not smoke."],
+  ["腹筋","ふっきん","fukkin","abdominal muscles, sit-ups","毎朝、腹筋をします。","Maiasa, fukkin o shimasu.","I do sit-ups every morning.","毎朝|maiasa|every morning / 、 / 腹筋|fukkin|abdominal muscles / を|o|(object) / します|shimasu|to do (polite) / 。 = I do sit-ups every morning."],
+  ["減量","げんりょう","genryou","weight loss","兄は減量をします。","Ani wa genryou o shimasu.","My older brother tries to lose weight.","兄|ani|my older brother / は|wa|(topic) / 減量|genryou|weight loss / を|o|(object) / します|shimasu|to do (polite) / 。 = My older brother tries to lose weight."],
+  ["禁酒","きんしゅ","kinshu","giving up alcohol","兄は禁酒をします。","Ani wa kinshu o shimasu.","My older brother gives up alcohol.","兄|ani|my older brother / は|wa|(topic) / 禁酒|kinshu|giving up alcohol / を|o|(object) / します|shimasu|to do (polite) / 。 = My older brother gives up alcohol."],
+  ["血圧","けつあつ","ketsuatsu","blood pressure","血圧は高いです。","Ketsuatsu wa takai desu.","My blood pressure is high.","血圧|ketsuatsu|blood pressure / は|wa|(topic) / 高い|takai|high / です|desu|is / 。 = My blood pressure is high."]],
+  [
+   "運動|undou|exercise / を|o|(object) / 日課|nikka|daily routine / として|toshite|as / 続けます|tsudzukemasu|continue / 。 = I continue exercise as a daily routine.",
+   "毎日|mainichi|every day / 、 / 昼寝|hirune|nap / を|o|(object) / します|shimasu|take / 。 = I take a nap every day.",
+   "肉|niku|meat / は|wa|(topic) / 脂肪|shibou|fat / が|ga|(subject) / あります|arimasu|has / 。 = Meat has fat.",
+   "毎朝|maiasa|every morning / 、 / 体重|taijuu|body weight / を|o|(object) / 見ます|mimasu|check / 。 = I check my weight every morning.",
+   "兄|ani|my older brother / は|wa|(topic) / 喫煙|kitsuen|smoking / を|o|(object) / しません|shimasen|does not do / 。 = My older brother does not smoke.",
+   "兄|ani|my older brother / は|wa|(topic) / 先生|sensei|teacher / として|toshite|as / 腹筋|fukkin|sit-ups / を|o|(object) / 教えます|oshiemasu|teaches / 。 = My older brother teaches sit-ups as a teacher."
+  ]],
+ ["History",
+  [["歴史","れきし","rekishi","history","歴史の本を読みます。","Rekishi no hon o yomimasu.","I read a history book.","歴史|rekishi|history / の|no|(of) / 本|hon|book / を|o|(object) / 読みます|yomimasu|to read (polite) / 。 = I read a history book."],
+  ["時代","じだい","jidai","era, period","今は新しい時代です。","Ima wa atarashii jidai desu.","Now is a new era.","今|ima|now / は|wa|(topic) / 新しい|atarashii|new / 時代|jidai|era / です|desu|is / 。 = Now is a new era."],
+  ["昔","むかし","mukashi","long ago, the past","昔、ここに城がありました。","Mukashi, koko ni shiro ga arimashita.","Long ago there was a castle here.","昔|mukashi|long ago / 、 / ここ|koko|here / に|ni|(at) / 城|shiro|castle / が|ga|(subject) / ありました|arimashita|there was (things) / 。 = Long ago there was a castle here."],
+  ["過去","かこ","kako","the past","過去は変わりません。","Kako wa kawarimasen.","The past does not change.","過去|kako|the past / は|wa|(topic) / 変わりません|kawarimasen|to not change (polite) / 。 = The past does not change."],
+  ["世紀","せいき","seiki","century","この寺は十世紀の寺です。","Kono tera wa juu seiki no tera desu.","This temple is from the tenth century.","この|kono|this / 寺|tera|temple / は|wa|(topic) / 十|juu|ten / 世紀|seiki|century / の|no|(of) / 寺|tera|temple / です|desu|is / 。 = This temple is from the tenth century."],
+  ["武士","ぶし","bushi","samurai, warrior","昔、武士がいました。","Mukashi, bushi ga imashita.","Long ago there were samurai.","昔|mukashi|long ago / 、 / 武士|bushi|samurai / が|ga|(subject) / いました|imashita|there were (people) / 。 = Long ago there were samurai."],
+  ["江戸","えど","Edo","Edo (old name of Tokyo)","江戸は今の東京です。","Edo wa ima no toukyou desu.","Edo is today’s Tokyo.","江戸|Edo|Edo (name) / は|wa|(topic) / 今|ima|now / の|no|(of) / 東京|toukyou|Tokyo (name) / です|desu|is / 。 = Edo is today’s Tokyo."],
+  ["戦争","せんそう","sensou","war","戦争は悲しいです。","Sensou wa kanashii desu.","War is sad.","戦争|sensou|war / は|wa|(topic) / 悲しい|kanashii|sad / です|desu|is / 。 = War is sad."],
+  ["古代","こだい","kodai","ancient times","古代、ここに町がありました。","Kodai, koko ni machi ga arimashita.","In ancient times there was a town here.","古代|kodai|ancient times / 、 / ここ|koko|here / に|ni|(at) / 町|machi|town / が|ga|(subject) / ありました|arimashita|there was (things) / 。 = In ancient times there was a town here."],
+  ["現代","げんだい","gendai","the present age, modern times","現代は便利です。","Gendai wa benri desu.","The present age is convenient.","現代|gendai|the present age / は|wa|(topic) / 便利|benri|convenient / です|desu|is / 。 = The present age is convenient."]],
+  [
+   "日本|nihon|Japan / の|no|of / 歴史|rekishi|history / について|ni tsuite|about / 本|hon|book / を|o|(object) / 読みます|yomimasu|read / 。 = I read a book about Japanese history.",
+   "江戸|Edo|Edo / は|wa|(topic) / 今|ima|now / の|no|’s / 東京|toukyou|Tokyo / です|desu|is / 。 = Edo is today’s Tokyo.",
+   "昔|mukashi|long ago / 、 / 武士|bushi|samurai / が|ga|(subject) / いました|imashita|there were / 。 = Long ago there were samurai.",
+   "古代|kodai|ancient times / について|ni tsuite|about / 考えます|kangaemasu|think / 。 = I think about ancient times.",
+   "戦争|sensou|war / について|ni tsuite|about / 先生|sensei|teacher / に|ni|to / 質問|shitsumon|question / します|shimasu|ask / 。 = I ask the teacher a question about the war.",
+   "今|ima|now / は|wa|(topic) / 新しい|atarashii|new / 時代|jidai|era / です|desu|is / 。 = Now is a new era."
+  ]],
+ ["Technology",
+  [["工学","こうがく","kougaku","engineering","日本の工学は有名です。","Nihon no kougaku wa yuumei desu.","Japanese engineering is famous.","日本|nihon|Japan / の|no|(of) / 工学|kougaku|engineering / は|wa|(topic) / 有名|yuumei|famous / です|desu|is / 。 = Japanese engineering is famous."],
+  ["工具","こうぐ","kougu","tool (for work)","この工具は重いです。","Kono kougu wa omoi desu.","This tool is heavy.","この|kono|this / 工具|kougu|tool / は|wa|(topic) / 重い|omoi|heavy / です|desu|is / 。 = This tool is heavy."],
+  ["装置","そうち","souchi","device, equipment","この装置は便利です。","Kono souchi wa benri desu.","This device is convenient.","この|kono|this / 装置|souchi|device / は|wa|(topic) / 便利|benri|convenient / です|desu|is / 。 = This device is convenient."],
+  ["開発","かいはつ","kaihatsu","development, to develop","新しい車を開発します。","Atarashii kuruma o kaihatsu shimasu.","We develop a new car.","新しい|atarashii|new / 車|kuruma|car / を|o|(object) / 開発|kaihatsu|development / します|shimasu|to do (polite) / 。 = We develop a new car."],
+  ["顕微鏡","けんびきょう","kenbikyou","microscope","顕微鏡で見ます。","Kenbikyou de mimasu.","I look through a microscope.","顕微鏡|kenbikyou|microscope / で|de|(by) / 見ます|mimasu|to see (polite) / 。 = I look through a microscope."],
+  ["回路","かいろ","kairo","electric circuit","回路を作ります。","Kairo o tsukurimasu.","I build a circuit.","回路|kairo|electric circuit / を|o|(object) / 作ります|tsukurimasu|to make (polite) / 。 = I build a circuit."],
+  ["歯車","はぐるま","haguruma","gear, cogwheel","この工具の歯車は小さいです。","Kono kougu no haguruma wa chiisai desu.","The gear of this tool is small.","この|kono|this / 工具|kougu|tool / の|no|(of) / 歯車|haguruma|gear / は|wa|(topic) / 小さい|chiisai|small / です|desu|is / 。 = The gear of this tool is small."],
+  ["設計","せっけい","sekkei","design, plan (of a machine)","設計は難しくないです。","Sekkei wa muzukashikunai desu.","The design is not difficult.","設計|sekkei|design / は|wa|(topic) / 難しくない|muzukashikunai|not difficult / です|desu|is / 。 = The design is not difficult."],
+  ["性能","せいのう","seinou","performance, capability","この携帯は性能がいいです。","Kono keitai wa seinou ga ii desu.","This mobile phone has good performance.","この|kono|this / 携帯|keitai|mobile phone / は|wa|(topic) / 性能|seinou|performance / が|ga|(subject) / いい|ii|good / です|desu|is / 。 = This mobile phone has good performance."],
+  ["自動","じどう","jidou","automatic","ドアは自動です。","Doa wa jidou desu.","The door is automatic.","ドア|doa|door / は|wa|(topic) / 自動|jidou|automatic / です|desu|is / 。 = The door is automatic."]],
+  [
+   "装置|souchi|device / に|ni|by / よって|yotte|by means of / 、 / 車|kuruma|car / は|wa|(topic) / 速く|hayaku|fast / なりました|narimashita|became / 。 = Thanks to devices, cars became fast.",
+   "国|kuni|country / に|ni|depending on / よって|yotte|depending / 、 / 工具|kougu|tool / の|no|of / 値段|nedan|price / が|ga|(subject) / 変わります|kawarimasu|changes / 。 = The price of tools changes depending on the country.",
+   "顕微鏡|kenbikyou|microscope / で|de|with / 見ます|mimasu|look / 。 = I look through a microscope.",
+   "回路|kairo|circuit / を|o|(object) / 作って|tsukutte|make and / ください|kudasai|please / 。 = Please build a circuit.",
+   "この|kono|this / 工具|kougu|tool / の|no|of / 歯車|haguruma|gear / は|wa|(topic) / 小さい|chiisai|small / です|desu|is / 。 = The gear of this tool is small.",
+   "ドア|doa|door / は|wa|(topic) / 自動|jidou|automatic / です|desu|is / 。 = The door is automatic."
+  ]]
+];
+const GR_P12B=[
+ ["Even with さえ","Noun + さえ","さえ (sae) after a noun means “even”. The speaker gives the smallest or easiest example, so the rest is clear. With a negative ending it means “not even”: 昼ご飯さえ食べませんでした is “I did not even eat lunch”. With a positive ending, 子供さえ知っています means “even a child knows it”.",[["今日","kyou","today"],["は","wa","(topic)"],["昼ご飯","hirugohan","lunch"],["さえ","sae","even"],["食べていません","tabete imasen","have not eaten"],["。","",""]],"I have not even eaten lunch today."],
+ ["Towards and in contrast with に対して","Noun + に対して","に対して (ni taishite) after a noun means “towards” a person or a thing: the action or the feeling goes to that noun. It can also show a contrast between two things: “as opposed to …”.",[["先生","sensei","teacher"],["は","wa","(topic)"],["学生","gakusei","student"],["に対して","ni taishite","towards"],["親切","shinsetsu","kind"],["です","desu","is"],["。","",""]],"The teacher is kind towards students."],
+ ["As a role with として","Noun + として","として (toshite) after a noun means “as”: in the role or position of that noun. 医者として means “as a doctor”. It also means “as a thing”: 日課として means “as a daily routine”.",[["兄","ani","my older brother"],["は","wa","(topic)"],["医者","isha","doctor"],["として","toshite","as"],["病院","byouin","hospital"],["で","de","at"],["働きます","hatarakimasu","works"],["。","",""]],"My older brother works at a hospital as a doctor."],
+ ["About with について","Noun + について","について (ni tsuite) after a noun shows the topic of a book, a talk, a question or a thought: “about …”. 歴史について本を読みます means “I read a book about history”.",[["日本","nihon","Japan"],["の","no","of"],["歴史","rekishi","history"],["について","ni tsuite","about"],["本","hon","book"],["を","o","(object)"],["読みます","yomimasu","read"],["。","",""]],"I read a book about Japanese history."],
+ ["Depending on with によって","Noun + によって","によって (ni yotte) after a noun means “depending on …”: the result is different for each noun. 国によって言葉が変わります means “the language changes depending on the country”. It can also mean “by means of …”: 装置によって means “by a device”.",[["国","kuni","country"],["に","ni","depending on"],["よって","yotte","depending"],["言葉","kotoba","language"],["が","ga","(subject)"],["変わります","kawarimasu","changes"],["。","",""]],"The language changes depending on the country."]
+];
+const STORY_P12B=[
+ {"t":"The body in class","l":[
+  "先生|sensei|teacher / は|wa|(topic) / 授業|jugyou|class / で|de|in / 体|karada|body / の|no|of / 説明|setsumei|explanation / を|o|(object) / します|shimasu|does / 。 = The teacher explains the body in class.",
+  "先生|sensei|teacher / ： / 心臓|shinzou|heart / は|wa|(topic) / 体|karada|body / の|no|of / 中|naka|inside / に|ni|in / あります|arimasu|is / 。 / 脳|nou|brain / は|wa|(topic) / 頭|atama|head / の|no|of / 中|naka|inside / に|ni|in / あります|arimasu|is / 。 = Teacher: The heart is inside the body. The brain is inside the head.",
+  "先生|sensei|teacher / ： / 血管|kekkan|blood vessels / は|wa|(topic) / 体|karada|body / の|no|of / 中|naka|inside / に|ni|in / あります|arimasu|are / 。 / 骨|hone|bone / は|wa|(topic) / 白い|shiroi|white / です|desu|is / 。 = Teacher: Blood vessels are inside the body. Bones are white.",
+  "けん|Ken|Ken (name) / ： / 昨日|kinou|yesterday / 、 / サッカー|sakkaa|soccer / を|o|(object) / した|shita|did / よ|yo|(friendly ending) / 。 / 今日|kyou|today / は|wa|(topic) / 腕|ude|arm / が|ga|(subject) / 痛い|itai|painful / 。 = Ken: I played soccer yesterday. Today my arm hurts.",
+  "ゆい|Yui|Yui (name) / ： / 胃|i|stomach / が|ga|(subject) / 痛い|itai|painful / 。 / 昼ご飯|hirugohan|lunch / さえ|sae|even / 食べなかった|tabenakatta|did not eat / 。 = Yui: My stomach hurts. I did not even eat lunch.",
+  "先生|sensei|teacher / ： / ゆっくり|yukkuri|slowly / 呼吸|kokyuu|breathing / して|shite|do and / ください|kudasai|please / 。 = Teacher: Please breathe slowly.",
+  "ゆい|Yui|Yui (name) / ： / 子供|kodomo|child / さえ|sae|even / 、 / 心臓|shinzou|heart / の|no|’s / 場所|basho|place / を|o|(object) / 知ってる|shitteru|know / よ|yo|(friendly ending) / 。 = Yui: Even children know where the heart is."
+ ],"q":[[1,"Where is the brain?",["Inside the head","Inside the shoulder","Inside the stomach"],0,"Line 2: 脳は頭の中にあります."],[4,"What did Yui not even eat?",["Lunch","Breakfast","Dinner"],0,"Line 5: 昼ご飯さえ食べなかった means “did not even eat lunch”."]]},
+ {"t":"Ken’s grandfather at the hospital","l":[
+  "けん|Ken|Ken (name) / の|no|’s / おじいさん|ojiisan|grandfather / は|wa|(topic) / 病院|byouin|hospital / に|ni|to / 行きます|ikimasu|goes / 。 = Ken’s grandfather goes to the hospital.",
+  "医者|isha|doctor / は|wa|(topic) / おじいさん|ojiisan|grandfather / を|o|(object) / 診察します|shinsatsu shimasu|examines / 。 = The doctor examines the grandfather.",
+  "医者|isha|doctor / ： / 明日|ashita|tomorrow / 、 / 採血|saiketsu|blood draw / を|o|(object) / します|shimasu|do / 。 = Doctor: Tomorrow we draw blood.",
+  "医者|isha|doctor / ： / 症状|shoujou|symptom / は|wa|(topic) / 軽い|karui|light / です|desu|is / 。 / 手術|shujutsu|surgery / は|wa|(topic) / しません|shimasen|do not do / 。 = Doctor: The symptoms are mild. We will not do surgery.",
+  "医者|isha|doctor / ： / 薬|kusuri|medicine / を|o|(object) / 飲めば|nomeba|if drink / 、 / 体|karada|body / が|ga|(subject) / 回復|kaifuku|recovery / します|shimasu|does / 。 = Doctor: If you take the medicine, your body recovers.",
+  "医者|isha|doctor / ： / この|kono|this / 薬|kusuri|medicine / は|wa|(topic) / 副作用|fukusayou|side effect / が|ga|(subject) / あります|arimasu|has / 。 = Doctor: This medicine has a side effect.",
+  "ゆい|Yui|Yui (name) / ： / この|kono|this / 病気|byouki|illness / は|wa|(topic) / 感染|kansen|infection / します|shimasu|does / か|ka|(question) / 。 = Yui: Is this illness infectious?",
+  "医者|isha|doctor / ： / 手|te|hand / を|o|(object) / 消毒|shoudoku|disinfection / して|shite|do and / ください|kudasai|please / 。 = Doctor: Please disinfect your hands."
+ ],"q":[[3,"Will the grandfather have surgery?",["No","Yes","Nobody knows"],0,"Line 4: 手術はしません means “we will not do surgery”."],[7,"What does the doctor ask Yui to do?",["Disinfect her hands","Take a bath","Go home"],0,"Line 8: 手を消毒してください."]]},
+ {"t":"A good habit","l":[
+  "けん|Ken|Ken (name) / は|wa|(topic) / 毎朝|maiasa|every morning / 、 / 腹筋|fukkin|sit-ups / を|o|(object) / します|shimasu|does / 。 = Ken does sit-ups every morning.",
+  "けん|Ken|Ken (name) / ： / 運動|undou|exercise / は|wa|(topic) / 日課|nikka|daily routine / だ|da|is / よ|yo|(friendly ending) / 。 = Ken: Exercise is my daily routine.",
+  "ゆい|Yui|Yui (name) / ： / 毎日|mainichi|every day / 、 / 昼寝|hirune|nap / を|o|(object) / する|suru|do / よ|yo|(friendly ending) / 。 = Yui: I take a nap every day.",
+  "先生|sensei|teacher / ： / 肉|niku|meat / は|wa|(topic) / 脂肪|shibou|fat / が|ga|(subject) / あります|arimasu|has / 。 = Teacher: Meat has fat.",
+  "ゆい|Yui|Yui (name) / は|wa|(topic) / 減量|genryou|weight loss / を|o|(object) / します|shimasu|does / 。 / 体重|taijuu|body weight / を|o|(object) / 見ます|mimasu|checks / 。 = Yui tries to lose weight. She checks her weight.",
+  "先生|sensei|teacher / ： / 夜|yoru|night / は|wa|(topic) / コーヒー|koohii|coffee / を|o|(object) / 飲まない|nomanai|do not drink / ほうがいい|hou ga ii|it is better to / です|desu|is / 。 = Teacher: It is better not to drink coffee at night.",
+  "けん|Ken|Ken (name) / の|no|’s / 兄|ani|older brother / は|wa|(topic) / 喫煙|kitsuen|smoking / を|o|(object) / しません|shimasen|does not do / 。 / けん|Ken|Ken (name) / は|wa|(topic) / 体力|tairyoku|stamina / が|ga|(subject) / あります|arimasu|has / 。 = Ken’s older brother does not smoke. Ken has stamina."
+ ],"q":[[2,"What does Yui do every day?",["She takes a nap","She goes jogging","She cooks"],0,"Line 3: 昼寝をするよ means “takes a nap”."],[5,"What does the teacher advise?",["Do not drink coffee at night","Skip lunch","Do not exercise"],0,"Line 6: 夜はコーヒーを飲まないほうがいいです."]]},
+ {"t":"At the museum","l":[
+  "ゆい|Yui|Yui (name) / と|to|and / けん|Ken|Ken (name) / は|wa|(topic) / 博物館|hakubutsukan|museum / に|ni|to / 行きます|ikimasu|go / 。 = Yui and Ken go to the museum.",
+  "ゆい|Yui|Yui (name) / は|wa|(topic) / 日本|nihon|Japan / の|no|of / 歴史|rekishi|history / について|ni tsuite|about / 本|hon|book / を|o|(object) / 読みました|yomimashita|read / 。 = Yui read a book about Japanese history.",
+  "けん|Ken|Ken (name) / ： / 昔|mukashi|long ago / 、 / 東京|toukyou|Tokyo / は|wa|(topic) / 江戸|Edo|Edo / だった|datta|was / よ|yo|(friendly ending) / 。 = Ken: Long ago Tokyo was Edo.",
+  "ゆい|Yui|Yui (name) / ： / 昔|mukashi|long ago / 、 / 武士|bushi|samurai / が|ga|(subject) / いた|ita|there was / よ|yo|(friendly ending) / 。 = Yui: Long ago there were samurai.",
+  "田中|Tanaka|Tanaka (family name) / 先生|sensei|teacher / ： / これ|kore|this / は|wa|(topic) / 古い|furui|old / 時代|jidai|era / の|no|of / 絵|e|picture / です|desu|is / 。 = Tanaka sensei: This is a picture from an old era.",
+  "ゆい|Yui|Yui (name) / は|wa|(topic) / 戦争|sensou|war / について|ni tsuite|about / 先生|sensei|teacher / に|ni|to / 質問|shitsumon|question / します|shimasu|asks / 。 = Yui asks the teacher a question about the war.",
+  "ゆい|Yui|Yui (name) / ： / 古代|kodai|ancient times / の|no|’s / 歴史|rekishi|history / が|ga|(subject) / 好き|suki|liked / 。 = Yui: I like the history of ancient times.",
+  "けん|Ken|Ken (name) / ： / 現代|gendai|present age / の|no|’s / 東京|toukyou|Tokyo / は|wa|(topic) / 便利|benri|convenient / だ|da|is / ね|ne|(agreement) / 。 = Ken: Tokyo in the present age is convenient."
+ ],"q":[[2,"What was Tokyo long ago?",["Edo","Kyoto","Osaka"],0,"Line 3: 昔、東京は江戸だったよ."],[6,"What does Yui like?",["The history of ancient times","Machines","Medicine"],0,"Line 7: 古代の歴史が好き."]]},
+ {"t":"New machines","l":[
+  "ゆい|Yui|Yui (name) / と|to|and / けん|Ken|Ken (name) / は|wa|(topic) / 新しい|atarashii|new / 工具|kougu|tools / を|o|(object) / 見ます|mimasu|look at / 。 = Yui and Ken look at new tools.",
+  "けん|Ken|Ken (name) / ： / 顕微鏡|kenbikyou|microscope / で|de|with / 見る|miru|see / よ|yo|(friendly ending) / 。 = Ken: I look through a microscope.",
+  "けん|Ken|Ken (name) / ： / 日本|nihon|Japan / の|no|’s / 工学|kougaku|engineering / は|wa|(topic) / 有名|yuumei|famous / だ|da|is / ね|ne|(agreement) / 。 = Ken: Japanese engineering is famous.",
+  "ゆい|Yui|Yui (name) / ： / この|kono|this / 装置|souchi|device / は|wa|(topic) / 性能|seinou|performance / が|ga|(subject) / いい|ii|good / ね|ne|(agreement) / 。 = Yui: This device has good performance.",
+  "ゆい|Yui|Yui (name) / ： / 設計|sekkei|design / は|wa|(topic) / 難しくない|muzukashikunai|is not difficult / よ|yo|(friendly ending) / 。 = Yui: The design is not difficult.",
+  "けん|Ken|Ken (name) / ： / ドア|doa|door / は|wa|(topic) / 自動|jidou|automatic / だ|da|is / ね|ne|(agreement) / 。 = Ken: The door is automatic.",
+  "先生|sensei|teacher / ： / 回路|kairo|circuit / を|o|(object) / 作って|tsukutte|make and / ください|kudasai|please / 。 = Teacher: Please build a circuit.",
+  "先生|sensei|teacher / ： / 装置|souchi|device / に|ni|by / よって|yotte|by means of / 、 / 車|kuruma|car / は|wa|(topic) / 速く|hayaku|fast / なりました|narimashita|became / 。 = Teacher: Thanks to devices, cars became fast."
+ ],"q":[[1,"What does Ken look through?",["A microscope","A window","A door"],0,"Line 2: 顕微鏡で見るよ means “look through a microscope”."],[5,"What is automatic?",["The door","The window","The battery"],0,"Line 6: ドアは自動だね."]]}
+];
+/* Japanese Level 3, Part 12 (themes 11 to 15): science, mathematics, research skills, research verbs and describing ideas. */
+const JA_P12C=[
+ ["Space and matter",
+  [["惑星","わくせい","wakusei","planet","惑星は大きいです。","Wakusei wa ookii desu.","The planet is big.","惑星|wakusei|planet / は|wa|(topic) / 大きい|ookii|big / です|desu|is / 。 = The planet is big."],
+  ["銀河","ぎんが","ginga","galaxy","銀河は広いです。","Ginga wa hiroi desu.","The galaxy is vast.","銀河|ginga|galaxy / は|wa|(topic) / 広い|hiroi|vast / です|desu|is / 。 = The galaxy is vast."],
+  ["重力","じゅうりょく","juuryoku","gravity","月の重力は弱いです。","Tsuki no juuryoku wa yowai desu.","The gravity of the moon is weak.","月|tsuki|moon / の|no|(of) / 重力|juuryoku|gravity / は|wa|(topic) / 弱い|yowai|weak / です|desu|is / 。 = The gravity of the moon is weak."],
+  ["気体","きたい","kitai","gas (state of matter)","この気体は軽いです。","Kono kitai wa karui desu.","This gas is light.","この|kono|this / 気体|kitai|gas / は|wa|(topic) / 軽い|karui|light / です|desu|is / 。 = This gas is light."],
+  ["湿度","しつど","shitsudo","humidity","部屋の湿度は高いです。","Heya no shitsudo wa takai desu.","The humidity of the room is high.","部屋|heya|room / の|no|(of) / 湿度|shitsudo|humidity / は|wa|(topic) / 高い|takai|high / です|desu|is / 。 = The humidity of the room is high."],
+  ["物質","ぶっしつ","busshitsu","substance, matter","これは新しい物質です。","Kore wa atarashii busshitsu desu.","This is a new substance.","これ|kore|this / は|wa|(topic) / 新しい|atarashii|new / 物質|busshitsu|substance / です|desu|is / 。 = This is a new substance."],
+  ["磁石","じしゃく","jishaku","magnet","磁石を使います。","Jishaku o tsukaimasu.","I use a magnet.","磁石|jishaku|magnet / を|o|(object) / 使います|tsukaimasu|to use (polite) / 。 = I use a magnet."],
+  ["酸素","さんそ","sanso","oxygen","この気体は酸素です。","Kono kitai wa sanso desu.","This gas is oxygen.","この|kono|this / 気体|kitai|gas / は|wa|(topic) / 酸素|sanso|oxygen / です|desu|is / 。 = This gas is oxygen."],
+  ["細胞","さいぼう","saibou","cell (of the body)","体には細胞があります。","Karada ni wa saibou ga arimasu.","The body has cells.","体|karada|body / に|ni|(at) / は|wa|(topic) / 細胞|saibou|cells / が|ga|(subject) / あります|arimasu|to have (polite) / 。 = The body has cells."],
+  ["液体","えきたい","ekitai","liquid","水は液体です。","Mizu wa ekitai desu.","Water is a liquid.","水|mizu|water / は|wa|(topic) / 液体|ekitai|liquid / です|desu|is / 。 = Water is a liquid."]],
+  [
+   "月|tsuki|moon / の|no|of / 重力|juuryoku|gravity / は|wa|(topic) / 惑星|wakusei|planet / ほど|hodo|as much as / 強くない|tsuyokunai|is not strong / です|desu|is / 。 = The gravity of the moon is not as strong as that of a planet.",
+   "銀河|ginga|galaxy / は|wa|(topic) / 惑星|wakusei|planet / より|yori|than / 大きい|ookii|big / です|desu|is / 。 = A galaxy is bigger than a planet.",
+   "この|kono|this / 気体|kitai|gas / は|wa|(topic) / 酸素|sanso|oxygen / です|desu|is / 。 = This gas is oxygen.",
+   "部屋|heya|room / の|no|of / 湿度|shitsudo|humidity / は|wa|(topic) / 外|soto|outside / くらい|kurai|about as / 高い|takai|high / です|desu|is / 。 = The humidity of the room is about as high as outside.",
+   "水|mizu|water / は|wa|(topic) / 液体|ekitai|liquid / です|desu|is / 。 = Water is a liquid.",
+   "磁石|jishaku|magnet / を|o|(object) / 使って|tsukatte|use and / 、 / 実験|jikken|experiment / を|o|(object) / します|shimasu|do / 。 = I do an experiment using a magnet."
+  ]],
+ ["Numbers and shapes",
+  [["足す","たす","tasu","to add","二に三を足します。","Ni ni san o tashimasu.","I add three to two.","二|ni|two / に|ni|(to) / 三|san|three / を|o|(object) / 足します|tashimasu|to add (polite) / 。 = I add three to two."],
+  ["掛け算","かけざん","kakezan","multiplication","掛け算は難しいです。","Kakezan wa muzukashii desu.","Multiplication is difficult.","掛け算|kakezan|multiplication / は|wa|(topic) / 難しい|muzukashii|difficult / です|desu|is / 。 = Multiplication is difficult."],
+  ["数字","すうじ","suuji","number, digit","数字を書きます。","Suuji o kakimasu.","I write numbers.","数字|suuji|numbers / を|o|(object) / 書きます|kakimasu|to write (polite) / 。 = I write numbers."],
+  ["式","しき","shiki","formula, equation","この式は難しいです。","Kono shiki wa muzukashii desu.","This formula is difficult.","この|kono|this / 式|shiki|formula / は|wa|(topic) / 難しい|muzukashii|difficult / です|desu|is / 。 = This formula is difficult."],
+  ["図","ず","zu","diagram, figure","図を見てください。","Zu o mite kudasai.","Please look at the diagram.","図|zu|diagram / を|o|(object) / 見て|mite|to see (and) / ください|kudasai|please / 。 = Please look at the diagram."],
+  ["表","ひょう","hyou","table, chart","表に名前を書きます。","Hyou ni namae o kakimasu.","I write a name in the table.","表|hyou|table / に|ni|(in) / 名前|namae|name / を|o|(object) / 書きます|kakimasu|to write (polite) / 。 = I write a name in the table."],
+  ["面積","めんせき","menseki","area (of a surface)","この庭は面積が大きいです。","Kono niwa wa menseki ga ookii desu.","This garden has a large area.","この|kono|this / 庭|niwa|garden / は|wa|(topic) / 面積|menseki|area / が|ga|(subject) / 大きい|ookii|big / です|desu|is / 。 = This garden has a large area."],
+  ["三角","さんかく","sankaku","triangle","これは三角です。","Kore wa sankaku desu.","This is a triangle.","これ|kore|this / は|wa|(topic) / 三角|sankaku|triangle / です|desu|is / 。 = This is a triangle."],
+  ["四角","しかく","shikaku","square, rectangle","テーブルは四角です。","Teeburu wa shikaku desu.","The table is a rectangle.","テーブル|teeburu|table / は|wa|(topic) / 四角|shikaku|rectangle / です|desu|is / 。 = The table is a rectangle."],
+  ["答え","こたえ","kotae","answer","答えは十です。","Kotae wa juu desu.","The answer is ten.","答え|kotae|answer / は|wa|(topic) / 十|juu|ten / です|desu|is / 。 = The answer is ten."]],
+  [
+   "二|ni|two / に|ni|to / 三|san|three / を|o|(object) / 足します|tashimasu|add / 。 = I add three to two.",
+   "掛け算|kakezan|multiplication / の|no|of / 答え|kotae|answer / は|wa|(topic) / 十|juu|ten / です|desu|is / 。 = The answer of the multiplication is ten.",
+   "数字|suuji|number / を|o|(object) / 書いて|kaite|write and / ください|kudasai|please / 。 = Please write the numbers.",
+   "表|hyou|table / と|to|and / 図|zu|diagram / を|o|(object) / 見ます|mimasu|look at / 。 = I look at the table and the diagram.",
+   "この|kono|this / 式|shiki|formula / は|wa|(topic) / 先週|senshuu|last week / ほど|hodo|as much as / 難しくない|muzukashikunai|is not difficult / です|desu|is / 。 = This formula is not as difficult as last week.",
+   "テーブル|teeburu|table / は|wa|(topic) / 四角|shikaku|rectangle / です|desu|is / 。 = The table is a rectangle."
+  ]],
+ ["Study and presentation",
+  [["発言","はつげん","hatsugen","remark, speaking up","明日、授業で発言します。","Ashita, jugyou de hatsugen shimasu.","Tomorrow I speak up in class.","明日|ashita|tomorrow / 、 / 授業|jugyou|class / で|de|(at) / 発言|hatsugen|speaking up / します|shimasu|to do (polite) / 。 = Tomorrow I speak up in class."],
+  ["答案","とうあん","touan","answer sheet","答案を書きます。","Touan o kakimasu.","I write on the answer sheet.","答案|touan|answer sheet / を|o|(object) / 書きます|kakimasu|to write (polite) / 。 = I write on the answer sheet."],
+  ["解釈","かいしゃく","kaishaku","interpretation","先生の解釈を聞きます。","Sensei no kaishaku o kikimasu.","I listen to the teacher’s interpretation.","先生|sensei|teacher / の|no|(of) / 解釈|kaishaku|interpretation / を|o|(object) / 聞きます|kikimasu|to listen (polite) / 。 = I listen to the teacher’s interpretation."],
+  ["要約","ようやく","youyaku","summary","要約を書きます。","Youyaku o kakimasu.","I write a summary.","要約|youyaku|summary / を|o|(object) / 書きます|kakimasu|to write (polite) / 。 = I write a summary."],
+  ["反復","はんぷく","hanpuku","repetition","漢字を反復します。","Kanji o hanpuku shimasu.","I repeat kanji over and over.","漢字|kanji|kanji / を|o|(object) / 反復|hanpuku|repetition / します|shimasu|to do (polite) / 。 = I repeat kanji over and over."],
+  ["参考","さんこう","sankou","reference, help","この本は参考になります。","Kono hon wa sankou ni narimasu.","This book is a useful reference.","この|kono|this / 本|hon|book / は|wa|(topic) / 参考|sankou|reference / に|ni|(into) / なります|narimasu|to become (polite) / 。 = This book is a useful reference."],
+  ["文献","ぶんけん","bunken","literature, written sources","図書館で文献を調べます。","Toshokan de bunken o shirabemasu.","I look up sources at the library.","図書館|toshokan|library / で|de|(at) / 文献|bunken|written sources / を|o|(object) / 調べます|shirabemasu|to look up (polite) / 。 = I look up sources at the library."],
+  ["要点","ようてん","youten","main point","要点を書きます。","Youten o kakimasu.","I write the main points.","要点|youten|main points / を|o|(object) / 書きます|kakimasu|to write (polite) / 。 = I write the main points."],
+  ["発想","はっそう","hassou","idea, way of thinking","これはいい発想です。","Kore wa ii hassou desu.","This is a good idea.","これ|kore|this / は|wa|(topic) / いい|ii|good / 発想|hassou|idea / です|desu|is / 。 = This is a good idea."],
+  ["内容","ないよう","naiyou","content","この本の内容は難しいです。","Kono hon no naiyou wa muzukashii desu.","The content of this book is difficult.","この|kono|this / 本|hon|book / の|no|(of) / 内容|naiyou|content / は|wa|(topic) / 難しい|muzukashii|difficult / です|desu|is / 。 = The content of this book is difficult."]],
+  [
+   "明日|ashita|tomorrow / 、 / 授業|jugyou|class / で|de|in / 発言|hatsugen|remark / します|shimasu|make / 。 = Tomorrow I speak up in class.",
+   "答案|touan|answer sheet / を|o|(object) / 書いて|kaite|write and / ください|kudasai|please / 。 = Please write on the answer sheet.",
+   "先生|sensei|teacher / の|no|’s / 解釈|kaishaku|interpretation / を|o|(object) / 聞きます|kikimasu|listen to / 。 = I listen to the teacher’s interpretation.",
+   "静か|shizuka|quiet / な|na|(links to noun) / 部屋|heya|room / で|de|in / 要約|youyaku|summary / を|o|(object) / 書きます|kakimasu|write / 。 = I write a summary in a quiet room.",
+   "この|kono|this / 本|hon|book / は|wa|(topic) / 参考|sankou|reference / に|ni|(change) / なります|narimasu|becomes / 。 = This book is a useful reference.",
+   "図書館|toshokan|library / で|de|at / 文献|bunken|sources / を|o|(object) / 調べます|shirabemasu|look up / 。 = I look up sources at the library."
+  ]],
+ ["Verbs of research",
+  [["観察","かんさつ","kansatsu","observation, to observe","鳥を観察します。","Tori o kansatsu shimasu.","I observe birds.","鳥|tori|bird / を|o|(object) / 観察|kansatsu|observation / します|shimasu|to do (polite) / 。 = I observe birds."],
+  ["記録","きろく","kiroku","record, to record","結果を記録します。","Kekka o kiroku shimasu.","I record the result.","結果|kekka|result / を|o|(object) / 記録|kiroku|record / します|shimasu|to do (polite) / 。 = I record the result."],
+  ["予想","よそう","yosou","prediction, to predict","結果を予想します。","Kekka o yosou shimasu.","I predict the result.","結果|kekka|result / を|o|(object) / 予想|yosou|prediction / します|shimasu|to do (polite) / 。 = I predict the result."],
+  ["比較","ひかく","hikaku","comparison, to compare","二つを比較します。","Futatsu o hikaku shimasu.","I compare the two.","二つ|futatsu|two things / を|o|(object) / 比較|hikaku|comparison / します|shimasu|to do (polite) / 。 = I compare the two."],
+  ["解決","かいけつ","kaiketsu","solution, to solve","問題を解決します。","Mondai o kaiketsu shimasu.","I solve the problem.","問題|mondai|problem / を|o|(object) / 解決|kaiketsu|solution / します|shimasu|to do (polite) / 。 = I solve the problem."],
+  ["掲示","けいじ","keiji","posting, notice","原稿を掲示します。","Genkou o keiji shimasu.","I post the manuscripts.","原稿|genkou|manuscripts / を|o|(object) / 掲示|keiji|posting / します|shimasu|to do (polite) / 。 = I post the manuscripts."],
+  ["集める","あつめる","atsumeru","to collect, to gather (things)","原稿を集めます。","Genkou o atsumemasu.","I collect manuscripts.","原稿|genkou|manuscripts / を|o|(object) / 集めます|atsumemasu|to collect (polite) / 。 = I collect manuscripts."],
+  ["混ぜる","まぜる","mazeru","to mix","砂糖と水を混ぜます。","Satou to mizu o mazemasu.","I mix sugar and water.","砂糖|satou|sugar / と|to|(and) / 水|mizu|water / を|o|(object) / 混ぜます|mazemasu|to mix (polite) / 。 = I mix sugar and water."],
+  ["凍る","こおる","kooru","to freeze","水が凍ります。","Mizu ga koorimasu.","Water freezes.","水|mizu|water / が|ga|(subject) / 凍ります|koorimasu|to freeze (polite) / 。 = Water freezes."],
+  ["分ける","わける","wakeru","to divide, to separate","二つに分けます。","Futatsu ni wakemasu.","I divide it into two.","二つ|futatsu|two things / に|ni|(into) / 分けます|wakemasu|to divide (polite) / 。 = I divide it into two."]],
+  [
+   "鳥|tori|bird / を|o|(object) / 観察します|kansatsu shimasu|observe / 。 = I observe birds.",
+   "結果|kekka|result / を|o|(object) / 記録します|kiroku shimasu|record / 。 = I record the result.",
+   "問題|mondai|problem / を|o|(object) / 解決すれば|kaiketsu sureba|if solve / 、 / 嬉しい|ureshii|happy / です|desu|am / 。 = If I solve the problem, I will be happy.",
+   "砂糖|satou|sugar / と|to|and / 水|mizu|water / を|o|(object) / 混ぜます|mazemasu|mix / 。 = I mix sugar and water.",
+   "水|mizu|water / は|wa|(topic) / 冬|fuyu|winter / に|ni|in / 凍ります|koorimasu|freezes / 。 = Water freezes in winter.",
+   "原稿|genkou|manuscript / を|o|(object) / 集めて|atsumete|collect and / 、 / 二つ|futatsu|two / に|ni|into / 分けます|wakemasu|divide / 。 = I collect the manuscripts and divide them into two."
+  ]],
+ ["Describing ideas",
+  [["正しい","ただしい","tadashii","correct, right","この答えは正しいです。","Kono kotae wa tadashii desu.","This answer is correct.","この|kono|this / 答え|kotae|answer / は|wa|(topic) / 正しい|tadashii|correct / です|desu|is / 。 = This answer is correct."],
+  ["詳しい","くわしい","kuwashii","detailed, knowing well","先生は歴史に詳しいです。","Sensei wa rekishi ni kuwashii desu.","The teacher knows history well.","先生|sensei|teacher / は|wa|(topic) / 歴史|rekishi|history / に|ni|(about) / 詳しい|kuwashii|knowing well / です|desu|is / 。 = The teacher knows history well."],
+  ["細かい","こまかい","komakai","detailed, fine","説明は細かいです。","Setsumei wa komakai desu.","The explanation is detailed.","説明|setsumei|explanation / は|wa|(topic) / 細かい|komakai|detailed / です|desu|is / 。 = The explanation is detailed."],
+  ["複雑","ふくざつ","fukuzatsu","complicated","この工具は複雑です。","Kono kougu wa fukuzatsu desu.","This tool is complicated.","この|kono|this / 工具|kougu|tool / は|wa|(topic) / 複雑|fukuzatsu|complicated / です|desu|is / 。 = This tool is complicated."],
+  ["単純","たんじゅん","tanjun","simple","この手順は単純です。","Kono tejun wa tanjun desu.","This procedure is simple.","この|kono|this / 手順|tejun|procedure / は|wa|(topic) / 単純|tanjun|simple / です|desu|is / 。 = This procedure is simple."],
+  ["正確","せいかく","seikaku","accurate","時計は正確です。","Tokei wa seikaku desu.","The clock is accurate.","時計|tokei|clock / は|wa|(topic) / 正確|seikaku|accurate / です|desu|is / 。 = The clock is accurate."],
+  ["基本","きほん","kihon","basics, the foundation","基本を練習します。","Kihon o renshuu shimasu.","I practise the basics.","基本|kihon|the basics / を|o|(object) / 練習|renshuu|practice / します|shimasu|to do (polite) / 。 = I practise the basics."],
+  ["十分","じゅうぶん","juubun","enough, sufficient","お金は十分です。","Okane wa juubun desu.","The money is enough.","お金|okane|money / は|wa|(topic) / 十分|juubun|enough / です|desu|is / 。 = The money is enough."],
+  ["重要","じゅうよう","juuyou","important","これは重要な原稿です。","Kore wa juuyou na genkou desu.","This is an important manuscript.","これ|kore|this / は|wa|(topic) / 重要|juuyou|important / な|na|(adjective ending) / 原稿|genkou|manuscript / です|desu|is / 。 = This is an important manuscript."],
+  ["適切","てきせつ","tekisetsu","appropriate","この手順は適切です。","Kono tejun wa tekisetsu desu.","This procedure is appropriate.","この|kono|this / 手順|tejun|procedure / は|wa|(topic) / 適切|tekisetsu|appropriate / です|desu|is / 。 = This procedure is appropriate."]],
+  [
+   "この|kono|this / 答え|kotae|answer / は|wa|(topic) / 正しい|tadashii|correct / です|desu|is / 。 = This answer is correct.",
+   "先生|sensei|teacher / は|wa|(topic) / 歴史|rekishi|history / に|ni|about / 詳しい|kuwashii|knows well / です|desu|is / 。 = The teacher knows history well.",
+   "この|kono|this / 工具|kougu|tool / は|wa|(topic) / 複雑|fukuzatsu|complicated / です|desu|is / 。 = This tool is complicated.",
+   "この|kono|this / 手順|tejun|procedure / は|wa|(topic) / 単純|tanjun|simple / です|desu|is / 。 = This procedure is simple.",
+   "時計|tokei|clock / は|wa|(topic) / 正確|seikaku|accurate / です|desu|is / 。 = My clock is accurate.",
+   "これ|kore|this / は|wa|(topic) / 重要|juuyou|important / な|na|(links to noun) / 原稿|genkou|manuscript / です|desu|is / 。 = This is an important manuscript."
+  ]]
+];
+const STORY_P12C=[
+ {"t":"Looking at the stars","l":[
+  "夜|yoru|night / 、 / ゆい|Yui|Yui (name) / と|to|and / けん|Ken|Ken (name) / は|wa|(topic) / 空|sora|sky / を|o|(object) / 見ます|mimasu|look at / 。 = At night Yui and Ken look at the sky.",
+  "けん|Ken|Ken (name) / ： / 銀河|ginga|galaxy / は|wa|(topic) / 惑星|wakusei|planet / より|yori|than / 大きい|ookii|big / よ|yo|(friendly ending) / 。 = Ken: A galaxy is bigger than a planet.",
+  "ゆい|Yui|Yui (name) / ： / 月|tsuki|moon / の|no|’s / 重力|juuryoku|gravity / は|wa|(topic) / 惑星|wakusei|planet / ほど|hodo|as much as / 強くない|tsuyokunai|is not strong / ね|ne|(agreement) / 。 = Yui: The gravity of the moon is not as strong as that of a planet.",
+  "先生|sensei|teacher / ： / この|kono|this / 気体|kitai|gas / は|wa|(topic) / 酸素|sanso|oxygen / です|desu|is / 。 = Teacher: This gas is oxygen.",
+  "先生|sensei|teacher / ： / 水|mizu|water / は|wa|(topic) / 液体|ekitai|liquid / です|desu|is / 。 = Teacher: Water is a liquid.",
+  "ゆい|Yui|Yui (name) / は|wa|(topic) / 磁石|jishaku|magnet / を|o|(object) / 使って|tsukatte|use and / 、 / 実験|jikken|experiment / を|o|(object) / します|shimasu|does / 。 = Yui does an experiment using a magnet.",
+  "けん|Ken|Ken (name) / ： / 部屋|heya|room / の|no|’s / 湿度|shitsudo|humidity / は|wa|(topic) / 外|soto|outside / くらい|kurai|about as / 高い|takai|high / ね|ne|(agreement) / 。 = Ken: The humidity of the room is about as high as outside.",
+  "先生|sensei|teacher / ： / 体|karada|body / には|ni wa|in / 細胞|saibou|cells / が|ga|(subject) / あります|arimasu|there are / 。 = Teacher: There are cells in the body."
+ ],"q":[[1,"What is bigger than a planet?",["A galaxy","The moon","A magnet"],0,"Line 2: 銀河は惑星より大きいよ."],[4,"What is water, according to the teacher?",["A liquid","A cell","A magnet"],0,"Line 5: 水は液体です."]]},
+ {"t":"Ken’s younger sister and arithmetic","l":[
+  "けん|Ken|Ken (name) / の|no|’s / 妹|imouto|younger sister / は|wa|(topic) / 算数|sansuu|arithmetic / の|no|of / 宿題|shukudai|homework / を|o|(object) / します|shimasu|does / 。 = Ken’s younger sister does her arithmetic homework.",
+  "妹|imouto|younger sister / ： / 十|juu|ten / に|ni|to / 二|ni|two / を|o|(object) / 足す|tasu|add / よ|yo|(friendly ending) / 。 / 答え|kotae|answer / は|wa|(topic) / 十二|juuni|twelve / だ|da|is / よ|yo|(friendly ending) / 。 = Younger sister: I add two to ten. The answer is twelve.",
+  "けん|Ken|Ken (name) / ： / 掛け算|kakezan|multiplication / の|no|’s / 答え|kotae|answer / は|wa|(topic) / 十|juu|ten / だ|da|is / よ|yo|(friendly ending) / 。 = Ken: The answer of the multiplication is ten.",
+  "妹|imouto|younger sister / ： / 数字|suuji|number / を|o|(object) / 書きます|kakimasu|write / 。 = Younger sister: I write the numbers.",
+  "田中|Tanaka|Tanaka (family name) / 先生|sensei|teacher / ： / 表|hyou|table / と|to|and / 図|zu|diagram / を|o|(object) / 見て|mite|look and / ください|kudasai|please / 。 = Tanaka sensei: Please look at the table and the diagram.",
+  "妹|imouto|younger sister / ： / この|kono|this / 式|shiki|formula / は|wa|(topic) / 先週|senshuu|last week / ほど|hodo|as much as / 難しくない|muzukashikunai|is not difficult / よ|yo|(friendly ending) / 。 = Younger sister: This formula is not as difficult as last week.",
+  "ゆい|Yui|Yui (name) / ： / あれ|are|that over there / は|wa|(topic) / 三角|sankaku|triangle / だ|da|is / よ|yo|(friendly ending) / 。 / テーブル|teeburu|table / は|wa|(topic) / 四角|shikaku|rectangle / だ|da|is / ね|ne|(agreement) / 。 = Yui: That is a triangle. The table is a rectangle.",
+  "ゆい|Yui|Yui (name) / ： / この|kono|this / 庭|niwa|garden / は|wa|(topic) / 面積|menseki|area / が|ga|(subject) / 大きい|ookii|big / ね|ne|(agreement) / 。 = Yui: This garden has a large area."
+ ],"q":[[1,"What is ten plus two?",["Twelve","Ten","Twenty"],0,"Line 2: 答えは十二だよ."],[6,"What shape is the table?",["A rectangle","A triangle","A circle"],0,"Line 7: テーブルは四角だね."]]},
+ {"t":"Yui’s presentation","l":[
+  "明日|ashita|tomorrow / 、 / ゆい|Yui|Yui (name) / は|wa|(topic) / 授業|jugyou|class / で|de|in / 発言|hatsugen|remark / します|shimasu|makes / 。 = Tomorrow Yui speaks up in class.",
+  "ゆい|Yui|Yui (name) / は|wa|(topic) / 図書館|toshokan|library / で|de|at / 文献|bunken|sources / を|o|(object) / 調べます|shirabemasu|looks up / 。 = Yui looks up sources at the library.",
+  "ゆい|Yui|Yui (name) / ： / この|kono|this / 本|hon|book / は|wa|(topic) / 参考|sankou|reference / に|ni|to / なる|naru|become / よ|yo|(friendly ending) / 。 = Yui: This book is a useful reference.",
+  "ゆい|Yui|Yui (name) / ： / 要点|youten|main point / を|o|(object) / 書く|kaku|write / よ|yo|(friendly ending) / 。 / 漢字|kanji|kanji / を|o|(object) / 反復する|hanpuku suru|repeat / ね|ne|(agreement) / 。 = Yui: I write the main points. I repeat the kanji over and over.",
+  "けん|Ken|Ken (name) / ： / 静か|shizuka|quiet / な|na|(links to noun) / 部屋|heya|room / で|de|at / 要約|youyaku|summary / を|o|(object) / 書いて|kaite|write / ね|ne|(agreement) / 。 = Ken: Please write a summary in a quiet room.",
+  "ゆい|Yui|Yui (name) / ： / これ|kore|this / は|wa|(topic) / いい|ii|good / 発想|hassou|idea / だ|da|is / ね|ne|(agreement) / 。 = Yui: This is a good idea.",
+  "田中|Tanaka|Tanaka (family name) / 先生|sensei|teacher / ： / 答案|touan|answer sheet / を|o|(object) / 書いて|kaite|write and / ください|kudasai|please / 。 = Tanaka sensei: Please write on the answer sheet.",
+  "田中|Tanaka|Tanaka (family name) / 先生|sensei|teacher / ： / 内容|naiyou|content / は|wa|(topic) / 難しい|muzukashii|difficult / です|desu|is / か|ka|(question) / 。 = Tanaka sensei: Is the content difficult?"
+ ],"q":[[1,"Where does Yui look up sources?",["At the library","At the station","At the shop"],0,"Line 2: 図書館で文献を調べます."],[6,"What does Tanaka sensei ask Yui to write on?",["An answer sheet","A map","A letter"],0,"Line 7: 答案を書いてください."]]},
+ {"t":"A small research project","l":[
+  "ゆい|Yui|Yui (name) / は|wa|(topic) / 公園|kouen|park / で|de|in / 鳥|tori|bird / を|o|(object) / 観察します|kansatsu shimasu|observes / 。 = Yui observes birds in the park.",
+  "ゆい|Yui|Yui (name) / は|wa|(topic) / 結果|kekka|result / を|o|(object) / 記録します|kiroku shimasu|records / 。 = Yui records the result.",
+  "けん|Ken|Ken (name) / ： / 結果|kekka|result / を|o|(object) / 予想する|yosou suru|predict / よ|yo|(friendly ending) / 。 = Ken: I predict the result.",
+  "けん|Ken|Ken (name) / ： / 二つ|futatsu|two / を|o|(object) / 比較する|hikaku suru|compare / ね|ne|(agreement) / 。 = Ken: I compare the two.",
+  "田中|Tanaka|Tanaka (family name) / 先生|sensei|teacher / ： / 原稿|genkou|manuscripts / を|o|(object) / 集めて|atsumete|collect and / 、 / 二つ|futatsu|two / に|ni|into / 分けて|wakete|divide and / ください|kudasai|please / 。 = Tanaka sensei: Please collect the manuscripts and divide them into two.",
+  "ゆい|Yui|Yui (name) / ： / 砂糖|satou|sugar / と|to|and / 水|mizu|water / を|o|(object) / 混ぜる|mazeru|mix / よ|yo|(friendly ending) / 。 / 水|mizu|water / は|wa|(topic) / 冬|fuyu|winter / に|ni|to / 凍る|kooru|freeze / よ|yo|(friendly ending) / 。 = Yui: I mix sugar and water. Water freezes in winter.",
+  "ゆい|Yui|Yui (name) / ： / 問題|mondai|problem / を|o|(object) / 解決すれば|kaiketsu sureba|if I solve / 、 / 嬉しい|ureshii|happy / な|na|(feeling) / 。 = Yui: If I solve the problem, I will be happy.",
+  "けん|Ken|Ken (name) / ： / 原稿|genkou|manuscript / を|o|(object) / 掲示する|keiji suru|post / よ|yo|(friendly ending) / 。 = Ken: I post the manuscripts."
+ ],"q":[[0,"What does Yui observe in the park?",["Birds","Cars","Trains"],0,"Line 1: 鳥を観察します."],[5,"What freezes in winter?",["Water","A book","A magnet"],0,"Line 6: 水は冬に凍るよ."]]},
+ {"t":"Talking with Tanaka sensei","l":[
+  "田中|Tanaka|Tanaka (family name) / 先生|sensei|teacher / は|wa|(topic) / 歴史|rekishi|history / に|ni|about / 詳しい|kuwashii|knows well / です|desu|is / 。 = Tanaka sensei knows history well.",
+  "田中|Tanaka|Tanaka (family name) / 先生|sensei|teacher / ： / この|kono|this / 答え|kotae|answer / は|wa|(topic) / 正しい|tadashii|correct / です|desu|is / 。 = Tanaka sensei: This answer is correct.",
+  "田中|Tanaka|Tanaka (family name) / 先生|sensei|teacher / ： / これ|kore|this / は|wa|(topic) / 重要|juuyou|important / な|na|(links to noun) / 原稿|genkou|manuscript / です|desu|is / 。 = Tanaka sensei: This is an important manuscript.",
+  "ゆい|Yui|Yui (name) / ： / この|kono|this / 工具|kougu|tool / は|wa|(topic) / 複雑|fukuzatsu|complicated / です|desu|is / 。 / 手順|tejun|procedure / は|wa|(topic) / 単純|tanjun|simple / です|desu|is / 。 = Yui: This tool is complicated. The procedure is simple.",
+  "ゆい|Yui|Yui (name) / ： / 私|watashi|my / の|no|’s / 時計|tokei|watch / は|wa|(topic) / 正確|seikaku|accurate / です|desu|is / 。 = Yui: My watch is accurate.",
+  "田中|Tanaka|Tanaka (family name) / 先生|sensei|teacher / ： / 説明|setsumei|explanation / は|wa|(topic) / 細かい|komakai|detailed / です|desu|is / 。 = Tanaka sensei: The explanation is detailed.",
+  "ゆい|Yui|Yui (name) / ： / 基本|kihon|basics / を|o|(object) / 練習します|renshuu shimasu|practise / 。 = Yui: I practise the basics.",
+  "田中|Tanaka|Tanaka (family name) / 先生|sensei|teacher / ： / この|kono|this / 手順|tejun|procedure / は|wa|(topic) / 適切|tekisetsu|appropriate / です|desu|is / 。 = Tanaka sensei: This procedure is appropriate."
+ ],"q":[[1,"What does Tanaka sensei say about the answer?",["It is correct","It is wrong","It is difficult"],0,"Line 2: この答えは正しいです."],[7,"What is appropriate?",["The procedure","The weather","The shop"],0,"Line 8: この手順は適切です."]]}
+];
+JA.push(...JA_P12A,...JA_P12B,...JA_P12C);GR.ja.push(...GR_P12A,...GR_P12B);STORY_JA.push(...STORY_P12A,...STORY_P12B,...STORY_P12C);
+/* JA-PART-12-END */

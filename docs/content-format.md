@@ -2,7 +2,9 @@
 
 Moved from CLAUDE.md sections 6 and 7.
 
-## Content format (content/content.js)
+## Content format (content/parts/*.js)
+
+The content is a set of plain scripts in `content/parts/`, loaded in the order of `content/manifest.js` (one shared global scope, so a part may use names from earlier parts). Each part starts with the line `/*@part NAME*/`. Tools read and write the parts through `tools/lib-content-files.js`. `VIDS`, `PARTS`, `LEVELS`, `CASUAL` are in `parts/meta.js`, `KANJI_JA` in `parts/kanji.js`, `KANA`, `TVREC` and `ACCENT_JA` in `parts/kana-tv-accent.js`.
 
 
 - **Chinese word:** `[word, pinyin, meaning, example, example pinyin, example English, example with word breaks]`
@@ -54,11 +56,11 @@ including a check for words the learner has not met yet), `add-kanji.js` (adds m
 readings from KANJI_JA sources), `validate-content.js` (everything, also run by `npm test`), `check-dictionary.js`
 (`npm run dict`: each word's reading against CC-CEDICT and JMdict; report only; `npm run dict:get` downloads JMdict to `tmp/dict/`). Lesson order: Words, Grammar, Sentences, Story, Quiz, Summary.
 
-1. In `content/content.js`, write the new themes as a new array (for example `const JA5=[...]`, 15 themes × 10 words, each with its 6 sentences),
+1. Create a new part `content/parts/<name>.js` (for example `ja-part-15.js`; first line `/*@part ja-part-15*/`) and add its name to `content/manifest.js` before `"meta"`. In it, write the new themes as a new array (for example `const JA5=[...]`, 15 themes × 10 words, each with its 6 sentences),
    10 grammar points (`const GR_JA3=[...]`) and 15 chapters (`const STORY_JA3=[...]`), following the "Content format" section above.
 2. Append them next to the existing appends: `JA.push(...JA5)`, `STORY_JA.push(...STORY_JA3)`, and
    `GR.ja.push(...GR_JA3)` (next to `GR.ja.push(...GR_JA2)`).
-3. In `content/content.js`, add one entry to `PARTS.ja`, for example `{lv:2,t:34,g:20,n:10}`
+3. In `content/parts/meta.js`, add one entry to `PARTS.ja`, for example `{lv:2,t:34,g:20,n:10}`
    (`t` = number of Japanese themes before this part, `g` = number of Japanese grammar points before it).
 4. Update the matching label in `LEVELS`.
 4a. Run `node tools/add-kanji.js` to add the kanji the new Japanese words use.

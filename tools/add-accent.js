@@ -1,4 +1,4 @@
-/* Adds pitch accent numbers for the Japanese words to content/content.js (the block ACCENT_JA).
+/* Adds pitch accent numbers for the Japanese words to the content parts (the block ACCENT_JA in content/parts/).
    Source: Kanjium accents.txt (CC BY-SA 4.0; accent data by Uros O., see Settings > Credits).
    Usage:  node tools/add-accent.js --get      downloads accents.txt to tmp/accent/ (network)
            node tools/add-accent.js            matches every Japanese word (word and kana reading) and writes the block
@@ -32,11 +32,11 @@ for (const w of words) {
 }
 console.log(`words ${words.length}, with accent ${Object.keys(out).length} without ${missing.length}`);
 if (process.argv.includes("--report")) { console.log(missing.join("  ")); process.exit(0); }
-const f = path.join(__dirname, "..", "content", "content.js");
-let s = fs.readFileSync(f, "utf8"); const crlf = s.includes("\r\n"); if (crlf) s = s.replace(/\r\n/g, "\n");
+const { readContent, writeContent } = require("./lib-content-files");
+let s = readContent();
 const block = `/* ACCENT_JA:start (written by tools/add-accent.js; accent numbers: 0 = flat, n = the pitch drops after mora n) */\nconst ACCENT_JA=${JSON.stringify(out)};\n/* ACCENT_JA:end */\n`;
 const a = s.indexOf("/* ACCENT_JA:start"), b = s.indexOf("/* ACCENT_JA:end */\n");
 s = a >= 0 && b > a ? s.slice(0, a) + block + s.slice(b + "/* ACCENT_JA:end */\n".length) : s.replace(/\n*$/, "\n") + block;
-fs.writeFileSync(f, crlf ? s.replace(/\n/g, "\r\n") : s);
-console.log("written to content/content.js");
+writeContent(s);
+console.log("written to the content parts");
 }

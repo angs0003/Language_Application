@@ -4,8 +4,8 @@ How several agents change the app at the same time without breaking each other. 
 
 ## What forces order
 
-1. **Shared global scope.** The app files share one scope (`APP_FILES` in js/loader.js). Two branches can add the same top-level name in different files; each passes alone and `main` breaks after both merge. `tests/globals.test.js` fails on a duplicate top-level name in `js/*.js`, `config.js` or `content/content.js`.
-2. **`content/content.js`** is one 3 MB file. Two content edits near the same lines conflict. Writers produce JSON patches (`tmp/patches/<lang>-<slice>.json`); one serial step applies them (as `tools/add-word-breaks.js` and `tools/add-accent.js` do).
+1. **Shared global scope.** The app files share one scope (`APP_FILES` in js/loader.js). Two branches can add the same top-level name in different files; each passes alone and `main` breaks after both merge. `tests/globals.test.js` fails on a duplicate top-level name in `js/*.js`, `config.js` or `content/parts/*.js`.
+2. **Content parts.** The content is split into parts (`content/parts/*.js`, order in `content/manifest.js`). Two writers conflict only when they edit the same part, the manifest or `parts/meta.js` (`PARTS`). Writers produce JSON patches (`tmp/patches/<lang>-<slice>.json`); one serial step applies them (as `tools/add-word-breaks.js` and `tools/add-accent.js` do).
 3. **Hot files:** `js/lessons.js`, `js/ui.js`, `js/sections.js`, `index.html`, `tests/phone/screens.js`, `tests/phone/touch-baseline.json`, `tests/helpers.js`. Only one task at a time may lease each of them.
 4. **The merge itself.** After each merge every other open branch must merge `main` and run the tests again.
 
@@ -23,4 +23,4 @@ How several agents change the app at the same time without breaking each other. 
 ## The orchestrator
 
 Should: read the request, call `planner`, show the plan, assign leases, start agents in parallel in one message, read their short reports, run the merge queue, write the owner summary, remove worktrees and branches it created.
-Should not: read `content/content.js` or other large files itself (delegate to Grep or an agent), write a large feature itself after the plan is approved (delegate to an editing agent), or run the full suite in the foreground when `test-runner` can run it in the background.
+Should not: read the content parts or other large files itself (delegate to Grep or an agent), write a large feature itself after the plan is approved (delegate to an editing agent), or run the full suite in the foreground when `test-runner` can run it in the background.

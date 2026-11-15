@@ -2,8 +2,8 @@
    with the app's own meaning for the same word (a token whose text is a taught word of the same language).
    A token is flagged when its meaning shares no content word with any taught meaning of that word, so it may mean something else.
    Usage: node tools/check-word-breaks.js [zh|ja] [--all]   (--all lists every flag; default lists the first 80 per language) */
-const fs = require("fs"), vm = require("vm"), path = require("path");
-const src = fs.readFileSync(path.join(__dirname, "..", "content", "content.js"), "utf8");
+const vm = require("vm");
+const src = require("./lib-content-files").readContent();
 const ctx = {}; vm.createContext(ctx); vm.runInContext(src + "\n;this.__={ZH,JA};", ctx);
 const { PUN } = require("./lib-known");
 const STOP = new Set("a an the to of and or in on at by for is are was be been it as that this with from one s polite past ongoing form used often usually someone something".split(" "));

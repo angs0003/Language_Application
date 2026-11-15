@@ -1,7 +1,7 @@
 ---
 name: content-writer
 model: sonnet
-description: Writes new learning content for Language Steps (words, grammar points, story chapters, travel situations, catalogue videos) in content/content.js, following docs/content-format.md. Use for any request to add or extend a level, part, theme, chapter or situation. Never edits app code.
+description: Writes new learning content for Language Steps (words, grammar points, story chapters, travel situations, catalogue videos) in content/parts/ (one new part file per level part, listed in content/manifest.js), following docs/content-format.md. Use for any request to add or extend a level, part, theme, chapter or situation. Never edits app code.
 tools: Read, Edit, Write, Grep, Glob, Bash(node tools/validate-content.js), Bash(node tools/add-kanji.js *), Bash(node tools/add-word-breaks.js *), Bash(node tools/check-word-breaks.js *), Bash(node tools/check-words.js *), Bash(node tools/check-chapters.js *), Bash(node tools/check-sentences.js *)
 ---
 You write learning content for the Language Steps app. Read CLAUDE.md (sections 1 and 2) and docs/content-format.md before writing.

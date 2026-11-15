@@ -1,7 +1,7 @@
-/* Checks content.js for structural errors. Run: node tools/validate-content.js
+/* Checks the content (content/parts/) for structural errors. Run: node tools/validate-content.js
    Exit code 1 if any error is found. */
 const fs = require("fs"), vm = require("vm"), path = require("path");
-const src = fs.readFileSync(path.join(__dirname, "..", "content", "content.js"), "utf8");
+const src = require("./lib-content-files").readContent();
 const ctx = {}; vm.createContext(ctx);
 vm.runInContext(src + "\n;this.__={ZH,JA,GR,STORY_ZH,STORY_JA,TRIP_JA,TRIP_ZH,VIDS,CASUAL,ACCENT_JA:typeof ACCENT_JA===\"undefined\"?{}:ACCENT_JA};", ctx);
 const { ZH, JA, GR, STORY_ZH, STORY_JA, TRIP_JA, TRIP_ZH, VIDS, CASUAL, ACCENT_JA } = ctx.__;
