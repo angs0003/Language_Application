@@ -44,6 +44,7 @@ module.exports = {
     { name: "Travel situation", covers: ["screenTrip"], open: "openTrip(0)" },
     { name: "My words", covers: ["screenVocab"], open: "openVocab()" },
     { name: "My words: flashcards", covers: ["screenCards"], setup: "{const w=themes(S.lang)[0].words[0];S[S.lang].saved=[{w:w.w,r:w.r,m:w.m,s:'',src:'',b:0,d:0,t:Date.now(),u:Date.now(),tk:null}];}", open: "startCards()" },
+    { name: "My words: practice finished", covers: [], setup: "{const w=themes(S.lang)[0].words[0];S[S.lang].saved=[{w:w.w,r:w.r,m:w.m,s:'',src:'',b:0,d:0,t:Date.now(),u:Date.now(),tk:null}];}", open: "startCards();view.k=view.list.length;render()" },
     { name: "Review session", covers: ["screenReview"], setup: LEARNED, open: "startMixed(true)" },
     { name: "Sounds: tone or pitch question", covers: [], setup: "themes(S.lang).slice(0,4).forEach(t=>t.words.forEach(w=>{S[S.lang].srs[w.w]={b:3,d:Date.now()+1e9,u:Date.now()};}));", open: "startSounds()" },
     { name: "Test out", covers: ["screenTest"], open: "startTest(0)" },

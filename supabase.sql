@@ -25,12 +25,16 @@ create table if not exists public.word_progress (
   saved_box int not null default 0,
   saved_due timestamptz,
   saved_at timestamptz,
+  lapses int not null default 0,
+  saved_lapses int not null default 0,
   sentence_tokens jsonb,
   updated_at timestamptz not null default now(),
   primary key (user_id, lang, word)
 );
 
 alter table public.word_progress add column if not exists sentence_tokens jsonb;
+alter table public.word_progress add column if not exists lapses int not null default 0;
+alter table public.word_progress add column if not exists saved_lapses int not null default 0;
 
 -- 3. One row per finished item: chapter, trip, trip_open, podcast, grammar.
 create table if not exists public.activity (

@@ -90,7 +90,7 @@ function startCards(){const l=S.lang,due=savedDue(l),list=(due.length?due:savedL
 function gradeCard(v,ok){const x=v.list[v.k];srsStep(x,ok);v.res[v.k]=ok;save();buzz(ok?30:[40,60,40]);v.k++;v.show=false;render();window.scrollTo(0,0);}
 function screenCards(){
   const v=view,l=S.lang;const r={row:"title",title:"⭐ My words",back:{label:"Back",fn:goHome},main:""};
-  if(v.k>=v.list.length){const c=v.res.filter(Boolean).length;r.prog=`<div class="ptext">Practice finished</div>`;r.main=`<div class="card tint"><h2>✅ Practice finished</h2><p style="margin:0">You knew ${c} of ${v.list.length} words. Words you did not know come back today.</p></div>`;r.next={label:"Go to home",fn:goHome};return r;}
+  if(v.k>=v.list.length){const c=v.res.filter(Boolean).length;r.prog=`<div class="ptext">Practice finished</div>`;r.main=`<div class="card tint"><h2>✅ Practice finished</h2><p style="margin:0">You knew ${c} of ${v.list.length} words. Words you did not know come back today. Words you find hard come back sooner.</p></div>`;r.next={label:"Go to home",fn:goHome};return r;}
   const x=v.list[v.k];
   r.prog=`<div class="ptext">Card ${v.k+1} of ${v.list.length}</div><div class="bar"><i style="width:${Math.round(v.k/v.list.length*100)}%"></i></div>`;
   let h=`<div class="card">${glyph(l,{w:x.w})}<p class="center"><button class="play" aria-label="Play audio" title="Play audio" data-a="${A(()=>say(x.w,l))}">${PLAY}</button></p>`;

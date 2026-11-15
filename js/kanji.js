@@ -19,7 +19,7 @@ function toHira(r){
 }
 const hasKanji=s=>/[\u4e00-\u9fff]/.test(s);
 const kStore=k=>S.ja[k]||(S.ja[k]={});
-function kSet(store,key,ok){const st=kStore(store),e=st[key]||{b:0,d:0};e.u=Date.now();e.b=ok?Math.min(5,(e.b||0)+1):1;e.d=Date.now()+(ok?INTERVAL[e.b]*DAY:0);st[key]=e;}
+function kSet(store,key,ok){const st=kStore(store),e=st[key]||{b:0,d:0};srsStep(e,ok,2);st[key]=e;}
 const kLearned=c=>{const e=(S.ja.kanji||{})[c];return !!e&&e.b>=2;};
 const kSeen=c=>!!(S.ja.kanji||{})[c];
 const kanaLearned=ch=>{const e=(S.ja.kana||{})[ch];return !!e&&e.b>=2;};
