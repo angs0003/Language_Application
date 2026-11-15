@@ -36,6 +36,7 @@ Read this file first. Then read only what the task needs (each file is short):
 | Content (words, stories, grammar, videos, travel) | docs/content-format.md |
 | Which file does what, which test covers what | docs/files.md |
 | Research, plans, agent team | docs/research/, docs/claude-code-team.md, docs/decisions/ |
+| Several agents or branches at once | docs/parallel-work.md (file leases, docs notes, tests by file, merge queue) |
 | Planned work | docs/roadmap.md |
 
 ## 3. Design rules (summary; full text in docs/design-rules.md)
@@ -87,7 +88,7 @@ The steps for a part of 150 words (themes, grammar points, chapters, kanji, word
 Commands (`.claude/commands/`): `/add-part`, `/check-content`, `/design-check`, `/release`, `/add-video`, `/curate-videos`,
 `/retro`, `/maintain`, `/ux-review`, `/content-report` (local only), `/content-gaps` (safe for public logs), `/ship` (pull request, CI, merge after the owner says so, cleanup),
 `/shot` (screenshots of any screen at the phone sizes).
-Subagents (`.claude/agents/`, 13, each with a `model:` line: opus for `planner`, `researcher`, `coach`, `content-reviewer`; haiku for `test-runner`, `pr-watcher`, `content-checker`; sonnet for the rest): `planner` (read-only; writes the plan before any change), `researcher` (web research with sources; writes only `docs/research/`), `content-writer`, `content-checker` (runs the automatic content checks), `content-reviewer` (naturalness and consistency on a sample, at most 2 rounds), `screen-verifier` (screenshots against the design rules),
+Subagents (`.claude/agents/`, 14, each with a `model:` line: opus for `planner`, `researcher`, `coach`, `content-reviewer`; haiku for `test-runner`, `pr-watcher`, `content-checker`; sonnet for the rest): `planner` (read-only; writes the plan before any change), `researcher` (web research with sources; writes only `docs/research/`), `content-writer`, `content-checker` (runs the automatic content checks), `content-reviewer` (naturalness and consistency on a sample, at most 2 rounds), `screen-verifier` (screenshots against the design rules), `docs-keeper` (the only agent that edits CLAUDE.md and shared docs, from notes in `tmp/doc-notes/`),
 `ui-engineer`, `test-runner`, `pr-watcher` (opens a draft pull request and reports checks; never merges), `coach`, `security-reviewer` (runs inside `/release`), `video-curator`
 (checks videos and writes the VIDS entry text; read-only, the content-writer adds approved entries), `data-engineer` (owns supabase.sql, js/sync.js, normalize() defaults and the sync tests).
 Hooks (`.claude/settings.json`, scripts in `.claude/hooks/`): the content validator runs after edits to `content/content.js`.

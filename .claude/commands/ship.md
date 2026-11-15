@@ -11,4 +11,6 @@ Use `tools/gh.js` for every GitHub step (it needs no gh CLI and never prints the
 6. If the merge is refused because of a conflict: merge `origin/main` into the branch, resolve the conflict, run all checks, push, and run step 5 again.
 7. Tell the owner in a short numbered summary: what changed, the pull request link and merge state, the Deploy result, and what was deleted. Leave files and branches that are not yours.
 
+Several pull requests at once (merge queue, docs/parallel-work.md): merge one at a time, oldest first, each only after the owner said to merge it. After each merge, for the next branch: `git merge origin/main`, `npm test` (and `npm run test:phone` for interface changes), push, `node tools/gh.js status <number>`, then merge. Do not merge the next one while the previous Deploy is running.
+
 Never push to `main`, never run the content upload, never change `CACHE` in `sw.js` (CLAUDE.md sections 8 and 12). The hooks in `.claude/hooks` block these.
