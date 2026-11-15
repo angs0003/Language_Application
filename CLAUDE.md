@@ -38,6 +38,7 @@ Read this file first. Then read only what the task needs (each file is short):
 | Research, plans, agent team | docs/research/, docs/claude-code-team.md, docs/decisions/ |
 | Several agents or branches at once | docs/parallel-work.md (file leases, docs notes, tests by file, merge queue) |
 | Planned work | docs/roadmap.md |
+| Changes waiting for the owner (protected files: guards, workflows, settings) | docs/proposed/README.md |
 
 ## 3. Design rules (summary; full text in docs/design-rules.md)
 

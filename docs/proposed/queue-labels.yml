@@ -1,0 +1,73 @@
+name: Queue labels
+# PROPOSED workflow (not active). To enable it, the owner moves it:  git mv docs/proposed/queue-labels.yml .github/workflows/queue-labels.yml
+# Keeps one label on each issue that shows where it is in the work queue (CLAUDE.md section 12):
+#   needs-plan   an issue or comment asks "@claude" and no plan was posted yet
+#   plan-posted  a plan was posted and waits for the owner
+#   approved     the owner commented "@claude approved"
+#   pr-open      a pull request with "Closes #N" is open
+# Plus two labels that are set by hand: needs-owner (a decision is needed) and size:small (no plan needed).
+# No AI runs here and no repository file changes: it only sets labels, with the workflow token.
+# Comment text is untrusted: it is passed in environment variables and never put into a command.
+on:
+  issues:
+    types: [opened]
+  issue_comment:
+    types: [created]
+  pull_request:
+    types: [opened, reopened]
+
+permissions:
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: queue-labels-${{ github.event.issue.number || github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      EVENT: ${{ github.event_name }}
+      ISSUE: ${{ github.event.issue.number }}
+      ASSOC: ${{ github.event.comment.author_association }}
+      ISSUE_BODY: ${{ github.event.issue.body }}
+      COMMENT_BODY: ${{ github.event.comment.body }}
+      PR_BODY: ${{ github.event.pull_request.body }}
+    steps:
+      - name: Make sure the labels exist
+        run: |
+          gh label create needs-plan --color FBCA04 --description "Waiting for a plan" --force
+          gh label create plan-posted --color 0E8A16 --description "Plan posted, waiting for the owner" --force
+          gh label create approved --color 1D76DB --description "Owner approved the plan" --force
+          gh label create pr-open --color 5319E7 --description "A pull request is open" --force
+          gh label create needs-owner --color D93F0B --description "A decision of the owner is needed" --force
+          gh label create "size:small" --color C5DEF5 --description "Small fix, no plan needed" --force
+      - name: Set the label
+        run: |
+          set_state() { # $1 = label to add, the other state labels are removed
+            for l in needs-plan plan-posted approved; do [ "$l" != "$1" ] && gh issue edit "$ISSUE" --remove-label "$l" >/dev/null 2>&1 || true; done
+            gh issue edit "$ISSUE" --add-label "$1"
+          }
+          case "$EVENT" in
+            issues)
+              case "$ISSUE_BODY" in *@claude*) set_state needs-plan;; esac ;;
+            issue_comment)
+              case "$ASSOC" in
+                OWNER|MEMBER|COLLABORATOR)
+                  case "$COMMENT_BODY" in
+                    *"@claude approved"*) set_state approved ;;
+                    *@claude*) set_state needs-plan ;;
+                  esac ;;
+                *)
+                  case "$COMMENT_BODY" in *"to build this plan"*) set_state plan-posted ;; esac ;;
+              esac ;;
+            pull_request)
+              for n in $(printf '%s' "$PR_BODY" | grep -oiE '(closes|fixes|resolves) #[0-9]+' | grep -oE '[0-9]+' | sort -u); do
+                gh issue edit "$n" --add-label pr-open >/dev/null 2>&1 || true
+                gh issue edit "$n" --remove-label approved >/dev/null 2>&1 || true
+              done ;;
+          esac
