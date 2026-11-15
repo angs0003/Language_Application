@@ -98,42 +98,88 @@ function screenTest(){
 }
 
 /* Placement */
-/* Placement: an adaptive search instead of one theme after another (docs/research/placement-test.md).
-   The learner knows the first s themes, s from 0 to the number of themes. v.post[s] is the probability of each s. Each question is one word from the theme in the middle of
-   the probability (so each answer halves the range). The answer chances for a known and an unknown theme: correct 0.9 and 0.16 (a guess of 1 in 4, made by about 2 in 3 of the learners who do not know the word), "I do not know" 0.03 and 0.42, wrong 0.07 and 0.42. It stops after at least 6 questions when 90% of the probability lies within 7% of the themes (at least 10), after 20 questions, or when the learner chooses "Finish now".
-   The starting theme is the 10th percentile, so a wrong placement errs towards easier themes. */
-const PLACE={min:6,max:20,about:12,width:n=>Math.max(10,Math.round(n*0.07))};
+/* Placement: an adaptive search instead of one theme after another (docs/research/placement-test.md, docs/features/placement-quiz.md). Two parts.
+   The learner knows the first s themes, s from 0 to the number of themes. Part 1 (words): v.post[s] is the probability of each s. Each question is one word from the theme in the middle of
+   the probability (so each answer halves the range). Part 2 (sentences): v.postS[s] is the same for sentences, over the themes 0 to (word 95th percentile + 5), starting flat.
+   The answer chances for a known and an unknown theme are in PLACE.lk: words and fill the blank (a guess of 1 in 4, made by about 2 in 3 of the learners who do not know the word), and the tile types (read and build the English, listen and build, build the sentence).
+   Each part stops when 90% of the probability lies within 7% of the themes (at least 10) after its minimum, or at its maximum, or when the learner chooses "Finish now".
+   The starting theme is the 10th percentile of the sentence result (the word result is the upper limit), so a wrong placement errs towards easier themes. */
+const PLACE={min:4,minS:4,maxW:8,maxS:6,max:14,about:12,width:n=>Math.max(10,Math.round(n*0.07)),
+  lk:{w:{ok:[0.9,0.16],dk:[0.03,0.42],no:[0.07,0.42]},b:{ok:[0.85,0.16],dk:[0.03,0.42],no:[0.12,0.42]},t:{ok:[0.8,0.03],dk:[0.04,0.55],no:[0.16,0.42]}}};
+const PLACE_TYPES=["blank","toEn","listen","build"];
 const placeQuant=(p,x)=>{let c=0;for(let s=0;s<p.length;s++){c+=p[s];if(c>=x-1e-9)return s;}return p.length-1;};
+const placeCount=(v,part)=>v.qs.filter(q=>q.part===part&&q.answered).length;
 function placeUpdate(v,q){
   if(q.upd||q.unit==null||!q.answered)return;q.upd=true;
-  const lk=q.correct?[0.9,0.16]:q.dk?[0.03,0.42]:[0.07,0.42];let tot=0;
-  v.post=v.post.map((pr,s)=>{const x=pr*(s>q.unit?lk[0]:lk[1]);tot+=x;return x;});v.post=v.post.map(x=>x/tot);
+  const c=PLACE.lk[q.type==="meaning"?"w":q.type==="blank"?"b":"t"],lk=q.correct?c.ok:q.dk?c.dk:c.no;let tot=0;
+  const k=q.part===2?"postS":"post";
+  v[k]=v[k].map((pr,s)=>{const x=pr*(s>q.unit?lk[0]:lk[1]);tot+=x;return x;});v[k]=v[k].map(x=>x/tot);
+}
+/* One sentence question of the given type at theme t (or the next lower theme that has a fitting sentence). A sentence is used once per session (v.used). */
+function placeSentProbe(v,type,t){
+  const l=S.lang;
+  for(let k=0;k<PLACE_TYPES.length;k++){
+    const ty=PLACE_TYPES[(Math.max(0,PLACE_TYPES.indexOf(type))+k)%4];
+    for(let u=t;u>=0;u--){
+      const th=CUR[l][u],sents=(th.sents||[]).filter(s=>!v.used.has(s.english));let q=null;
+      if(ty==="blank"){
+        for(const s of shuffle(sents)){const n=contentToks(s).length;if(n<2||n>8)continue;const w=th.words.find(x=>s.tokens.some(z=>z[0]===x.w));if(!w)continue;q=mkBlank(l,s,w,poolFor(l,th.words));if(q)break;}
+      }else{
+        const s=shuffle(sents.filter(x=>{const n=contentToks(x).length;return n>=2&&n<=6;}))[0];
+        if(s)q=mkBuild(l,s,ty,poolFor(l,th.words));
+      }
+      if(q){v.used.add(q.sent.english);q.unit=u;q.part=2;return q;}
+    }
+  }
+  return null;
 }
 function placeProbe(v){
-  const l=S.lang,n=CUR[l].length,t=Math.min(placeQuant(v.post,0.5),n-1),ws=CUR[l][t].words,seen=new Set(v.qs.map(q=>q.word&&q.word.w));
-  const pool=ws.filter(w=>!seen.has(w.w)),w=shuffle(pool.length?pool:ws)[0],q=mkQ("meaning",w,l);q.unit=t;return q;
-}
-function placeDone(v){
-  const n=v.qs.filter(q=>q.answered).length;if(n>=PLACE.max)return true;
-  return n>=PLACE.min&&placeQuant(v.post,0.95)-placeQuant(v.post,0.05)<=PLACE.width(CUR[S.lang].length);
-}
-function placeFinish(v,q){placeUpdate(v,q);v.res={start:placeQuant(v.post,0.10),lo:placeQuant(v.post,0.05),hi:placeQuant(v.post,0.95),n:v.qs.filter(x=>x.answered).length};v.finished=true;}
-function startPlacement(){
   const l=S.lang,n=CUR[l].length;
-  view={s:"place",qs:[],i:0,streak:0,finished:false,post:new Array(n+1).fill(1/(n+1))};view.qs.push(placeProbe(view));
+  if(v.part===2){
+    const t=Math.min(placeQuant(v.postS,0.5),n-1),q=placeSentProbe(v,PLACE_TYPES[v.qs.filter(x=>x.part===2).length%4],t);
+    if(q)return q;
+  }
+  const t=Math.min(placeQuant(v.part===2?v.postS:v.post,0.5),n-1),ws=CUR[l][t].words,seen=new Set(v.qs.map(q=>q.word&&q.word.w));
+  const pool=ws.filter(w=>!seen.has(w.w)),w=shuffle(pool.length?pool:ws)[0],q=mkQ("meaning",w,l);q.unit=t;q.part=v.part;return q;
+}
+/* True when the quiz is over. The end of part 1 starts part 2 and returns false. */
+function placeDone(v){
+  const l=S.lang,wd=PLACE.width(CUR[l].length);
+  if(v.part===1){
+    const n=placeCount(v,1);
+    if(n<PLACE.maxW&&!(n>=PLACE.min&&placeQuant(v.post,0.95)-placeQuant(v.post,0.05)<=wd))return false;
+    const k=Math.min(CUR[l].length,placeQuant(v.post,0.95)+5);v.part=2;v.postS=new Array(k+1).fill(1/(k+1));return false;
+  }
+  const n=placeCount(v,2);if(n>=PLACE.maxS)return true;
+  return n>=PLACE.minS&&placeQuant(v.postS,0.95)-placeQuant(v.postS,0.05)<=wd;
+}
+function placeFinish(v,q){
+  placeUpdate(v,q);const nS=placeCount(v,2),p=nS?v.postS:v.post;
+  v.res={start:Math.min(placeQuant(p,0.10),placeQuant(v.post,0.95)),lo:placeQuant(p,0.05),hi:placeQuant(p,0.95),wx:placeQuant(v.post,0.5),sx:nS?placeQuant(v.postS,0.5):null,nS,n:placeCount(v,1)+nS};v.finished=true;
+}
+function placeState(){const n=CUR[S.lang].length;return {s:"place",part:1,qs:[],i:0,streak:0,finished:false,used:new Set(),post:new Array(n+1).fill(1/(n+1)),postS:null};}
+function startPlacement(){
+  view=placeState();view.qs.push(placeProbe(view));
+  render();window.scrollTo(0,0);
+}
+/* Opens a placement screen directly (tests/phone/screens.js): type is "blank", "toEn", "listen", "build" (a sentence question at Theme 1) or "result". */
+function placeOpenAt(type){
+  const n=CUR[S.lang].length;view=placeState();view.part=2;view.postS=new Array(n+1).fill(1/(n+1));
+  if(type==="result"){view.res={start:20,lo:15,hi:30,wx:30,sx:24,nS:6,n:14};view.finished=true;}
+  else view.qs.push(placeSentProbe(view,type,0));
   render();window.scrollTo(0,0);
 }
 function screenPlace(){
   const l=S.lang,v=view;
   if(v.finished){
-    const {start,lo,hi,n}=v.res,nt=CUR[l].length,lvn=t=>{const x=LEVELS[l][lvOfTheme(l,Math.min(t,nt-1))-1];return x?x[0]:"";};
+    const {start,lo,hi,n,wx,sx,nS}=v.res,nt=CUR[l].length,lvn=t=>{const x=LEVELS[l][lvOfTheme(l,Math.min(t,nt-1))-1];return x?x[0]:"";};
     return {row:"title",title:"Placement quiz",prog:`<div class="ptext">Placement quiz: finished</div><div class="psub">Questions answered: ${n}</div><div class="bar"><i style="width:100%"></i></div>`,
-      main:`<div class="card"><h2>Result</h2><p>Your starting theme is Theme ${start+1}${start<nt?", "+esc(CUR[l][start].title):", "+esc(AI_THEMES[0])}.</p><p class="small muted">About 90% sure that your level is between Theme ${lo+1} and Theme ${hi+1}${lvn(start)?" ("+esc(lvn(start))+")":""}. ${n<PLACE.min?"You finished early, so this is a rough estimate.":""} You can start at any theme later from All themes.</p>${start?`<p>Themes 1 to ${start} are marked as learned. Their words are added to your review list, spread over the next 4 weeks.</p>`:"<p>No themes are marked as learned.</p>"}</div>`,
+      main:`<div class="card"><h2>Result</h2><p>Words: ${wx<1?"you do not know the words of Theme 1 yet.":`you know the words of about Themes 1 to ${wx}.`}</p>${sx==null?"":`<p>Sentences: ${sx<1?"you cannot use the sentences of Theme 1 yet.":`you can use the sentences of about Themes 1 to ${sx}.`}</p>`}<p>Your starting theme is Theme ${start+1}${start<nt?", "+esc(CUR[l][start].title):", "+esc(AI_THEMES[0])}.</p><p class="small muted">About 90% sure that your level is between Theme ${lo+1} and Theme ${hi+1}${lvn(start)?" ("+esc(lvn(start))+")":""}. ${nS<PLACE.minS?"You finished early, so this is a rough estimate.":""} You can start at any theme later from All themes.</p>${start?`<p>Themes 1 to ${start} are marked as learned. Their words are added to your review list, spread over the next 4 weeks.</p>`:"<p>No themes are marked as learned.</p>"}</div>`,
       back:{label:"Back",dis:true},next:{label:"Save and go to home",fn:()=>{const st=S[l];st.placed=true;for(let u=0;u<start;u++)CUR[l][u].words.forEach((w,wi)=>{if(!S[l].srs[w.w])S[l].srs[w.w]={b:3,d:Date.now()+((u*7+wi*3)%28)*DAY,u:Date.now()};});save();goHome();}}};
   }
-  const q=v.qs[v.i];view.q=q;const est=Math.min(PLACE.max,Math.max(PLACE.about,v.i+3));
+  const q=v.qs[v.i];view.q=q;const est=Math.min(PLACE.max,Math.max(PLACE.about,v.i+3)),pt=q.part===2?"part 2 of 2: sentences":"part 1 of 2: words";
   const r={row:"title",title:"Placement quiz",exit:true,
-    prog:`<div class="ptext">Placement quiz: question ${v.i+1} of about ${est}</div><div class="psub">At most ${PLACE.max} questions. No timer.</div><div class="bar"><i style="width:${Math.round((v.i+1)/est*100)}%"></i></div>`,
+    prog:`<div class="ptext">Placement quiz, ${pt}. Question ${v.i+1} of about ${est}</div><div class="psub">At most ${PLACE.max} questions. No timer.</div><div class="bar"><i style="width:${Math.round((v.i+1)/est*100)}%"></i></div>`,
     main:`<p style="text-align:right;margin:-8px 0 -6px"><button class="btn link" style="min-height:44px;padding:4px 8px;width:auto" data-a="${A(()=>{placeFinish(v,q);render();window.scrollTo(0,0);})}">Finish now</button></p><div class="card">${qHTML(q,{noAI:true})}</div>`,back:{label:"Back",fn:()=>{if(v.i===0){view.confirm=true;render();window.scrollTo(0,0);}else{v.i--;render();window.scrollTo(0,0);}}}};
   if(!q.answered)r.next={label:"Check answer",fn:()=>{checkQ(q);render();},dis:!canCheck(q)};
   else r.next={label:"Continue",fn:()=>{placeUpdate(v,q);if(v.i<v.qs.length-1)v.i++;else if(placeDone(v))placeFinish(v,q);else{v.qs.push(placeProbe(v));v.i++;}render();window.scrollTo(0,0);}};

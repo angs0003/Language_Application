@@ -47,7 +47,12 @@ module.exports = {
     { name: "Review session", covers: ["screenReview"], setup: LEARNED, open: "startMixed(true)" },
     { name: "Sounds: tone or pitch question", covers: [], setup: "themes(S.lang).slice(0,4).forEach(t=>t.words.forEach(w=>{S[S.lang].srs[w.w]={b:3,d:Date.now()+1e9,u:Date.now()};}));", open: "startSounds()" },
     { name: "Test out", covers: ["screenTest"], open: "startTest(0)" },
-    { name: "Placement quiz", covers: ["screenPlace"], open: "startPlacement()" }
+    { name: "Placement quiz", covers: ["screenPlace"], open: "startPlacement()" },
+    { name: "Placement quiz: fill the blank", covers: [], open: "placeOpenAt('blank')" },
+    { name: "Placement quiz: read and build the English", covers: [], open: "placeOpenAt('toEn')" },
+    { name: "Placement quiz: listen and build", covers: [], open: "placeOpenAt('listen')" },
+    { name: "Placement quiz: build the sentence", covers: [], open: "placeOpenAt('build')" },
+    { name: "Placement quiz: result", covers: [], open: "placeOpenAt('result')" }
   ],
   /* Functions that are not screens of their own, or that need something the test cannot give. Give the reason. */
   skip: {
