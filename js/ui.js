@@ -22,9 +22,9 @@ const ICONS={
  review:'<path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/>', chevd:'<path d="M6 9l6 6 6-6"/>',
 };
 function ico(n,size=22,extra=""){return `<svg class="ico" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" ${extra}>${ICONS[n]||""}</svg>`;}
-const STATUS={ok:'<span class="st st-ok" aria-label="Done">'+'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg></span>',
- half:'<span class="st st-half" aria-label="In progress"></span>',todo:'<span class="st st-todo" aria-label="Not started"></span>',
- no:'<span class="st st-no" aria-label="Incorrect"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" aria-hidden="true"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg></span>'};
+const STATUS={ok:'<span class="st st-ok" role="img" aria-label="Done">'+'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg></span>',
+ half:'<span class="st st-half" role="img" aria-label="In progress"></span>',todo:'<span class="st st-todo" role="img" aria-label="Not started"></span>',
+ no:'<span class="st st-no" role="img" aria-label="Incorrect"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" aria-hidden="true"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg></span>'};
 const EMO_ICON={"🔊":"speaker","▶️":"play","▶":"play","⏸️":"pause","⏹️":"stop","⏮️":"prev","⏭️":"next","🔁":"loop","⭐":"star","⏪":"rew"};
 const EMO_STATUS={"✅":"ok","🟡":"half","⭕":"todo","❌":"no"};
 /* Removes emoji from visible text: meaningful ones become line icons or status marks, the rest are dropped. */

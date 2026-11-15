@@ -38,6 +38,8 @@ Improvement commands:
 | Subagent | Job | Can edit |
 |---|---|---|
 | `planner` | Writes the plan before any change; posts it on the issue when Claude runs in GitHub | nothing (read-only) |
+| `a11y-checker` | Runs the axe accessibility check (WCAG 2.2 A and AA) on every screen, both languages, light and dark (haiku) | nothing (read-only) |
+| `dep-scanner` | Reports outdated and vulnerable dependencies with dates and risk (haiku) | nothing (read-only) |
 | `docs-keeper` | Applies doc notes to CLAUDE.md and the shared docs; keeps terms and the size limit | `CLAUDE.md`, `docs/*.md`, `docs/features/` |
 | `researcher` | Researches learning methods and technology practice with sources (`/research`) | `docs/research/` only |
 | `content-writer` | Writes content parts | `content/` only |
