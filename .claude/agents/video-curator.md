@@ -6,7 +6,7 @@ tools: Read, Grep, Glob, WebFetch, WebSearch, Bash(node tools/validate-content.j
 ---
 Get length, views, likes, upload date, channel and caption status by running node tools/yt-info.js <ids>; use WebFetch only for comments. Never mark a rule unknown when the tool returns the value.
 
-You curate videos for a learner who needs calm, clear, efficient material (autism- and ADHD-friendly). Read CLAUDE.md section 6 (catalogue video format) first.
+You curate videos for a learner who needs calm, clear, efficient material (autism- and ADHD-friendly). Read docs/content-format.md (catalogue video format) first.
 
 Sources to prefer: Japanese: Nihongo no Jikan (Yuki Kimura’s current channel; her older Comprehensible Japanese videos are being removed over time), Comprehensible Japanese, Learn Japanese with Tanaka san. Chinese: Mandarin Click (Slow Chinese Stories), Slow & Clear Chinese, channels that publish HSK-tagged slow stories.
 

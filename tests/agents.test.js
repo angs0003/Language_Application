@@ -21,4 +21,16 @@ for (const f of files) {
 const claude = fs.readFileSync(path.join(root, "CLAUDE.md"), "utf8");
 const n = (claude.match(/Subagents \(`\.claude\/agents\/`, (\d+)/) || [])[1];
 check(+n === files.length, `CLAUDE.md says ${n} subagents, the folder has ${files.length}`);
+// CLAUDE.md is the short core; details live in docs/. Keep it short and keep every pointer valid.
+check(Buffer.byteLength(claude) <= 14000, "CLAUDE.md is at most 14000 bytes (" + Buffer.byteLength(claude) + "); put details in docs/");
+const texts = [["CLAUDE.md", claude]];
+for (const d of [".claude/agents", ".claude/commands"]) for (const f of fs.readdirSync(path.join(root, d)).filter(x => x.endsWith(".md"))) texts.push([d + "/" + f, fs.readFileSync(path.join(root, d, f), "utf8")]);
+for (const [name, t] of texts) {
+  const gone = [...t.matchAll(/docs\/[A-Za-z0-9_\/.-]+\.md/g)].map(x => x[0]).filter(p => !/NNNN/.test(p) && !fs.existsSync(path.join(root, p)));
+  check(!gone.length, name + ": every docs file it names exists " + [...new Set(gone)].join(", "));
+  if (name !== "CLAUDE.md") check(!/CLAUDE\.md sections? (?:\d+, )*(?:3|4|5|6|7|10)\b/.test(t), name + ": does not point at sections of CLAUDE.md that moved to docs/ (3, 4, 5, 6, 7, 10)");
+}
+const featDir = path.join(root, "docs", "features"), idx = fs.readFileSync(path.join(featDir, "README.md"), "utf8");
+const unlisted = fs.readdirSync(featDir).filter(f => f.endsWith(".md") && f !== "README.md" && !idx.includes("(" + f + ")"));
+check(!unlisted.length, "docs/features/README.md lists every feature file " + unlisted.join(", "));
 process.exit(bad ? 1 : 0);
