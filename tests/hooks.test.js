@@ -2,9 +2,10 @@
    Each hook gets the same JSON on stdin as Claude Code sends; exit code 2 means "blocked". */
 const { spawnSync } = require("child_process");
 const path = require("path");
+const HOOKS = path.join(__dirname, "..", ...(process.env.GUARD_HOOKS_DIR || ".claude/hooks").split("/")); // tests/proposed-guards.test.js runs this file against docs/proposed/guards
 const failures = [];
 const check = (ok, msg) => { if (!ok) failures.push(msg); else console.log("ok:", msg); };
-const run = (hook, tool_input, env) => spawnSync("node", [path.join(__dirname, "..", ".claude", "hooks", hook)], { input: JSON.stringify({ tool_input }), env: Object.assign({}, process.env, { GUARD_SKIP_TESTS: "1", ALLOW_PROTECTED_EDIT: "", GUARD_BRANCH: "feature/x" }, env || {}), encoding: "utf8" });
+const run = (hook, tool_input, env) => spawnSync("node", [path.join(HOOKS, hook)], { input: JSON.stringify({ tool_input }), env: Object.assign({}, process.env, { GUARD_SKIP_TESTS: "1", ALLOW_PROTECTED_EDIT: "", GUARD_BRANCH: "feature/x" }, env || {}), encoding: "utf8" });
 const bash = (command, env) => run("guard-release.js", { command }, env).status;
 const edit = (file_path, extra) => run("guard-files.js", Object.assign({ file_path }, extra || {})).status;
 const UP = "npm run " + "upload"; // written in two parts so that this file is not itself blocked by the guard
@@ -32,7 +33,7 @@ check(edit("/repo/sw.js", { old_string: "const CACHE=\"ls-1\"", new_string: "con
 check(edit("/repo/sw.js", { old_string: "fetch(e.request)", new_string: "fetch(e.request, {})" }) === 0, "other edits to sw.js are allowed");
 check(edit("/repo/js/ui.js", { old_string: "a", new_string: "b" }) === 0 && edit("/repo/content/content.js") === 0, "normal app and content files can be edited");
 check(run("guard-files.js", { file_path: "/repo/.env" }, { ALLOW_PROTECTED_EDIT: "1" }).status === 0, "ALLOW_PROTECTED_EDIT=1 lets the owner allow a protected edit");
-check(spawnSync("node", [path.join(__dirname, "..", ".claude", "hooks", "guard-files.js")], { input: "not json", encoding: "utf8" }).status === 0, "unreadable input does not block");
+check(spawnSync("node", [path.join(HOOKS, "guard-files.js")], { input: "not json", encoding: "utf8" }).status === 0, "unreadable input does not block");
 
 failures.forEach(f => console.log("FAIL:", f));
 console.log(failures.length ? failures.length + " failure(s)." : "Hooks test OK.");
