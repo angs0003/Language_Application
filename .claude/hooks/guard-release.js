@@ -1,4 +1,4 @@
-/* Hook (before every Bash command): safety rails for git and uploads.   PROPOSED hardened version (see docs/proposed/README.md).
+/* Hook (before every Bash command): safety rails for git and uploads.
    1. Never push to main or master (CLAUDE.md sections 8 and 12): any push whose target is main or master, a push with no target while the current branch is main or master,
       and --all or --mirror (they push every branch, including main). Found also behind git options (git -C dir push, git -c x=y push), inside bash -c "...", sh -c, eval and $(...).
    2. Never force-push.
