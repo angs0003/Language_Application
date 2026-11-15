@@ -40,13 +40,15 @@ Improvement commands:
 | `planner` | Writes the plan before any change; posts it on the issue when Claude runs in GitHub | nothing (read-only) |
 | `researcher` | Researches learning methods and technology practice with sources (`/research`) | `docs/research/` only |
 | `content-writer` | Writes content parts | `content/` only |
-| `content-reviewer` | Reviews content for correctness and consistency | nothing (read-only) |
+| `content-checker` | Runs every automatic content check and lists findings (haiku) | nothing (read-only) |
+| `content-reviewer` | Reviews naturalness, register, consistency and level fit on a sample (opus) | nothing (read-only) |
+| `screen-verifier` | Screenshots on both phones in both languages, checked against the design rules | `tmp/shots/` only |
 | `ui-engineer` | Screens, components, styles; keeps the design rules | `js/`, `index.html` |
 | `test-runner` | Runs tests and explains failures | nothing |
-| `release-manager` | Tests, commit to a branch, push the branch, open a pull request | git (never `main`) |
+| `pr-watcher` | Pushes the branch, opens a draft pull request with `tools/gh.js`, reports the checks (haiku); never merges | `tmp/pr-body.md` only |
 | `coach` | Improves the team setup from evidence (retrospectives) | `CLAUDE.md`, `.claude/`, `docs/decisions/`, new test checks |
 | `security-reviewer` | Secrets, database rules, scripts, sign-in redirect; runs inside `/release` | nothing (read-only) |
-| `video-curator` | Finds and checks YouTube videos against fixed rules; adds approved ones | `VIDS` and `TVREC` in `content/content.js` |
+| `video-curator` | Finds and checks YouTube videos against fixed rules and writes the entry text; the content-writer adds approved ones | nothing (read-only) |
 | `data-engineer` | Tables, security rules, progress sync, sync tests | `supabase.sql`, `js/sync.js`, `js/content-rows.js`, `tests/sync.test.js`, `normalize()` |
 
 Example: "Use the ui-engineer subagent to add a Hanzi section to the Practise tab, following the kanji section."
