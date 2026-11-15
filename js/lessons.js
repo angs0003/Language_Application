@@ -328,7 +328,7 @@ Reply with only JSON in this shape:
    Called after the screen is drawn from a tap (start, Continue, Back). Nothing is read again when the screen is redrawn for another reason. */
 function readWordCard(){
   const v=view;if(!v||v.s!=="lesson"||v.step!==0||S.settings.autoRead===false||!("speechSynthesis" in window))return;
-  const l=v.lang,w=v.words[v.i];if(!w)return;
+  const l=v.lang,it=v.items0[v.i],w=it&&it.k==="word"?v.words[it.wi]:null;if(!w)return;
   say(w.w,l);
   const u=new SpeechSynthesisUtterance(w.ex[0]);u.lang=L[l].code;const vc=voiceFor(l);if(vc)u.voice=vc;u.rate=0.9*S.settings.speed;
   if(w.tk&&S.settings.hlWord!==false){const tok=++playTok;hlClear();hlTrack(u,w.tk.tokens,()=>document.querySelector("#main .sent .gl"),()=>tok===playTok);u.onend=()=>{if(tok===playTok)hlClear();};}
@@ -340,7 +340,7 @@ function readWordCard(){
 function readQuestion(){
   if(S.settings.autoRead===false||!("speechSynthesis" in window))return;
   const v=view;let q=null;
-  if(v.s==="lesson"&&v.step===4)q=v.quiz&&v.quiz[v.i];else if(v.s==="review"&&!v.finished)q=v.qs&&v.qs[v.i];
+  if(v.s==="lesson"&&v.step===0){const it=v.items0&&v.items0[v.i];q=it&&it.k==="check"?it.q:null;}else if(v.s==="lesson"&&v.step===4)q=v.quiz&&v.quiz[v.i];else if(v.s==="review"&&!v.finished)q=v.qs&&v.qs[v.i];
   if(!q||q.answered)return;
   const l=S.lang;
   if(q.type==="build"&&(q.mode==="toEn"||q.mode==="listen"))sayAt(sentText(q.sent),l,1);
@@ -349,20 +349,42 @@ function readQuestion(){
 }
 function lessonResumeFor(l,words){const r=S[l]&&S[l].resume;if(!r||!Array.isArray(r.words)||!words||!words.length)return null;return r.ti===themeIdxOf(l,words[0])&&r.words[0]===words[0].w&&r.words.length===words.length?r:null;}
 function lessonResumeText(l,r){const n=r.words.length;return r.step===0?"New words, word "+(r.i+1)+" of "+n:STEPS[r.step].replace(/^\S+\s/,"");}
-function lessonSave(v){if(!v||v.s!=="lesson"||v.repeat)return;const l=v.lang,st=S[l];if(v.step===0&&v.i===0)st.resume=null;else st.resume={ti:themeIdxOf(l,v.words[0]),words:v.words.map(w=>w.w),title:v.title,step:v.step,i:v.step===4?0:v.i,u:Date.now()};save();}
+function lessonSave(v){if(!v||v.s!=="lesson"||v.repeat)return;const l=v.lang,st=S[l];if(v.step===0&&v.i===0)st.resume=null;else st.resume={ti:themeIdxOf(l,v.words[0]),words:v.words.map(w=>w.w),title:v.title,step:v.step,i:v.step===4?0:v.step===0?(v.items0[v.i]||{wi:0}).wi:v.i,u:Date.now()};save();}
 function startLesson(words,title,repeat,fresh){
   const l=S.lang,types=["meaning","listen","type","speak"];
   const quiz=buildQuiz(l,words,S[l].lc||0);
   const g=GR[l][grFor(l,themeIdxOf(l,words[0]))];
   view={s:"lesson",lang:l,words,title,repeat:!!repeat,g,sents:((CUR[l][themeIdxOf(l,words[0])]||{}).sents)||[],step:0,i:0,quiz,ex:{},gex:[],gq:[],aState:"loading",bState:"loading",story:null,dia:null,confirm:false,sheet:null};
   {const ch=chapter(l,themeIdxOf(l,words[0]));view.story=ch?{title:ch.title,lines:ch.lines}:null;view.aState="none";view.bState="";}
+  view.items0=buildCheckins(l,words);
   const rs=!repeat&&!fresh?lessonResumeFor(l,words):null;
-  if(rs){view.step=Math.max(0,Math.min(rs.step,5));view.i=view.step>=4?0:Math.max(0,Math.min(rs.i,lessonItemCount(view)-1));}
+  if(rs){view.step=Math.max(0,Math.min(rs.step,5));
+    if(view.step===0){const wi=Math.max(0,Math.min(rs.i,words.length-1));view.i=Math.max(0,view.items0.findIndex(it=>it.k==="word"&&it.wi===wi));}/* resume.i in step 0 is a word index */
+    else view.i=view.step>=4?0:Math.max(0,Math.min(rs.i,lessonItemCount(view)-1));}
   else if(fresh&&!repeat&&S[l].resume){S[l].resume=null;save();}
   render();window.scrollTo(0,0);
   readWordCard();readQuestion();
 }
-function lessonItemCount(v){const n=v.words.length;return [n,1+v.gq.length,1,1,v.quiz.length,1][v.step];}
+/* New words step: the words are split into groups of at most 3, as equal as possible (5 words: 3+2, 10 words: 3+3+2+2). After the word cards of a group comes a check: one question per word of the group,
+   in mixed order, and from the second group on one more question on a word of an earlier group. Question types rotate: recall, listen, meaning. Check answers are practice only:
+   they change no review data and are not part of the Summary (the Quiz step asks every word again). Items: {k:"word",wi} and {k:"check",q,wi (last word of the group),n,m}. */
+function checkinSizes(n){const g=Math.max(1,Math.ceil(n/3)),b=Math.floor(n/g),x=n%g;return Array.from({length:g},(_,i)=>b+(i<x?1:0));}
+function buildCheckins(l,words){
+  const items=[];let at=0,c=0;
+  checkinSizes(words.length).forEach((sz,gi)=>{
+    const grp=words.slice(at,at+sz);
+    for(let k=0;k<sz;k++)items.push({k:"word",wi:at+k});
+    const ws=grp.map(w=>({w,e:false}));
+    if(gi>0)ws.push({w:shuffle(words.slice(0,at))[0],e:true});
+    const qs=shuffle(ws).map(x=>{const t=["recall","listen","meaning"][c++%3],q=t==="recall"?mkRecall(x.w,l):mkQ(t,x.w,l);if(x.e)q.earlier=true;return q;});
+    qs.forEach((q,k)=>items.push({k:"check",q,wi:at+sz-1,n:k+1,m:qs.length}));
+    at+=sz;
+  });
+  return items;
+}
+/* the answer of a check question is counted once (q.upd), when Continue is pressed; the tally is practice only and is not shown or saved */
+function checkinCount(v,q){if(q.upd||!q.answered)return;q.upd=true;v.ck=v.ck||{n:0,ok:0};v.ck.n++;if(q.correct)v.ck.ok++;}
+function lessonItemCount(v){const n=v.items0.length;return [n,1+v.gq.length,1,1,v.quiz.length,1][v.step];}
 /* End of the Quiz step: every question answered wrongly (also "I do not know") is asked once more, at most 5, as a new question with again=true.
    Speak questions and Match the pairs are not repeated, and a wrong repeat is not repeated again. Built once per lesson view (v.rq). */
 function lessonRepeatStart(v){
@@ -374,6 +396,7 @@ function lessonRepeatStart(v){
 }
 function lessonMove(d){
   const v=view;const n=lessonItemCount(v);
+  if(d>0&&v.step===0){const it=v.items0[v.i];if(it&&it.k==="check")checkinCount(v,it.q);}
   if(d>0){if(v.i<n-1)v.i++;else if(v.step===4&&lessonRepeatStart(v))v.i++;else{v.step++;v.i=0;}}
   else{if(v.i>0)v.i--;else if(v.step>0){v.step--;v.i=lessonItemCount(v)-1;}}
   if(v.step===2&&!v.sents.length){v.step+=d>0?1:-1;v.i=d>0?0:lessonItemCount(v)-1;}
@@ -386,19 +409,26 @@ function screenLesson(){
   const v=view,l=S.lang,ws=v.words,n=lessonItemCount(v);
   const unitLabel=(v.repeat?"Repeat: ":"Lesson: ")+v.title;
   const itemNames=["Word","Grammar item","","","Question",""];
+  const it0=v.step===0?v.items0[v.i]:null;
   const inRep=!!(v.rq&&v.rq.n&&v.step===4&&v.i>=v.rq.first),nq=v.rq&&v.rq.n?v.rq.first:v.quiz.length;
-  const counts=[ws.length,1+v.gq.length,1,1,v.quiz.length,1];let pos=0;for(let k=0;k<v.step;k++)pos+=counts[k];pos+=v.i;const total=counts.reduce((a,b)=>a+b,0);
+  const counts=[v.items0.length,1+v.gq.length,1,1,v.quiz.length,1];let pos=0;for(let k=0;k<v.step;k++)pos+=counts[k];pos+=v.i;const total=counts.reduce((a,b)=>a+b,0);
   let pct=Math.round(pos/total*100);if(v.rq&&v.rq.n)pct=Math.max(v.shown||0,pct);v.shown=pct;/* the bar never moves backwards once the repeats have started */
   const r={row:"title",title:unitLabel,exit:true,
-    prog:`<div class="ptext">Step ${v.step+1-(!v.sents.length&&v.step>2?1:0)} of ${v.sents.length?6:5}: ${STEPS[v.step]}</div><div class="psub">${inRep?"Repeat: question "+(v.i-v.rq.first+1)+" of "+v.rq.n:itemNames[v.step]&&n>1?itemNames[v.step]+" "+(v.i+1)+" of "+(v.step===4?nq:n):""}</div><div class="bar"><i style="width:${pct}%"></i></div>`,
+    prog:`<div class="ptext">Step ${v.step+1-(!v.sents.length&&v.step>2?1:0)} of ${v.sents.length?6:5}: ${STEPS[v.step]}</div><div class="psub">${v.step===0&&it0.k==="check"?"Check: question "+it0.n+" of "+it0.m:inRep?"Repeat: question "+(v.i-v.rq.first+1)+" of "+v.rq.n:itemNames[v.step]&&n>1?itemNames[v.step]+" "+(v.step===0?it0.wi+1:v.i+1)+" of "+(v.step===0?ws.length:v.step===4?nq:n):""}</div><div class="bar"><i style="width:${pct}%"></i></div>`,
     back:{label:"Back",fn:()=>{if(v.step===0&&v.i===0)goHome();else lessonMove(-1);}},next:{label:"Continue",fn:()=>lessonMove(1)}};
   let h="";
   const retry=(fn,label)=>`<p><button class="btn sec full" data-a="${A(fn)}">${label}</button></p>`;
   if(v.step===0){
-    const w=ws[v.i],ex=v.ex[w.w];
+    if(it0.k==="check"){
+      const q=it0.q;view.q=q;
+      h=`<div class="card">${qHTML(q)}</div>`;
+      if(!q.answered)r.next={label:"Check answer",fn:()=>{checkQ(q);render();},dis:!canCheck(q)};
+    }else{
+    const w=ws[it0.wi],ex=v.ex[w.w];
     const sv=isSaved(l,w.w);
     h=`<div class="card hasstar"><button class="ibtn starbtn${sv?" on":""}" aria-label="${sv?"Remove from My words":"Save to My words"}" aria-pressed="${sv}" data-a="${A(ev=>starWord(l,w,ev))}">${ico("star",22)}</button><p class="q">New word</p>${glyph(l,w)}${readingHTML(l,w)}<p class="meaning">${esc(w.m)}</p><p class="center"><button class="play" data-a="${A(()=>say(w.w,l))}" aria-label="Play audio" title="Play audio">${PLAY}</button></p></div>
     <div class="card"><p class="q">Example</p>${ex?sentHTML(l,ex,[w]):w.tk?sentHTML(l,w.tk,[w]):builtinEx(l,w)}${!ex&&v.aState==="loading"?`<p class="small muted" style="margin-top:6px">The word-by-word version is loading.</p>`:""}</div>`;
+    }
   }else if(v.step===1){
     if(v.i===0){
       const g=v.g;

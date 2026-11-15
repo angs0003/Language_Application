@@ -284,7 +284,7 @@ for (const lang of ["ja", "zh"]) {
     await page.evaluate(l => { S[l].placed = true; save(); render(); }, lang);
     const len0 = await page.evaluate(() => history.length);
     await page.evaluate(() => { const t = themes(S.lang)[0]; startLesson(t.words.slice(0, 5), t.title); });
-    for (let k = 0; k < 40 && await page.evaluate(() => view.step < 4); k++) { await page.locator("#nextbtn:not([disabled])").click(); }
+    for (let k = 0; k < 40 && await page.evaluate(() => view.step < 4); k++) { await page.evaluate(() => { if (view.step === 0 && view.items0[view.i].k === "check" && !view.q.answered) { dontKnow(view.q); render(); } }); await page.locator("#nextbtn:not([disabled])").click(); }
     expect(await page.evaluate(() => history.length), "spare entries were added during taps").toBeGreaterThan(len0);
     let steps = 0;
     while (await page.evaluate(() => view.s === "lesson") && steps < 30) { await page.goBack(); steps++; await page.waitForTimeout(60); expect(page.url(), "the app is still open after back " + steps).toContain("localhost"); }
