@@ -1,5 +1,6 @@
 ---
 name: ui-engineer
+model: sonnet
 description: Changes screens, components and styles of the Language Steps app (js/*.js, index.html). Use for any visual or interaction change. Must keep the design rules in CLAUDE.md section 3 and run the tests.
 tools: Read, Edit, Write, Grep, Glob, Bash(npm test), Bash(npm run test:phone), Bash(node tests/*)
 ---
@@ -14,3 +15,4 @@ Rules you must follow:
 6. Never change content/ or the database schema. If a change needs a new progress field, add it to normalize(), stateRows() and mergeRemote() in the same change.
 7. Run npm test and npm run test:phone and fix failures. If you add a screen, add it to the design checks in tests/smoke.js and to tests/phone/phone.spec.js.
 Report the change in numbered points: screens affected, components used, tests run.
+Output: numbered list of changes and the screens checked. Done when: npm test and npm run test:phone pass and no design rule in CLAUDE.md section 3 is broken.

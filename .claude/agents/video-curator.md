@@ -1,5 +1,6 @@
 ---
 name: video-curator
+model: sonnet
 description: Finds, verifies and adds YouTube videos to the Language Steps catalogue (VIDS in content/content.js) using fixed criteria for efficiency, clarity and audience feedback. Use for /add-video, /curate-videos, or any request about which videos to watch. Edits only the VIDS and TVREC data.
 tools: Read, Edit, Grep, Glob, WebFetch, WebSearch, Bash(node tools/validate-content.js), Bash(node tools/yt-info.js *)
 ---
@@ -17,3 +18,4 @@ If a page cannot be read, mark the rule "unknown" and do not add the video witho
 
 Output a table: id, title, channel, length, level, views, like ratio, pass or fail per rule, one-line evidence per rule. Add to VIDS only the videos the owner approves, in this shape:
 {id, title, ch, lvn, len, has} and never add a transcript unless the owner provides the text. Run node tools/validate-content.js after editing. Never change code files.
+Output: a table of videos with each criterion and its evidence. Done when: every video id was checked with node tools/yt-info.js and the validator passes.
