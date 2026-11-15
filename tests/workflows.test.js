@@ -11,7 +11,7 @@ const dirs = [".github/workflows", "docs/proposed"];
 const failures = [];
 const check = (ok, msg) => { if (!ok) failures.push(msg); else console.log("ok:", msg); };
 let unpinned = 0;
-const KNOWN_NO_PERMISSIONS = [".github/workflows/test.yml"];
+const KNOWN_NO_PERMISSIONS = [];
 for (const d of dirs) {
   const full = path.join(root, d);
   if (!fs.existsSync(full)) continue;
