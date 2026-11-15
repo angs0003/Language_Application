@@ -15,7 +15,7 @@ Moved from CLAUDE.md section 5 (features are in docs/features/).
 ### Database tables (supabase.sql)
 - `content(key, lang, kind, ord, level, part, data)`: kinds `theme`, `chapter`, `grammar`, `trip`, `meta`
   (`meta:parts`, `meta:levels`, `meta:vids`, `meta:casual`, `meta:version`). Readable by signed-in users; written only by the upload tool.
-- `word_progress(user_id, lang, word, box, due, saved, reading, meaning, sentence, source, saved_box, saved_due, saved_at, updated_at)`.
+- `word_progress(user_id, lang, word, box, due, saved, reading, meaning, sentence, source, saved_box, saved_due, saved_at, lapses, saved_lapses, updated_at)`.
 - `activity(user_id, lang, kind, key, done_at)`: kinds `chapter`, `trip`, `trip_open`, `podcast`, `grammar`.
 - `user_settings(user_id, data, updated_at)`: settings plus per-language details (placed, gi, lc, lst, hist, lastLesson, videos).
 - Row-level security: each user reads and writes only their own progress rows.
@@ -29,8 +29,8 @@ Moved from CLAUDE.md section 5 (features are in docs/features/).
 - **Any new progress field must be added to `stateRows` and `mergeRemote`, and to `normalize()`.**
 
 ### State, rendering and features
-- `S`: `{v:1, updatedAt, lastActive, lang, tab, settings:{...}, zh:{...}, ja:{...}}`. Per language: `placed, srs{word:{b,d,u}},
-  gi, grDone[], lc, lst, chRead[], tripDone{}, tripOpen{}, podDone{}, hist[], lastLesson[], saved[], videos[], mis[]`.
+- `S`: `{v:1, updatedAt, lastActive, lang, tab, settings:{...}, zh:{...}, ja:{...}}`. Per language: `placed, srs{word:{b,d,u,lp}},
+  gi, grDone[], lc, lst, chRead[], tripDone{}, tripOpen{}, podDone{}, hist[], lastLesson[], saved[], videos[], mis[]`. Saved entries and `ja.kana`/`ja.kanji` entries also carry `lp` (lapses).
   Always load through `normalize()`. Call `save()` after any change.
 - `render()` (js/ui.js) calls one `screenX()` per view (`view.s`): `home, lesson, place, review, test, settings, theme, gram, story,
   trip, pod, cards, casual`. Each returns `{row, title, prog, main, back:{label,fn,dis}, next:{label,fn,dis}, exit}`.
@@ -39,9 +39,9 @@ Moved from CLAUDE.md section 5 (features are in docs/features/).
   from `planSteps()`), `homePractise` (one mixed session `startMixed()`, then My words, Kanji, Kana, Grammar),
   `homeListen` (filter, Continue card from `S[lang].lastListen`, tiles, Add a video, TV list), `homeTravel`.
   Sub-screens open with `openSub(key)` (themes, kanji, kana, grammar, watchadd) and reuse the older section renderers.
-- Lesson: New words → Grammar → Story (theme's chapter) → Quiz → Summary (`AI_OFF=true` skips the Dialogue step).
-- Exercises: meaning, listen, type, speak, match pairs, build sentence, listen-and-build, build English, fill blank, grammar choice.
+- Lesson: New words → Grammar → Story (theme's chapter) → Quiz → Summary (`AI_OFF=true` skips the Dialogue step). Step 0 (New words) has check questions after groups of at most 3 words; the items are in `view.items0`; check answers are practice only (no srs, not in the Summary) (docs/features/lesson-checkins.md). The Quiz step has Match the pairs, one question per word (recall, meaning, listen, fill the blank), sentence questions, up to 2 earlier words and a repeat of wrong answers (docs/features/lesson-recall.md).
+- Exercises: meaning, listen, type, speak, recall (type the reading from the meaning), match pairs, build sentence, listen-and-build, build English, fill blank, grammar choice. The placement quiz also uses fill the blank and the three build types (docs/features/placement-quiz.md).
   Sentence exercises (build, blank) are wrapped in `.qarea` (js/exercise-types.js `exHTML`): the prompt and the answer row stay at the top and the word tiles (`.bank`) or options (`.opts`) sit at the bottom, above the bottom bar, within thumb reach (min-height from `100svh`; if the header or bottom bar height changes, adjust `.qarea` in index.html; a media query for screens under 720 px high, such as the iPhone in Safari, tightens the spacing so that the tiles fit without scrolling). The prompt of "Build the English meaning" and "Listen and build" and the sentence of "Choose the missing word" are in a speech bubble (`.bubblerow`, `.bubble`); the feedback of a sentence question shows `Meaning: English` (`sentMeaningHTML`).
-- Review timing: `srsSet()` and `srsStep()` (js/core.js), `INTERVAL=[0,1,2,4,8,16]` days by box. A wrong answer goes to box 1 and is due now. A correct answer raises the box only when the word was due; a correct answer before the due date (for example in "Practise anyway", My words practice, flashcards) keeps the schedule. Kana and kanji (`kSet`) are not changed, because "learned" is box 2 or higher there.
+- Review timing: `srsSet()` and `srsStep()` (js/core.js), `INTERVAL=[0,1,2,4,8,16]` days by box. A wrong answer goes to box 1 and is due now. `HARD={lapses:2,factor:0.5}`, `gapDays(e)`, `srsStep(e,ok,learn)`. A wrong answer counts a lapse (`lp`) unless the entry is already in box 1 and due now. From 2 lapses the gap after a correct due answer is halved (minimum 1 day). A correct answer before the due date keeps the schedule when box >= `learn`; kana and kanji (`kSet`) use `learn=2`, so they still reach box 2 through early practice. Details: docs/features/review-timing.md.
 - Levels and parts: `PARTS` and `LEVELS` (in content); `grFor()` maps a theme to its grammar point.
 - AI: `AI_OFF=true`. Never call AI APIs from the browser. If AI is added later, use a server function.
