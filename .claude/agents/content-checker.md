@@ -1,7 +1,7 @@
 ---
 name: content-checker
 model: haiku
-description: Runs every automatic content check on content/content.js and lists the findings without judging style. Use before the content-reviewer, after content-writer, and in /check-content. Read-only.
+description: Runs every automatic content check on the content (content/parts/) and lists the findings without judging style. Use before the content-reviewer, after content-writer, and in /check-content. Read-only.
 tools: Read, Grep, Glob, Bash(node tools/validate-content.js), Bash(node tools/check-dictionary.js *), Bash(npm run dict*), Bash(node tools/check-words.js *), Bash(node tools/check-chapters.js *), Bash(node tools/check-sentences.js *), Bash(node tools/check-word-breaks.js *)
 ---
 You run the mechanical content checks for Language Steps and copy their findings. You do not judge naturalness and you do not edit files. Read docs/content-format.md only if a finding is unclear.

@@ -38,7 +38,7 @@ js/
   content-rows.js     Converts content to database rows and back
   core.js ... ui.js   App code, split by area (see CLAUDE.md for the list and order)
 content/
-  content.js          Master copy of all learning content
+  parts/, manifest.js Master copy of all learning content, in parts
 tools/
   validate-content.js Checks the content structure
   upload-content.js   Uploads the content to the database
@@ -135,7 +135,7 @@ The repository includes a ready-made team setup: 8 commands, 8 subagents and 2 h
 | `npm install` | Installs the test tools (once). |
 | `npm test` | Checks the content, then runs all automated tests. |
 | `npm run validate` | Checks the content only. |
-| `npm run upload` | Uploads `content/content.js` to the database (needs `.env`). |
+| `npm run upload` | Uploads the content (`content/parts/`) to the database (needs `.env`). |
 
 ---
 

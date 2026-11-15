@@ -1,4 +1,4 @@
-/* Word breaks for the example sentences of words (content/content.js).
+/* Word breaks for the example sentences of words (the content parts in content/parts/).
    Each word entry may end with one extra element: its example sentence split into words, written like a story line:
    "text|reading|meaning / text|reading|meaning / ， / ... = English"  (zh: 7th element, ja: 8th element).
    Punctuation is a bare token. The tokens must join to the example, the readings must join to the example reading,
@@ -10,10 +10,10 @@
      node tools/add-word-breaks.js file.json [more.json] add the sentences to content.js (nothing is added when a sentence is wrong)
    A JSON file is { "zh": { "word": "sentence string" }, "ja": { "word": "sentence string" } }.
    Run node tools/validate-content.js afterwards. */
-const fs = require("fs"), vm = require("vm"), path = require("path");
+const fs = require("fs"), vm = require("vm");
 const { checkWordBreak, WIDTH } = require("./lib-word-breaks");
-const file = path.join(__dirname, "..", "content", "content.js");
-let src = fs.readFileSync(file, "utf8");
+const { readContent, writeContent } = require("./lib-content-files");
+let src = readContent();
 const crlf = src.includes("\r\n");
 if (crlf) src = src.replace(/\r\n/g, "\n");
 const ctx = {}; vm.createContext(ctx);
@@ -48,6 +48,6 @@ for (const jf of files) {
     }
   }
 }
-if (!check) fs.writeFileSync(file, crlf ? src.replace(/\n/g, "\r\n") : src);
+if (!check) writeContent(src);
 console.log(`${check ? "Checked" : "Added word breaks to"} ${done} entries${failed ? `, ${failed} failed` : ", all correct"}.`);
 process.exit(failed ? 1 : 0);

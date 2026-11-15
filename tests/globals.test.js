@@ -1,9 +1,9 @@
-/* Shared global scope check. The app files (js/*.js), config.js and content/content.js are loaded as scripts that share one global scope, so two files that declare the same
+/* Shared global scope check. The app files (js/*.js), config.js and the content parts (content/parts/*.js) are loaded as scripts that share one global scope, so two files that declare the same
    top-level name break the app after both are merged, even if each branch passed alone. This test parses every file and fails on a duplicate top-level function, class,
    const, let or var name. Run: node tests/globals.test.js */
 const fs = require("fs"), path = require("path"), espree = require("espree");
 const root = path.join(__dirname, "..");
-const files = [...fs.readdirSync(path.join(root, "js")).filter(f => f.endsWith(".js") && f !== "content-rows.js").map(f => "js/" + f), "config.js", "content/content.js"].filter(f => fs.existsSync(path.join(root, f)));
+const files = [...fs.readdirSync(path.join(root, "js")).filter(f => f.endsWith(".js") && f !== "content-rows.js").map(f => "js/" + f), "config.js", ...fs.readdirSync(path.join(root, "content", "parts")).map(f => "content/parts/" + f)].filter(f => fs.existsSync(path.join(root, f)));
 const where = new Map();
 const names = pat => !pat ? [] : pat.type === "Identifier" ? [pat.name] : pat.type === "ObjectPattern" ? pat.properties.flatMap(p => names(p.value || p.argument)) : pat.type === "ArrayPattern" ? pat.elements.flatMap(names) : pat.type === "RestElement" ? names(pat.argument) : pat.type === "AssignmentPattern" ? names(pat.left) : [];
 let failed = 0;

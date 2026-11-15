@@ -60,7 +60,7 @@ Example: "Use the ui-engineer subagent to add a Hanzi section to the Practise ta
 
 | Hook | When | Effect |
 |---|---|---|
-| `validate-content.js` | After any edit to `content/content.js` | Runs the validator; errors are sent back to Claude Code to fix |
+| `validate-content.js` | After any edit to a content part (`content/parts/*.js`) or `content/manifest.js` | Runs the validator; errors are sent back to Claude Code to fix |
 | `guard-release.js` | Before `git commit`, `git push` or the content upload command | Runs `npm test`; blocks a commit or push if a test fails. It also blocks a push to `main`, force-pushes and the content upload from your computer (the Deploy workflow uploads). |
 | `guard-files.js` | Before an edit with the Edit or Write tool | Blocks edits to `.env*`, `.github/workflows/*`, `.claude/settings*.json`, the guard scripts and `CACHE` in `sw.js`. It does not check shell commands. |
 
@@ -68,11 +68,9 @@ Example: "Use the ui-engineer subagent to add a Hanzi section to the Practise ta
 
 Use only for parallel content work, for example Japanese Level 2 Part 2 and Chinese Level 3 at the same time.
 1. Enable: in `~/.claude/settings.json`, add `"env": { "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1" }`. Needs Claude Code v2.1.32 or later.
-2. Split the content file first, so each teammate owns different files (for example `content/ja.js` and `content/zh.js`).
-   Ask: "Split content/content.js into content/ja.js and content/zh.js, update the loader, tools and tests, and keep
-   npm test passing."
-3. Then ask for the team: "Create an agent team: one teammate writes Japanese Level 2 Part 2 in content/ja.js, one writes
-   Chinese Level 3 Part 1 in content/zh.js, one reviews both with the content-reviewer rules. Use Sonnet for teammates."
+2. The content is already split into parts (`content/parts/`), so each teammate owns a different part file (docs/parallel-work.md).
+3. Ask for the team: "Create an agent team: one teammate writes Japanese Level 4 Part 6 in content/parts/ja-part-15.js, one writes
+   Chinese Level 4 Part 5 in content/parts/zh-part-5.js, one checks both with the content-checker and content-reviewer rules. Use Sonnet for teammates."
 4. Review the shared task list with Ctrl+T, then run `/release` yourself and merge the pull request.
 
 ## 6. Files the team reads and writes
@@ -83,7 +81,7 @@ Use only for parallel content work, for example Japanese Level 2 Part 2 and Chin
 - `.github/workflows/test.yml`: GitHub runs `npm test`, `npm run lint` and the phone tests (`npm run test:phone`) on every pull request.
 - `.github/workflows/dictionary.yml`: when a pull request changes content, GitHub checks every word's reading against
   CC-CEDICT and JMdict and posts the report as a comment. Report only. On your computer: `npm run dict:get` once, then `npm run dict`.
-- `.github/workflows/deploy.yml`: after a merge to `main`, GitHub tests again, uploads content (only if `content/content.js` changed),
+- `.github/workflows/deploy.yml`: after a merge to `main`, GitHub tests again, uploads content (only if a file under `content/` changed),
   sets the cache version and publishes the app. If any step fails, nothing is published.
 
 ## 7. Habits that keep quality high

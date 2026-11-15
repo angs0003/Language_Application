@@ -2,7 +2,7 @@
 /* Language Steps: core.js. State, saving, helpers, audio, review timing.
    Files load in the order listed in js/loader.js (APP_FILES); they share one global scope. */
 /* Language Steps app. Content globals (ZH, JA, GR, STORY, TRIP_ZH, TRIP_JA, PARTS, LEVELS, VIDS)
-   are provided by js/loader.js from the database, or by content/content.js when no database is set up. */
+   are provided by js/loader.js from the database, or by the content parts (content/parts/, in the order of content/manifest.js) when no database is set up. */
 
 /* ---------- Built-in curriculum ---------- */
 function parseLine(x){const i=x.lastIndexOf(" = ");const a=i>=0?x.slice(0,i):x,e=i>=0?x.slice(i+3):"";return{tokens:a.split(" / ").map(t=>{const p=t.split("|");return[p[0],p[1]||"",p[2]||""];}),english:e};}

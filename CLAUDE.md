@@ -56,7 +56,7 @@ Read this file first. Then read only what the task needs (each file is short):
 
 ## 4. Files (full table in docs/files.md)
 
-`index.html` (page shell and all CSS), `js/*.js` (app files; shared global scope, loaded in the order of `APP_FILES` in js/loader.js; a file may use at load time only names from earlier files), `content/content.js` (master copy of all content), `tools/`, `tests/`, `docs/`, `.claude/` (agents, commands, hooks).
+`index.html` (page shell and all CSS), `js/*.js` (app files; shared global scope, loaded in the order of `APP_FILES` in js/loader.js; a file may use at load time only names from earlier files), `content/parts/*.js` with `content/manifest.js` (master copy of all content, in parts), `tools/`, `tests/`, `docs/`, `.claude/` (agents, commands, hooks).
 Never commit `.env`; never put the service key in browser code; do not change `CACHE` in `sw.js` (the Deploy workflow sets it).
 
 ## 5. App architecture (details in docs/architecture.md and docs/features/)
@@ -92,7 +92,7 @@ Commands (`.claude/commands/`): `/add-part`, `/check-content`, `/design-check`, 
 Subagents (`.claude/agents/`, 16, each with a `model:` line: opus for `planner`, `researcher`, `coach`, `content-reviewer`; haiku for `test-runner`, `pr-watcher`, `content-checker`, `a11y-checker`, `dep-scanner`; sonnet for the rest): `planner` (read-only; writes the plan before any change), `researcher` (web research with sources; writes only `docs/research/`), `content-writer`, `content-checker` (runs the automatic content checks), `content-reviewer` (naturalness and consistency on a sample, at most 2 rounds), `screen-verifier` (screenshots against the design rules), `a11y-checker` (axe accessibility check on every screen), `dep-scanner` (outdated and vulnerable dependencies), `docs-keeper` (the only agent that edits CLAUDE.md and shared docs, from notes in `tmp/doc-notes/`),
 `ui-engineer`, `test-runner`, `pr-watcher` (opens a draft pull request and reports checks; never merges), `coach`, `security-reviewer` (runs inside `/release`), `video-curator`
 (checks videos and writes the VIDS entry text; read-only, the content-writer adds approved entries), `data-engineer` (owns supabase.sql, js/sync.js, normalize() defaults and the sync tests).
-Hooks (`.claude/settings.json`, scripts in `.claude/hooks/`): the content validator runs after edits to `content/content.js`.
+Hooks (`.claude/settings.json`, scripts in `.claude/hooks/`): the content validator runs after edits to a content part (`content/parts/*.js`) or `content/manifest.js`.
 Safety rails (tested in `tests/hooks.test.js`): `guard-release.js` blocks a push to `main` or `master` (also by refspec, and a push with no target while on main), every force-push,
 a commit on `main`, and the content upload, and requires `npm test` to pass before any commit or push. `guard-files.js` blocks edits to `.env*`, `.github/workflows/*`,
 `.claude/settings*.json`, the guard scripts and any change to `CACHE` in `sw.js`. The owner can allow one protected edit by setting `ALLOW_PROTECTED_EDIT=1` for the session.
@@ -116,7 +116,7 @@ See docs/roadmap.md (content batches, feature batches, open content task, ideas 
 3. Vibration does not work on iPhone browsers.
 4. Content was written without a native-speaker review. In November 2026 agents audited it for naturalness and rewrote the lines that were too formal or
    written-style; this is not a native review. Some written-style words remain in the word lists on purpose (changing a word list risks duplicate words and
-   lost review progress). If the owner reports an error, fix it in `content.js` and re-run the checks.
+   lost review progress). If the owner reports an error, fix it in the content part and re-run the checks.
 5. `tools/check-chapters.js` reports "uses only 5 of the theme's 10 words" for Level 1 themes 1 to 8, because those themes have 5 words. Ignore that warning there.
 
 ## 12. Working unattended in GitHub (decision 0005)

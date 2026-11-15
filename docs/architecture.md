@@ -4,7 +4,7 @@ Moved from CLAUDE.md section 5 (features are in docs/features/).
 
 
 ### Start-up (js/loader.js)
-1. No database configured → load `content/content.js`, then the app files (`LS_CONTENT_SOURCE="bundled"`).
+1. No database configured → load `content/manifest.js` and each part of `content/parts/` in its order, then the app files (`LS_CONTENT_SOURCE="bundled"`).
 2. Database configured and no session → show the sign-in screen only. The app files are not loaded.
 3. Session → read `meta:version` from `content`. If it differs from the device copy (`localStorage["ls-content-cache"]`),
    download all content rows and rebuild the globals with `buildContent`. Then load the app files

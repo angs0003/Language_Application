@@ -5,7 +5,7 @@ argument-hint: <ja|zh> <level number> <part number>
 Add a content part for Language Steps: language, level and part = $ARGUMENTS.
 
 Do this in order:
-1. Read docs/content-format.md and CLAUDE.md section 9. Read the end of content/content.js to see how earlier parts are appended and the PARTS and LEVELS entries.
+1. Read docs/content-format.md and CLAUDE.md section 9. Read the last part file in content/parts/ and content/manifest.js to see how earlier parts are written, and the PARTS and LEVELS entries in content/parts/meta.js.
 2. Use the content-writer subagent to write 15 themes (10 words each with example sentences), 10 grammar points and 15 story chapters for this part, continuing the story characters. Words must come from the level’s official list where one exists (HSK), or from common JLPT lists.
 3. Append the new arrays, add the PARTS entry (t = number of themes before, g = number of grammar points before, n = 10) and update LEVELS.
 4. Use the content-checker subagent, then the content-reviewer subagent (sample review), to check the new content. Fix every problem they report (at most 2 review rounds).
