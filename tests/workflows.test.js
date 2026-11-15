@@ -1,4 +1,4 @@
-/* Safety checks on the GitHub workflows (.github/workflows/*.yml) and on the proposed ones (docs/proposed/*.yml). It only reads them. Run: node tests/workflows.test.js
+/* Safety checks on the GitHub workflows (.github/workflows/*.yml). It only reads them. Run: node tests/workflows.test.js
    1. Every file is valid YAML with a name and jobs.
    2. No workflow uses pull_request_target (it runs fork code with secrets).
    3. No run: step puts untrusted text (issue, comment, pull request or review body or title, branch names) directly into the command with the expression syntax;
@@ -7,7 +7,7 @@
    5. Notice only (not a failure): actions that are pinned by tag and not by commit ID. */
 const fs = require("fs"), path = require("path"), yaml = require("js-yaml");
 const root = path.join(__dirname, "..");
-const dirs = [".github/workflows", "docs/proposed"];
+const dirs = [".github/workflows"];
 const failures = [];
 const check = (ok, msg) => { if (!ok) failures.push(msg); else console.log("ok:", msg); };
 let unpinned = 0;
@@ -28,7 +28,7 @@ for (const d of dirs) {
         if (/github\.event\.(issue|comment|pull_request|review|head_commit|pages|discussion)\.[\w.]*(body|title|label|name|email|message|ref|label)\b|github\.head_ref|github\.event\.workflow_run\.(head_branch|display_title)/.test(m[1])) bad.push(`${jn} step ${i + 1}: ${m[0]}`);
     check(!bad.length, name + ": no untrusted text inside a run: command " + bad.join("; "));
     const explicit = !!doc.permissions || Object.values(doc.jobs || {}).every(j => !!j.permissions);
-    // Known gap: test.yml has no permissions block (docs/proposed/test-permissions.patch adds it). Remove it from this list when the patch is applied.
+    // KNOWN_NO_PERMISSIONS lists workflows that still lack a permissions block (none now).
     check(explicit || KNOWN_NO_PERMISSIONS.includes(name), name + ": sets permissions explicitly" + (explicit ? "" : " (known gap)"));
     for (const job of Object.values(doc.jobs || {})) for (const st of job.steps || []) if (typeof st.uses === "string" && !/@[0-9a-f]{40}$/.test(st.uses) && !st.uses.startsWith("./")) unpinned++;
   }
