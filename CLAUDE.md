@@ -133,4 +133,5 @@ The repository is public: every Actions log, comment and pull request is public.
 4. **Never:** push to `main`, run `npm run upload`, change `CACHE`, edit `.github/workflows/` or `.claude/settings.json`
    unless the issue names the file, read the database, or print environment variables.
 5. **Reports** (monthly runs, reviews) change no files. The owner acts on them with `@claude do items N and M`.
-6. **Personal data** (learning progress) is never read in GitHub Actions. `/content-report` runs only on the owner's computer.
+6. **Work queue labels** (`queue-labels.yml`, no AI, labels only): an issue with `@claude` gets `needs-plan`; the planner's comment sets `plan-posted`; the owner's `@claude approved` sets `approved`; a pull request with `Closes #N` sets `pr-open`. `needs-owner` (a decision is needed) and `size:small` (no plan needed) are set by hand. Monthly reports run on Sonnet.
+7. **Personal data** (learning progress) is never read in GitHub Actions. `/content-report` runs only on the owner's computer.

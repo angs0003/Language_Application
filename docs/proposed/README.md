@@ -18,13 +18,13 @@ cp docs/proposed/guards/settings.json .claude/settings.json
 ```
 Then move the cases of `tests/proposed-guards.test.js` section 2 and 3 into `tests/hooks.test.js` and delete `tests/proposed-guards.test.js`. After this, an agent can no longer edit workflows or the rails from the shell; you allow one edit by starting Claude Code with `ALLOW_PROTECTED_EDIT=1`. Limit: a script that changes a protected file without naming it in the command (for example `node tmp/x.js` that contains the path) is still not seen. The real protection is the GitHub ruleset on `main` (require a pull request and the `test` check, block force-pushes): please confirm it is on.
 
-## Step 7: cheaper reports and a work queue (not applied)
+## Step 7: cheaper reports and a work queue (APPLIED by the owner's permission; the files here are kept as the record)
 
 1. `monthly-model.patch`: the monthly reports run on Sonnet (`--model sonnet`) and may use `npm view` (the dep-scanner needs it). Apply: `git apply docs/proposed/monthly-model.patch`.
 2. `queue-labels.yml`: a workflow without AI that keeps one label on each issue: `needs-plan`, `plan-posted`, `approved`, `pr-open` (plus `needs-owner` and `size:small` set by hand). The text of comments is passed in environment variables, never in a command. Apply: `git mv docs/proposed/queue-labels.yml .github/workflows/queue-labels.yml`.
 3. `test-permissions.patch`: the `test` workflow sets `permissions: contents: read` (it had none, so it used the repository default). Apply: `git apply docs/proposed/test-permissions.patch`, then remove `.github/workflows/test.yml` from `KNOWN_NO_PERMISSIONS` in `tests/workflows.test.js`.
 `tests/workflows.test.js` checks the active and the proposed workflows (valid YAML, no `pull_request_target`, no comment or title text inside a `run:` command, explicit permissions).
 
-## Step 6: split `content/content.js` (plan only)
+## Step 6: split `content/content.js`
 
-See `content-split.md`. It needs one change in `.github/workflows/deploy.yml` (`deploy-content-detect.patch`), so it waits for you.
+See `content-split.md`. The one protected change, `deploy-content-detect.patch` (upload when any file under `content/` changed), is APPLIED; it is harmless before the split.

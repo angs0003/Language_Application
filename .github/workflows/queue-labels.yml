@@ -1,5 +1,5 @@
 name: Queue labels
-# PROPOSED workflow (not active). To enable it, the owner moves it:  git mv docs/proposed/queue-labels.yml .github/workflows/queue-labels.yml
+# Enabled by the owner (moved from docs/proposed/).
 # Keeps one label on each issue that shows where it is in the work queue (CLAUDE.md section 12):
 #   needs-plan   an issue or comment asks "@claude" and no plan was posted yet
 #   plan-posted  a plan was posted and waits for the owner
