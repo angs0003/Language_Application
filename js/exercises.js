@@ -78,7 +78,7 @@ function qHTML(q,opts){
   }else if(q.type==="type"&&q.recall){
     const sp=recallSpeakOn(q);
     h+=`<p class="q">Remember the word</p><p class="meaning">${esc(w.m)}</p>
-    <p class="small muted">Type the reading in ${L[l].rd}${l==="ja"?" or hiragana":""}. ${l==="zh"?"Tone marks are not required.":"Long vowels can be typed as “ou”, “oo” or “o”."} Spaces are ignored.</p>
+    <p class="small muted">Type the reading in ${L[l].rd}${l==="ja"?" or hiragana":""}.${q.again?"":` ${l==="zh"?"Tone marks are not required.":"Long vowels can be typed as “ou”, “oo” or “o”."} Spaces are ignored.`}</p>
     <label class="sr" for="tin">Your answer</label><input id="tin" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" ${q.answered?"disabled":""} value="${esc(q.input)}" placeholder="Type here">`;
     if(sp)h+=recallSpeakHTML(q);
     else if(!q.answered&&view.noSpeak)h+=`<p class="center" style="margin:6px 0 0"><button class="btn link" aria-label="I can speak now" data-a="${A(()=>setNoSpeak(false))}">I can speak now</button></p>`;
