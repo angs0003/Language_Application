@@ -35,4 +35,5 @@ Add TV titles to `TVREC` only with a rating that has a named source.
 Feature ideas discussed but not built: kana lessons (Japanese) and pinyin/tone lessons (Chinese);
 typed AI role-play through a server function; calm motivation (daily goal, progress calendar);
 mistakes review for sentences and grammar; Chinese character (hanzi) lessons like the kanji section.
+Done (November 2026): no emoji in the interface source, `plural()` for count text, answer options without shared meanings, Japanese words spoken from kana, furigana and romaji for づ and ぢ, 24 kanji cards with kun readings used by lesson words.
 Done (November 2026): Casual speech section (12 lessons per language) in the Practise tab. Next planned: none agreed.

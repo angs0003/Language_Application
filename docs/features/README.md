@@ -25,4 +25,5 @@ One file per feature (moved from CLAUDE.md section 5). Read only the file of the
 - [Lesson recall](lesson-recall.md): Quiz step of a lesson: recall questions (type or say the reading from the English meaning), up to 2 Earlier word questions, a repeat of wrong answers at the end, Summary from first answers.
 - [Lesson check-ins](lesson-checkins.md): New words step of a lesson: groups of at most 3 words, each followed by a check of one question per word (recall, listen, meaning), with one earlier-word question from the second check on. Practice only.
 - [Review timing](review-timing.md): boxes, lapses, shorter gaps for hard words, early practice rule.
+- [Answer options](answer-options.md): wrong options never share a meaning with the right one; Japanese words are spoken from kana (`sayWord`, `sayText`); typing accepts z/j for dz/dj.
 - [Word card](word-card.md): note for readings that belong to the whole word (`WHOLE_READING`), and the no-break group of the last word and the full stop in sentences (`glossHTML` `grp`).

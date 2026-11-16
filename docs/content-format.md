@@ -22,6 +22,10 @@ The content is a set of plain scripts in `content/parts/`, loaded in the order o
   `text|reading|meaning`; punctuation is a bare token; then `" = English translation"`.
   Example: `"私|watashi|I / は|wa|(topic) / 学生|gakusei|student / です|desu|am / 。 = I am a student."`
   Japanese readings are romaji; write the particles は and を as `wa` and `o`.
+  The kana づ is spelled “zu” and ぢ is spelled “ji” in romaji (not “dzu” or “dji”).
+  The checks (`tools/romaji-match.js`, `romajiMatches`, used by tools/validate-content.js and tools/check-words.js) compare a word whose kana has づ, ぢ or を
+  with づ=ず, ぢ=じ, を=お, so “z”, “j” and “o” pass, and the older “dz”, “dj” and “wo” also pass. Any other kana is compared exactly (ず must be “zu”, じ must be “ji”).
+  A new Japanese word whose kana has づ or ぢ also needs an entry in `FURI_DZ` (js/kanji.js, see docs/features/fading-furigana.md).
 - **Story chapter:** `{t:"English title", l:[6 to 8 sentence strings], q:[[afterLineIndex, "Question?", ["correct","wrong","wrong"], 0, "Literal reason."]]}`.
   Chapter *n* belongs to theme *n*: **the number of chapters must equal the number of themes**.
 - **Grammar point:** `["Title", "Pattern", "Literal explanation.", [tokens as arrays], "English"]`.
