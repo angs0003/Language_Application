@@ -79,6 +79,11 @@ function readingHTML(l,w,force){
   if(l==="ja"){const k=w.k&&w.k!==w.w?`<p class="kana" lang="ja">${esc(w.k)}</p>`:"";return k+`<p class="reading">${esc(w.r)}</p>`;}
   return `<p class="reading">${esc(w.r)}</p>`;
 }
+/* Japanese words whose reading belongs to the whole word and cannot be split per kanji (jukujikun and irregular readings).
+   A fixed list, checked by tests/smoke.js; the content files are not changed. */
+const WHOLE_READING=new Set("今日 明日 昨日 今朝 大人 果物 友達 部屋 一人 二人 眼鏡 下手 一日 二十日 二十歳 お腹 田舎 お土産 浴衣 梅雨 真面目 可愛い 葉書 七夕 山車 神輿 八百屋 三味線 為替".split(" "));
+const wholeReading=(l,w)=>l==="ja"&&WHOLE_READING.has(w.w);
+function wholeReadingNote(l,w){return wholeReading(l,w)&&S.settings.showReading?`<p class="small muted center" style="margin:4px 0 0">This reading belongs to the whole word, not to each kanji.</p>`:"";}
 function hl(text,words){let h=esc(text);words.slice().sort((a,b)=>b.w.length-a.w.length).forEach(w=>{h=h.split(esc(w.w)).join("\u0000"+esc(w.w)+"\u0001");});return h.replace(/\u0000/g,"<mark>").replace(/\u0001/g,"</mark>");}
 const fmtDate=t=>new Date(t).toLocaleDateString(undefined,{weekday:"long",day:"numeric",month:"long"});
 function normPinyin(s){return String(s).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/v/g,"u").replace(/[^a-z]/g,"");}

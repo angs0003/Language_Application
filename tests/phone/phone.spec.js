@@ -180,6 +180,24 @@ for (const lang of ["ja", "zh"]) {
       expect(errors, "script errors").toEqual([]);
     });
   }
+  if (lang === "ja") test("ja new word card: whole-word reading note, and the full stop stays with the last word", async ({ page }) => {
+    const errors = await openApp(page, lang);
+    await page.evaluate(() => {
+      S.ja.placed = true;
+      const t = themes("ja").find(x => x.title === "Months and dates"); startLesson(t.words, t.title);
+      const k = view.words.findIndex(w => w.w === "一日"); view.i = view.items0.findIndex(it => it.k === "word" && it.wi === k); render();
+    });
+    await expect(page.locator("#main")).toContainText("This reading belongs to the whole word, not to each kanji.");
+    const cells = await page.locator(".glyph .cell").allTextContents();
+    expect(cells, "one character per cell").toEqual(["一", "日"]);
+    const r = await page.evaluate(() => {
+      const stop = [...document.querySelectorAll(".sent .tk.pu")].pop(), prev = stop.previousElementSibling, a = stop.getBoundingClientRect(), b = prev.getBoundingClientRect();
+      return { sameLine: Math.abs((a.top + a.bottom) / 2 - (b.top + b.bottom) / 2) < b.height, grouped: stop.parentElement.classList.contains("tkg") };
+    });
+    expect(r.grouped, "the full stop is grouped with the last word").toBe(true);
+    expect(r.sameLine, "the full stop is on the line of the last word").toBe(true);
+    expect(errors, "script errors").toEqual([]);
+  });
   // Answer choices low on the screen (thumb reach): tiles (.bank) or options (.opts) at the bottom, prompt and answer row at the top
   for (const mode of ["toEn", "listen", "build", "blank"]) {
     test(`${lang} question choices low on screen: ${mode}`, async ({ page }) => {

@@ -55,6 +55,16 @@ const failures = [];
     const unlabeled = [...d.querySelectorAll("button")].filter(b => !b.textContent.trim() && !b.getAttribute("aria-label")).length; if (unlabeled) failures.push(label + ": " + unlabeled + " icon buttons without a label");
   }
   W.eval("CASUAL.ja.length=0");
+  // New word card: whole-word reading note (Japanese) and the full stop stays grouped with the last word
+  W.eval("S.lang='ja';libSec=null;view={s:'home'};render()");
+  const missingWhole = W.eval("[...WHOLE_READING].filter(x=>!allWords('ja').some(w=>w.w===x))");
+  if (missingWhole.length > 8) failures.push("WHOLE_READING lists many words that are not in the content: " + missingWhole.join(" "));
+  W.eval("S.settings.showReading=true;startLesson([allWords('ja').find(w=>w.w==='今日')],'T',true);view.step=0;view.i=0;render()");
+  if (!M().includes("This reading belongs to the whole word, not to each kanji.")) failures.push("New word card: whole-word reading note missing for 今日");
+  if (!d.querySelector("#main .sent .tkg .tk.pu")) failures.push("New word card: the full stop is not grouped with the last word");
+  W.eval("startLesson([allWords('ja').find(w=>w.w==='私')],'T',true);view.step=0;view.i=0;render()");
+  if (M().includes("belongs to the whole word")) failures.push("New word card: whole-word note shown for an ordinary word");
+  W.eval("goHome()");
   failures.forEach(f => console.log("FAIL:", f));
   console.log(failures.length ? failures.length + " failure(s)." : "Smoke test OK.");
   process.exit(failures.length ? 1 : 0);
