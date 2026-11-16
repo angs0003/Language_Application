@@ -243,7 +243,7 @@ const JA_P8B=[
   ["光る","ひかる","hikaru","to shine","星が光ります。","Hoshi ga hikarimasu.","The stars shine.","星|hoshi|star / が|ga|(subject) / 光ります|hikarimasu|shine (polite) / 。 = The stars shine."],
   ["輝く","かがやく","kagayaku","to sparkle, to shine brightly","星が輝きます。","Hoshi ga kagayakimasu.","The stars sparkle.","星|hoshi|star / が|ga|(subject) / 輝きます|kagayakimasu|sparkle (polite) / 。 = The stars sparkle."],
   ["向かう","むかう","mukau","to head toward","駅に向かいます。","Eki ni mukaimasu.","I head toward the station.","駅|eki|station / に|ni|(at/to) / 向かいます|mukaimasu|head toward (polite) / 。 = I head toward the station."],
-  ["続く","つづく","tsudzuku","to continue, to go on","雨が続きます。","Ame ga tsuzukimasu.","The rain continues.","雨|ame|rain / が|ga|(subject) / 続きます|tsuzukimasu|continue (polite) / 。 = The rain continues."]],
+  ["続く","つづく","tsuzuku","to continue, to go on","雨が続きます。","Ame ga tsuzukimasu.","The rain continues.","雨|ame|rain / が|ga|(subject) / 続きます|tsuzukimasu|continue (polite) / 。 = The rain continues."]],
   [
    "今|ima|now / 、 / 電気|denki|light / が|ga|(subject) / 消える|kieru|goes out / ところです|tokoro desu|is about to / 。 = The light is about to go out now.",
    "空|sora|sky / に|ni|in / 虹|niji|rainbow / が|ga|(subject) / 現れた|arawareta|appeared / ところです|tokoro desu|has just / 。 = A rainbow has just appeared in the sky.",
@@ -309,7 +309,7 @@ const STORY_P8B=[
   "ゆい|Yui|Yui (name) / ： / 今|ima|now / 、 / 駅|eki|station / に|ni|to / 向かう|mukau|head / ところ|tokoro|when / 。 = Yui: I am about to head to the station now.",
   "星|hoshi|stars / が|ga|(subject) / 輝いて|kagayaite|sparkling / います|imasu|are / 。 = The stars are sparkling.",
   "ゆい|Yui|Yui (name) / ： / 声|koe|voice / が|ga|(subject) / 聞こえる|kikoeru|can be heard / ね|ne|(agreement) / 。 / 富士山|fujisan|Mt Fuji / が|ga|(subject) / 見える|mieru|can be seen / よ|yo|(friendly ending) / 。 = Yui: I can hear a voice. I can see Mt. Fuji.",
-  "雨|ame|rain / が|ga|(subject) / 続きます|tsudzukimasu|continues / 。 = The rain continues."
+  "雨|ame|rain / が|ga|(subject) / 続きます|tsuzukimasu|continues / 。 = The rain continues."
  ],"q":[[0,"What is Yui doing right now?",["Gazing at the view","Cooking dinner","Writing a letter"],0,"Line 1: 景色を眺めているところ means “I am gazing at the view right now”."],[4,"Where is Yui about to go?",["To the station","To the museum","To a shop"],0,"Line 5: 駅に向かうところ."]]}
 ];
 const JA_P8C=[

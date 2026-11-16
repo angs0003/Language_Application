@@ -390,7 +390,7 @@ const JA_P5C=[
   ["最初","さいしょ","saisho","first, the beginning","最初に手を洗います。","Saisho ni te o araimasu.","First I wash my hands.","最初|saisho|first / に|ni|(at) / 手|te|hands / を|o|(object) / 洗います|araimasu|wash / 。 = First I wash my hands."],
   ["最後","さいご","saigo","last, the end","最後に先生が話しました。","Saigo ni sensei ga hanashimashita.","At the end the teacher spoke.","最後|saigo|the end / に|ni|(at) / 先生|sensei|teacher / が|ga|(subject) / 話しました|hanashimashita|spoke / 。 = At the end the teacher spoke."],
   ["順番","じゅんばん","junban","order, turn","順番を待ちます。","Junban o machimasu.","I wait for my turn.","順番|junban|turn / を|o|(object) / 待ちます|machimasu|wait for / 。 = I wait for my turn."],
-  ["日付","ひづけ","hidzuke","date (day, month, year)","日付を書いてください。","Hidzuke o kaite kudasai.","Please write the date.","日付|hidzuke|date / を|o|(object) / 書いて|kaite|write and / ください|kudasai|please / 。 = Please write the date."],
+  ["日付","ひづけ","hizuke","date (day, month, year)","日付を書いてください。","Hizuke o kaite kudasai.","Please write the date.","日付|hizuke|date / を|o|(object) / 書いて|kaite|write and / ください|kudasai|please / 。 = Please write the date."],
   ["以内","いない","inai","within","駅から十分以内です。","Eki kara juppun inai desu.","It is within ten minutes from the station.","駅|eki|station / から|kara|from / 十分|juppun|ten minutes / 以内|inai|within / です|desu|is / 。 = It is within ten minutes from the station."],
   ["急に","きゅうに","kyuu ni","suddenly","急に雨が降りました。","Kyuu ni ame ga furimashita.","It suddenly rained.","急に|kyuu ni|suddenly / 雨|ame|rain / が|ga|(subject) / 降りました|furimashita|fell / 。 = It suddenly rained."]],
   [
@@ -399,7 +399,7 @@ const JA_P5C=[
    "最近|saikin|recently / 寒い|samui|cold / です|desu|is / ね|ne|(right?) / 。 = It is cold these days, isn’t it?",
    "帰る|kaeru|go home / 途中|tochuu|on the way / で|de|at / 買い物|kaimono|shopping / を|o|(object) / します|shimasu|do / 。 = I shop on the way home.",
    "最初|saisho|first / に|ni|at / 手|te|hand / を|o|(object) / 洗います|araimasu|wash / 。 = First I wash my hands.",
-   "日付|hidzuke|date / を|o|(object) / 書いて|kaite|write / ください|kudasai|please / 。 = Please write the date."
+   "日付|hizuke|date / を|o|(object) / 書いて|kaite|write / ください|kudasai|please / 。 = Please write the date."
   ]]
 ];
 const STORY_P5C=[
@@ -444,7 +444,7 @@ const STORY_P5C=[
   "本屋|hon’ya|bookstore / に|ni|to / は|wa|(topic) / 自転車|jitensha|bicycle / で|de|by / 行きます|ikimasu|goes / 。 = She goes to the bookstore by bicycle.",
   "今日|kyou|today / は|wa|(topic) / 急に|kyuu ni|suddenly / 雨|ame|rain / が|ga|(subject) / 降りました|furimashita|fell / 。 = Today it suddenly rained.",
   "帰る|kaeru|go home / 途中|tochuu|on the way / で|de|at / ゆい|Yui|Yui (name) / は|wa|(topic) / 傘|kasa|umbrella / を|o|(object) / 買いました|kaimashita|bought / 。 = Yui bought an umbrella on the way home.",
-  "最近|saikin|recently / ゆい|Yui|Yui (name) / は|wa|(topic) / 忙しい|isogashii|busy / です|desu|is / 。 / 試験|shiken|exam / の|no|of / 日付|hidzuke|date / を|o|(object) / 見ました|mimashita|looked at / 。 = Yui is busy these days. She looked at the date of the exam.",
+  "最近|saikin|recently / ゆい|Yui|Yui (name) / は|wa|(topic) / 忙しい|isogashii|busy / です|desu|is / 。 / 試験|shiken|exam / の|no|of / 日付|hizuke|date / を|o|(object) / 見ました|mimashita|looked at / 。 = Yui is busy these days. She looked at the date of the exam.",
   "本屋|hon’ya|bookstore / は|wa|(topic) / 駅|eki|station / から|kara|from / 十分|juppun|ten minutes / 以内|inai|within / です|desu|is / 。 = The bookstore is within ten minutes from the station.",
   "ゆい|Yui|Yui (name) / と|to|and / けん|Ken|Ken (name) / は|wa|(topic) / 順番|junban|order / を|o|(object) / 見ました|mimashita|looked at / 。 / 最初|saisho|first / は|wa|(topic) / けん|Ken|Ken (name) / です|desu|is / 。 / 最後|saigo|last / は|wa|(topic) / ゆい|Yui|Yui (name) / です|desu|is / 。 = Yui and Ken looked at the order. Ken is first. Yui is last."
  ],"q":[[2,"What happened today?",["It suddenly rained","Ken was late","The shop closed"],0,"Line 3: 急に雨が降りました means “it suddenly rained”."],[3,"What did Yui buy on the way home?",["An umbrella","A hat","A bag"],0,"Line 4: 傘を買いました means “bought an umbrella”."]]}

@@ -22,7 +22,7 @@ const JA_P6A=[
   ]],
  ["Housework",
   [["家事","かじ","kaji","housework","母は毎日家事をします。","Haha wa mainichi kaji o shimasu.","My mother does housework every day.","母|haha|my mother / は|wa|(topic) / 毎日|mainichi|every day / 家事|kaji|housework / を|o|(object) / します|shimasu|does / 。 = My mother does housework every day."],
-  ["片付ける","かたづける","katadzukeru","to tidy up","部屋を片付けます。","Heya o katadzukemasu.","I tidy the room.","部屋|heya|room / を|o|(object) / 片付けます|katadzukemasu|tidy / 。 = I tidy the room."],
+  ["片付ける","かたづける","katazukeru","to tidy up","部屋を片付けます。","Heya o katazukemasu.","I tidy the room.","部屋|heya|room / を|o|(object) / 片付けます|katazukemasu|tidy / 。 = I tidy the room."],
   ["洗い物","あらいもの","araimono","dishes (to wash)","夜に洗い物をします。","Yoru ni araimono o shimasu.","I do the dishes at night.","夜|yoru|night / に|ni|(at) / 洗い物|araimono|dishes / を|o|(object) / します|shimasu|do / 。 = I do the dishes at night."],
   ["干す","ほす","hosu","to hang out to dry","庭で服を干します。","Niwa de fuku o hoshimasu.","I hang clothes to dry in the garden.","庭|niwa|garden / で|de|(in) / 服|fuku|clothes / を|o|(object) / 干します|hoshimasu|hang out to dry / 。 = I hang clothes to dry in the garden."],
   ["畳む","たたむ","tatamu","to fold","タオルを畳みます。","Taoru o tatamimasu.","I fold a towel.","タオル|taoru|towel / を|o|(object) / 畳みます|tatamimasu|fold / 。 = I fold a towel."],
@@ -33,7 +33,7 @@ const JA_P6A=[
   ["食器","しょっき","shokki","tableware","食器を洗います。","Shokki o araimasu.","I wash the tableware.","食器|shokki|tableware / を|o|(object) / 洗います|araimasu|wash / 。 = I wash the tableware."]],
   [
    "母|haha|my mother / の|no|’s / 家事|kaji|housework / を|o|(object) / 手伝います|tetsudaimasu|help with / 。 = I help with my mother’s housework.",
-   "弟|otouto|my younger brother / の|no|’s / 部屋|heya|room / を|o|(object) / 片付けてあげます|katadzukete agemasu|tidy up for / 。 = I tidy my younger brother’s room for him.",
+   "弟|otouto|my younger brother / の|no|’s / 部屋|heya|room / を|o|(object) / 片付けてあげます|katazukete agemasu|tidy up for / 。 = I tidy my younger brother’s room for him.",
    "父|chichi|my father / は|wa|(topic) / 洗い物|araimono|dishes / を|o|(object) / します|shimasu|does / 。 = My father does the dishes.",
    "妹|imouto|my younger sister / に|ni|for / 服|fuku|clothes / を|o|(object) / 畳んであげます|tatande agemasu|fold for / 。 = I fold clothes for my younger sister.",
    "庭|niwa|garden / で|de|in / タオル|taoru|towels / を|o|(object) / 干します|hoshimasu|hang out / 。 = I hang towels out in the garden.",
@@ -123,7 +123,7 @@ const STORY_P6A=[
   "けん|Ken|Ken (name) / は|wa|(topic) / 山田さん|Yamada-san|Yamada-san / に|ni|for / 服|fuku|clothes / を|o|(object) / 畳んであげます|tatande agemasu|folds for / 。 = Ken folds the clothes for Yamada-san.",
   "庭|niwa|garden / で|de|in / ゆい|Yui|Yui (name) / は|wa|(topic) / タオル|taoru|towels / を|o|(object) / 干します|hoshimasu|hangs out / 。 = In the garden, Yui hangs out the towels.",
   "山田さん|Yamada-san|Yamada-san / ： / 雑巾|zoukin|cleaning cloth / は|wa|(topic) / 台所|daidokoro|kitchen / に|ni|in / あります|arimasu|there is / 。 = Yamada-san: The cleaning cloth is in the kitchen.",
-  "けん|Ken|Ken (name) / は|wa|(topic) / 部屋|heya|room / を|o|(object) / 片付けます|katadzukemasu|tidies / 。 = Ken tidies the room."
+  "けん|Ken|Ken (name) / は|wa|(topic) / 部屋|heya|room / を|o|(object) / 片付けます|katazukemasu|tidies / 。 = Ken tidies the room."
  ],"q":[[3,"What does Yui use to wash the tableware?",["Detergent","Soap","A cloth"],0,"Line 4: 洗剤で食器を洗います."],[4,"What does Ken fold?",["Clothes","Towels","Paper"],0,"Line 5: 服を畳んであげます."]]},
  {"t":"A favour for Ken","l":[
   "ゆい|Yui|Yui (name) / ： / けん|Ken|Ken (name) / 、 / お願い|onegai|favour / が|ga|(subject) / ある|aru|there is / 。 = Yui: Ken, I have a favour to ask.",
@@ -183,7 +183,7 @@ const JA_P6B=[
   ["挑戦","ちょうせん","chousen","challenge","新しい料理に挑戦します。","Atarashii ryouri ni chousen shimasu.","I take on a new dish as a challenge.","新しい|atarashii|new / 料理|ryouri|dish / に|ni|(to) / 挑戦|chousen|challenge / します|shimasu|do / 。 = I take on a new dish as a challenge."],
   ["珍しい","めずらしい","mezurashii","rare, unusual","これは珍しい果物です。","Kore wa mezurashii kudamono desu.","This is a rare fruit.","これ|kore|this / は|wa|(topic) / 珍しい|mezurashii|rare / 果物|kudamono|fruit / です|desu|is / 。 = This is a rare fruit."],
   ["工夫","くふう","kufuu","clever way, idea","いい工夫です。","Ii kufuu desu.","That is a good idea.","いい|ii|good / 工夫|kufuu|idea / です|desu|is / 。 = That is a good idea."],
-  ["手作り","てづくり","tedzukuri","homemade","これは母の手作りです。","Kore wa haha no tedzukuri desu.","This is my mother’s homemade food.","これ|kore|this / は|wa|(topic) / 母|haha|my mother / の|no|(of) / 手作り|tedzukuri|homemade / です|desu|is / 。 = This is my mother’s homemade food."],
+  ["手作り","てづくり","tezukuri","homemade","これは母の手作りです。","Kore wa haha no tezukuri desu.","This is my mother’s homemade food.","これ|kore|this / は|wa|(topic) / 母|haha|my mother / の|no|(of) / 手作り|tezukuri|homemade / です|desu|is / 。 = This is my mother’s homemade food."],
   ["体験","たいけん","taiken","experience","いい体験でした。","Ii taiken deshita.","It was a good experience.","いい|ii|good / 体験|taiken|experience / でした|deshita|was / 。 = It was a good experience."],
   ["比べる","くらべる","kuraberu","to compare","二つの値段を比べます。","Futatsu no nedan o kurabemasu.","I compare the two prices.","二つ|futatsu|two / の|no|(of) / 値段|nedan|price / を|o|(object) / 比べます|kurabemasu|compare / 。 = I compare the two prices."],
   ["気に入る","きにいる","kiniiru","to like, to be pleased with","この服が気に入りました。","Kono fuku ga ki ni irimashita.","I like these clothes.","この|kono|this / 服|fuku|clothes / が|ga|(subject) / 気に入りました|ki ni irimashita|liked / 。 = I like these clothes."]],
@@ -223,7 +223,7 @@ const JA_P6B=[
   ["話し合う","はなしあう","hanashiau","to talk over, to discuss","家族で話し合います。","Kazoku de hanashiaimasu.","My family talks it over.","家族|kazoku|family / で|de|(together) / 話し合います|hanashiaimasu|talk over / 。 = My family talks it over."],
   ["理解","りかい","rikai","understanding","意味を理解します。","Imi o rikai shimasu.","I understand the meaning.","意味|imi|meaning / を|o|(object) / 理解|rikai|understanding / します|shimasu|do / 。 = I understand the meaning."],
   ["許す","ゆるす","yurusu","to forgive, to allow","友達を許します。","Tomodachi o yurushimasu.","I forgive my friend.","友達|tomodachi|friend / を|o|(object) / 許します|yurushimasu|forgive / 。 = I forgive my friend."],
-  ["気をつける","きをつける","ki wo tsukeru","to be careful","車に気をつけてください。","Kuruma ni ki o tsukete kudasai.","Please be careful of cars.","車|kuruma|cars / に|ni|(of) / 気をつけて|ki o tsukete|be careful and / ください|kudasai|please / 。 = Please be careful of cars."],
+  ["気をつける","きをつける","ki o tsukeru","to be careful","車に気をつけてください。","Kuruma ni ki o tsukete kudasai.","Please be careful of cars.","車|kuruma|cars / に|ni|(of) / 気をつけて|ki o tsukete|be careful and / ください|kudasai|please / 。 = Please be careful of cars."],
   ["意見","いけん","iken","opinion","ゆいの意見を聞きます。","Yui no iken o kikimasu.","I ask for Yui’s opinion.","ゆい|Yui|Yui (name) / の|no|(of) / 意見|iken|opinion / を|o|(object) / 聞きます|kikimasu|ask for / 。 = I ask for Yui’s opinion."]],
   [
    "友達|tomodachi|friend / に|ni|(person asked) / 頼って|tayotte|rely (て-form) / ほしい|hoshii|want / です|desu|is / 。 = I want my friend to rely on me.",
@@ -276,7 +276,7 @@ const STORY_P6B=[
   "ゆい|Yui|Yui (name) / は|wa|(topic) / 新しい|atarashii|new / コート|kooto|coat / を|o|(object) / 試着|shichaku|trying on / して|shite|do (て-form) / みます|mimasu|try / 。 = Yui tries on a new coat.",
   "ゆい|Yui|Yui (name) / ： / この|kono|this / コート|kooto|coat / が|ga|(subject) / 気に入った|ki ni itta|liked / 。 = Yui: I like this coat.",
   "けん|Ken|Ken (name) / は|wa|(topic) / 二つ|futatsu|two / の|no|’s / 値段|nedan|price / を|o|(object) / 比べます|kurabemasu|compares / 。 = Ken compares the two prices.",
-  "店員|ten’in|shop clerk / ： / これ|kore|this / は|wa|(topic) / 手作り|tedzukuri|handmade / です|desu|is / 。 = Shop clerk: This is handmade.",
+  "店員|ten’in|shop clerk / ： / これ|kore|this / は|wa|(topic) / 手作り|tezukuri|handmade / です|desu|is / 。 = Shop clerk: This is handmade.",
   "ゆい|Yui|Yui (name) / ： / 珍しい|mezurashii|rare / コート|kooto|coat / だ|da|is / ね|ne|(isn’t it) / 。 = Yui: It is a rare coat, isn’t it.",
   "けん|Ken|Ken (name) / ： / いい|ii|good / 体験|taiken|experience / だ|da|is / ね|ne|(isn’t it) / 。 = Ken: It is a good experience.",
   "ゆい|Yui|Yui (name) / は|wa|(topic) / コート|kooto|coat / を|o|(object) / 買います|kaimasu|buys / 。 = Yui buys the coat."

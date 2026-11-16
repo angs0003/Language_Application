@@ -9,6 +9,7 @@ if (!file) { console.log("Usage: node tools/check-words.js <file.json>"); proces
 const G = require("./load-content")();
 const ks = fs.readFileSync(path.join(__dirname, "..", "js", "kanji.js"), "utf8");
 const toHira = new Function(ks.slice(ks.indexOf("const R2H_MAP"), ks.indexOf("const hasKanji")) + "; return toHira;")();
+const { romajiMatches } = require("./romaji-match");
 const data = JSON.parse(fs.readFileSync(file, "utf8"));
 let errors = 0, warns = 0;
 const err = (...m) => { errors++; console.log("ERROR:", ...m); }, warn = (...m) => { warns++; console.log("WARN:", ...m); };
@@ -27,8 +28,7 @@ data.forEach((t, ti) => {
     if (existing.has(word)) err(ww, `duplicate of existing word ${word} (theme ${existing.get(word)})`);
     if (mine.has(word)) err(ww, `duplicate of ${word} in file theme ${mine.get(word)}`); else mine.set(word, ti + 1);
     if (/[ぁ-ゖ]/.test(kana) && !/[゠-ヿ一-鿿]/.test(kana)) {
-      const exp = romaji.endsWith("wa") ? kana.replace(/は$/, "わ") : kana;
-      if (toHira(romaji) !== exp) err(ww, `romaji ${romaji} gives ${toHira(romaji)} but kana is ${kana}`);
+      if (!romajiMatches(toHira, romaji, kana)) err(ww, `romaji ${romaji} gives ${toHira(romaji)} but kana is ${kana}`);
     } else if (!/^[゠-ヿ]+$/.test(kana)) err(ww, "kana field must be only hiragana or only katakana:", kana);
     if (/[一-鿿]/.test(kana)) err(ww, "kana field contains kanji");
     if (!/[A-Za-z]/.test(romaji) || /[^A-Za-z’' -]/.test(romaji)) err(ww, "romaji has odd characters:", romaji);
