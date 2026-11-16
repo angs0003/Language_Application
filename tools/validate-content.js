@@ -75,7 +75,8 @@ for (const [name, themes, width] of [["zh", ZH, 6], ["ja", JA, 7]]) {
   /* Romaji of each Japanese word must convert to its kana (the app builds furigana from the romaji). Warning only. */
   const ks = fs.readFileSync(path.join(__dirname, "..", "js", "kanji.js"), "utf8");
   const toHira = new Function(ks.slice(ks.indexOf("const R2H_MAP"), ks.indexOf("const hasKanji")) + "; return toHira;")();
-  let n = 0; JA.forEach((t, ti) => t[1].forEach(w => { if (/^[ぁ-ゖ]+$/.test(w[1]) && toHira(w[2]) !== (w[2].endsWith("wa") ? w[1].replace(/は$/, "わ") : w[1])) { n++; console.log(`WARN: ja theme ${ti + 1} word ${w[0]}: romaji ${w[2]} gives ${toHira(w[2])}, kana is ${w[1]}`); } }));
+  const { romajiMatches } = require("./romaji-match");
+  let n = 0; JA.forEach((t, ti) => t[1].forEach(w => { if (/^[ぁ-ゖ]+$/.test(w[1]) && !romajiMatches(toHira, w[2], w[1])) { n++; console.log(`WARN: ja theme ${ti + 1} word ${w[0]}: romaji ${w[2]} gives ${toHira(w[2])}, kana is ${w[1]}`); } }));
   if (!n) console.log("Romaji matches kana for every Japanese word.");
 }
 {

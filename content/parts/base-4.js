@@ -231,9 +231,9 @@ const JA6B=[
 ]],
 ["Post office, bank and library",[
 ["郵便","ゆうびん","yuubin","mail","郵便は朝に来ます。","Yuubin wa asa ni kimasu.","The mail comes in the morning.","郵便|yuubin|mail / は|wa|(topic) / 朝|asa|morning / に|ni|(in) / 来ます|kimasu|to come (polite) / 。 = The mail comes in the morning."],
-["配達","はいたつ","haitatsu","delivery","小包を配達します。","Kodzutsumi o haitatsu shimasu.","I deliver the parcel.","小包|kodzutsumi|parcel / を|o|(object) / 配達|haitatsu|delivery / します|shimasu|to do (polite) / 。 = I deliver the parcel."],
+["配達","はいたつ","haitatsu","delivery","小包を配達します。","Kozutsumi o haitatsu shimasu.","I deliver the parcel.","小包|kozutsumi|parcel / を|o|(object) / 配達|haitatsu|delivery / します|shimasu|to do (polite) / 。 = I deliver the parcel."],
 ["速達","そくたつ","sokutatsu","express mail","手紙を速達で送ります。","Tegami o sokutatsu de okurimasu.","I send the letter by express mail.","手紙|tegami|letter / を|o|(object) / 速達|sokutatsu|express mail / で|de|(by) / 送ります|okurimasu|to send (polite) / 。 = I send the letter by express mail."],
-["小包","こづつみ","kodzutsumi","parcel","小包を送ります。","Kodzutsumi o okurimasu.","I send a parcel.","小包|kodzutsumi|parcel / を|o|(object) / 送ります|okurimasu|to send (polite) / 。 = I send a parcel."],
+["小包","こづつみ","kozutsumi","parcel","小包を送ります。","Kozutsumi o okurimasu.","I send a parcel.","小包|kozutsumi|parcel / を|o|(object) / 送ります|okurimasu|to send (polite) / 。 = I send a parcel."],
 ["ポスト","ポスト","posuto","mailbox","ポストは郵便局の前にあります。","Posuto wa yuubinkyoku no mae ni arimasu.","The mailbox is in front of the post office.","ポスト|posuto|mailbox / は|wa|(topic) / 郵便局|yuubinkyoku|post office / の|no|(of) / 前|mae|front / に|ni|(at) / あります|arimasu|there is (polite) / 。 = The mailbox is in front of the post office."],
 ["預金","よきん","yokin","bank deposit","銀行に預金があります。","Ginkou ni yokin ga arimasu.","There is a deposit in the bank.","銀行|ginkou|bank / に|ni|(at) / 預金|yokin|bank deposit / が|ga|(subject) / あります|arimasu|there is (polite) / 。 = There is a deposit in the bank."],
 ["口座","こうざ","kouza","bank account","銀行の口座があります。","Ginkou no kouza ga arimasu.","I have a bank account.","銀行|ginkou|bank / の|no|(of) / 口座|kouza|account / が|ga|(subject) / あります|arimasu|there is (polite) / 。 = I have a bank account."],
@@ -243,7 +243,7 @@ const JA6B=[
 ],[
 "手紙|tegami|letter / を|o|(object) / 速達|sokutatsu|express mail / で|de|by / 送ります|okurimasu|send / 。 = I send the letter by express mail.",
 "郵便|yuubin|mail / の|no|’s / 配達|haitatsu|delivery / は|wa|(topic) / 朝|asa|morning / です|desu|is / 。 = The mail delivery is in the morning.",
-"郵便局|yuubinkyoku|post office / から|kara|from / 小包|kodzutsumi|parcel / を|o|(object) / 送ります|okurimasu|send / 。 = I send a parcel from the post office.",
+"郵便局|yuubinkyoku|post office / から|kara|from / 小包|kozutsumi|parcel / を|o|(object) / 送ります|okurimasu|send / 。 = I send a parcel from the post office.",
 "ポスト|posuto|mailbox / は|wa|(topic) / 郵便局|yuubinkyoku|post office / の|no|’s / 前|mae|front / に|ni|at / あります|arimasu|is / 。 = The mailbox is in front of the post office.",
 "図書館|toshokan|library / で|de|at / 漫画|manga|manga / と|to|and / 小説|shousetsu|novel / を|o|(object) / 読みます|yomimasu|read / 。 = I read a manga and a novel at the library.",
 "預金|yokin|deposit / は|wa|(topic) / 口座|kouza|account / に|ni|in / あります|arimasu|is / 。 = The deposit is in the account."
@@ -305,7 +305,7 @@ const STORY_JA5B=[
 "ポスト|posuto|mailbox / は|wa|(topic) / 郵便局|yuubinkyoku|post office / の|no|’s / 前|mae|front / に|ni|at / あります|arimasu|is / 。 / ゆい|Yui|Yui (name) / は|wa|(topic) / 手紙|tegami|letter / を|o|(object) / ポスト|posuto|mailbox / に|ni|in / 入れました|iremashita|put / 。 = The mailbox is in front of the post office. Yui put the letter in the mailbox.",
 "図書館|toshokan|library / で|de|at / 漫画|manga|manga / と|to|and / 小説|shousetsu|novel / を|o|(object) / 読みました|yomimashita|read / 。 = She read a manga and a novel at the library.",
 "図書館|toshokan|library / の|no|’s / カード|kaado|card / を|o|(object) / 使って|tsukatte|use (て-form) / 、 / 本|hon|book / を|o|(object) / 借りました|karimashita|borrowed / 。 = She used the library card and borrowed a book.",
-"カード|kaado|card / の|no|’s / 番号|bangou|number / を|o|(object) / ノート|nooto|notebook / に|ni|in / 書きました|kakimashita|wrote / 。 / 小包|kodzutsumi|parcel / は|wa|(topic) / 来週|raishuu|next week / 速達|sokutatsu|express mail / で|de|by / 送ります|okurimasu|will send / 。 = She wrote the card number in her notebook. She will send the parcel by express mail next week."
+"カード|kaado|card / の|no|’s / 番号|bangou|number / を|o|(object) / ノート|nooto|notebook / に|ni|in / 書きました|kakimashita|wrote / 。 / 小包|kozutsumi|parcel / は|wa|(topic) / 来週|raishuu|next week / 速達|sokutatsu|express mail / で|de|by / 送ります|okurimasu|will send / 。 = She wrote the card number in her notebook. She will send the parcel by express mail next week."
 ],q:[[2,"What did Yui do before going to the post office?",["She took out money at the bank","She read a manga","She bought a book"],0,"Line 3: 郵便局に行く前に、銀行でお金を出しました."],[6,"What did Yui borrow at the library?",["A book","A letter","A newspaper"],0,"Line 7: 本を借りました means “borrowed a book”."]]}
 ];
 const JA6C=[
@@ -337,12 +337,12 @@ const JA6C=[
 ["壊れる","こわれる","kowareru","to break (to become broken)","時計が壊れました。","Tokei ga kowaremashita.","The watch broke.","時計|tokei|watch / が|ga|(subject) / 壊れました|kowaremashita|broke / 。 = The watch broke."],
 ["見つける","みつける","mitsukeru","to find","鍵を見つけました。","Kagi o mitsukemashita.","I found the key.","鍵|kagi|key / を|o|(object) / 見つけました|mitsukemashita|found / 。 = I found the key."],
 ["変わる","かわる","kawaru","to change (by itself)","天気が変わります。","Tenki ga kawarimasu.","The weather changes.","天気|tenki|weather / が|ga|(subject) / 変わります|kawarimasu|to change (polite) / 。 = The weather changes."],
-["続ける","つづける","tsudzukeru","to continue","勉強を続けます。","Benkyou o tsudzukemasu.","I continue to study.","勉強|benkyou|study / を|o|(object) / 続けます|tsudzukemasu|to continue (polite) / 。 = I continue to study."],
+["続ける","つづける","tsuzukeru","to continue","勉強を続けます。","Benkyou o tsuzukemasu.","I continue to study.","勉強|benkyou|study / を|o|(object) / 続けます|tsuzukemasu|to continue (polite) / 。 = I continue to study."],
 ["集まる","あつまる","atsumaru","to gather","友達が集まります。","Tomodachi ga atsumarimasu.","Friends gather.","友達|tomodachi|friends / が|ga|(subject) / 集まります|atsumarimasu|to gather (polite) / 。 = Friends gather."]
 ],[
 "天気|tenki|weather / が|ga|(subject) / 変わって|kawatte|change and / 、 / 暗く|kuraku|dark / なりました|narimashita|became / 。 = The weather changed, and it became dark.",
 "店|mise|shop / は|wa|(topic) / 十|juu|ten / 時|ji|o’clock / に|ni|at / 閉まります|shimarimasu|closes / 。 = The shop closes at ten o’clock.",
-"授業|jugyou|class / が|ga|(subject) / 始まって|hajimatte|begin and / 、 / 勉強|benkyou|study / を|o|(object) / 続けます|tsudzukemasu|continue / 。 = The class begins, and I continue studying.",
+"授業|jugyou|class / が|ga|(subject) / 始まって|hajimatte|begin and / 、 / 勉強|benkyou|study / を|o|(object) / 続けます|tsuzukemasu|continue / 。 = The class begins, and I continue studying.",
 "車|kuruma|car / を|o|(object) / 止めて|tomete|stop and / 、 / ドア|doa|door / を|o|(object) / 開けます|akemasu|open / 。 = I stop the car and open the door.",
 "私|watashi|I / の|no|’s / 時計|tokei|watch / が|ga|(subject) / 壊れました|kowaremashita|broke / 。 = My watch broke.",
 "机|tsukue|desk / の|no|’s / 上|ue|top / で|de|at / 鍵|kagi|key / を|o|(object) / 見つけました|mitsukemashita|found / 。 = I found the key on the desk."

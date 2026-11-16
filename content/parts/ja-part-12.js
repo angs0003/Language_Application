@@ -205,7 +205,7 @@ const JA_P12B=[
   ["禁酒","きんしゅ","kinshu","giving up alcohol","兄は禁酒をします。","Ani wa kinshu o shimasu.","My older brother gives up alcohol.","兄|ani|my older brother / は|wa|(topic) / 禁酒|kinshu|giving up alcohol / を|o|(object) / します|shimasu|to do (polite) / 。 = My older brother gives up alcohol."],
   ["血圧","けつあつ","ketsuatsu","blood pressure","血圧は高いです。","Ketsuatsu wa takai desu.","My blood pressure is high.","血圧|ketsuatsu|blood pressure / は|wa|(topic) / 高い|takai|high / です|desu|is / 。 = My blood pressure is high."]],
   [
-   "運動|undou|exercise / を|o|(object) / 日課|nikka|daily routine / として|toshite|as / 続けます|tsudzukemasu|continue / 。 = I continue exercise as a daily routine.",
+   "運動|undou|exercise / を|o|(object) / 日課|nikka|daily routine / として|toshite|as / 続けます|tsuzukemasu|continue / 。 = I continue exercise as a daily routine.",
    "毎日|mainichi|every day / 、 / 昼寝|hirune|nap / を|o|(object) / します|shimasu|take / 。 = I take a nap every day.",
    "肉|niku|meat / は|wa|(topic) / 脂肪|shibou|fat / が|ga|(subject) / あります|arimasu|has / 。 = Meat has fat.",
    "毎朝|maiasa|every morning / 、 / 体重|taijuu|body weight / を|o|(object) / 見ます|mimasu|check / 。 = I check my weight every morning.",
