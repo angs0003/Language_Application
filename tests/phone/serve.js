@@ -4,6 +4,7 @@ const ROOT = path.join(__dirname, "..", ".."), PORT = +process.argv[2] || 4173;
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".json": "application/json", ".png": "image/png", ".css": "text/css", ".svg": "image/svg+xml" };
 http.createServer((req, res) => {
   const p = decodeURIComponent(new URL(req.url, "http://x").pathname);
+  if (p === "/__root") { res.writeHead(200, { "Content-Type": "text/plain" }); return res.end(ROOT); } // identity check of tests/phone/global-setup.js
   const f = path.join(ROOT, p === "/" ? "index.html" : p);
   if (!f.startsWith(ROOT) || !fs.existsSync(f) || fs.statSync(f).isDirectory()) { res.writeHead(404); return res.end("Not found"); }
   res.writeHead(200, { "Content-Type": TYPES[path.extname(f)] || "application/octet-stream" });

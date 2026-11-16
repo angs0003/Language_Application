@@ -11,6 +11,7 @@
     "dict": "node tools/check-dictionary.js",
     "dict:get": "node tools/get-jmdict.js",
     "test:phone": "playwright test",
+    "test:phone:area": "node tests/phone/run.js",
     "shot": "node tools/shot.js"
   },
   "devDependencies": {
