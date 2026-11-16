@@ -18,7 +18,7 @@ const LV_START={},GR_START={};
 for(const l of ["ja","zh"]){LV_START[l]=[];GR_START[l]=[];PARTS[l].forEach(p=>{if(LV_START[l].length<p.lv){LV_START[l].push(p.t);GR_START[l].push(p.g);}});}
 function lvOfTheme(l,ti){return partOf(l,ti).lv;}
 function grFor(l,ti){const p=partOf(l,ti);return Math.min(GR[l].length-1,p.g+((ti-p.t)%p.n));}
-const STEPS=["🆕 New words","🧩 Grammar","💬 Sentences","📖 Story","✏️ Quiz","✅ Summary"];
+const STEPS=["New words","Grammar","Sentences","Story","Quiz","Summary"];
 const DAY=864e5, INTERVAL=[0,1,2,4,8,16];
 
 /* ---------- State and saving ---------- */
@@ -85,6 +85,8 @@ const WHOLE_READING=new Set("今日 明日 昨日 今朝 大人 果物 友達 �
 const wholeReading=(l,w)=>l==="ja"&&WHOLE_READING.has(w.w);
 function wholeReadingNote(l,w){return wholeReading(l,w)&&S.settings.showReading?`<p class="small muted center" style="margin:4px 0 0">This reading belongs to the whole word, not to each kanji.</p>`:"";}
 function hl(text,words){let h=esc(text);words.slice().sort((a,b)=>b.w.length-a.w.length).forEach(w=>{h=h.split(esc(w.w)).join("\u0000"+esc(w.w)+"\u0001");});return h.replace(/\u0000/g,"<mark>").replace(/\u0001/g,"</mark>");}
+/* Count with a noun: plural(1,"word") is "1 word", plural(0,"word") is "0 words". Pass the plural form for irregular nouns. */
+const plural=(n,one,many)=>n+" "+(n===1?one:(many||one+"s"));
 const fmtDate=t=>new Date(t).toLocaleDateString(undefined,{weekday:"long",day:"numeric",month:"long"});
 function normPinyin(s){return String(s).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/v/g,"u").replace(/[^a-z]/g,"");}
 function normRomaji(s){return String(s).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z]/g,"").replace(/ou/g,"o").replace(/oo/g,"o").replace(/uu/g,"u");}
@@ -93,7 +95,7 @@ function readingMatch(l,input,w){
   if(l==="ja"){ if(/[\u3040-\u30ff]/.test(t))return t.replace(/\s/g,"")===(w.k||w.w); return normRomaji(t)===normRomaji(w.r); }
   return normPinyin(t)===normPinyin(w.r);
 }
-const PLAY=`<span aria-hidden="true">🔊</span>`;
+
 
 /* ---------- Audio: speech output ---------- */
 let voices=[];

@@ -22,7 +22,7 @@ const emoji = s => /\p{Extended_Pictographic}/u.test(s);
   lang("ja"); click("Skip and start"); tab("Practise");
   check(!M().includes("Casual speech"), "the row is hidden when there are no lessons");
   W.eval("CASUAL.ja.push(" + JSON.stringify(FIX) + ")"); W.eval("render()");
-  check(M().includes("Casual speech") && M().includes("0 of 1 lessons done"), "the row is shown when a lesson exists");
+  check(M().includes("Casual speech") && M().includes("0 of 1 lesson done"), "the row is shown when a lesson exists");
   check(W.eval("CASUAL.zh.length=0;delete CASUAL.zh;casualList('zh').length") === 0, "a missing language list is treated as empty"); W.eval("CASUAL.zh=[]");
   click("Casual speech");
   check(M().includes("Talking to friends") && M().includes("0 of 1 done") && M().includes("4 pairs"), "the list shows the lesson and the count");

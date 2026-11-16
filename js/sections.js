@@ -2,14 +2,14 @@
 /* Language Steps: sections.js. Section data, home sections (themes, grammar guide, stories, talk), theme and grammar pages, story reader, travel situations.
    Files load in the order listed in js/loader.js (APP_FILES); they share one global scope. */
 /* ---------- Sections: data ---------- */
-const SECS=[["path","🧭","Path"],["trip","✈️","Travel"],["pod","🎧","Podcast"],["watch","📺","Watch"],["kanji","🈴","Kanji"],["grammar","🧩","Grammar"],["stories","📖","Stories"],["review","🔁","Review"]];
-const SITS=[["👋","Introducing yourself"],["🍜","Ordering food"],["🎫","Buying a train ticket"],["🧭","Asking for directions"],["🛍️","Shopping for clothes"],["📞","A phone call with a friend"],["🏨","Checking in at a hotel"],["🩺","At the doctor"]];
+const SECS=[["path","","Path"],["trip","","Travel"],["pod","","Podcast"],["watch","","Watch"],["kanji","","Kanji"],["grammar","","Grammar"],["stories","","Stories"],["review","","Review"]];
+const SITS=[["","Introducing yourself"],["","Ordering food"],["","Buying a train ticket"],["","Asking for directions"],["","Shopping for clothes"],["","A phone call with a friend"],["","Checking in at a hotel"],["","At the doctor"]];
 const CHARS={
   zh:"Main character: 小文 (Xiǎo Wén), a young woman from another country who has just moved to Beijing to study Chinese. Other characters: 大明 (Dàmíng), her Chinese classmate and friend; 李老师 (Lǐ lǎoshī), her teacher; 王阿姨 (Wáng āyí), the owner of a small shop near her home.",
   ja:"Main character: ゆい (Yui), a young woman from another country who has just moved to Tokyo to study Japanese. Other characters: けん (Ken), her Japanese classmate and friend; 田中先生 (Tanaka sensei), her teacher; 山田さん (Yamada-san), the owner of a small café near her home."
 };
 const CHAR_EN={zh:"小文 (Xiǎo Wén) has just moved to Beijing to study Chinese. You follow her daily life with her friend 大明 (Dàmíng), her teacher 李老师 (Lǐ lǎoshī) and the shop owner 王阿姨 (Wáng āyí).",ja:"ゆい (Yui) has just moved to Tokyo to study Japanese. You follow her daily life with her friend けん (Ken), her teacher 田中先生 (Tanaka sensei) and the café owner 山田さん (Yamada-san)."};
-const stEmoji=(c,t)=>t&&c>=t?"✅":c?"🟡":"⭕";
+const stEmoji=(c,t)=>t&&c>=t?STATUS.ok:c?STATUS.half:STATUS.todo;
 const learnedWords=l=>allWords(l).filter(w=>isL(l,w)).map(w=>w.w);
 function mkGramQ(q,l,plain){
   const opts=q.options.map((o,i)=>({text:String(o&&typeof o==="object"?o.text:o),reading:String(o&&o.reading||""),english:String(o&&o.english||""),ok:i===q.answer}));const sh=shuffle(opts);
@@ -19,7 +19,7 @@ const validQ=q=>q&&Array.isArray(q.options)&&q.options.length>=2&&Number.isInteg
 function cleanLines(arr){return (Array.isArray(arr)?arr:[]).map(x=>{const c=cleanSent(x);if(!c)return null;c.speaker=String(x.speaker||"A").toUpperCase().startsWith("B")?"B":"A";
   c.wrong=(Array.isArray(x.wrong)?x.wrong:[]).filter(w=>w&&w.text).map(w=>({text:String(w.text),reading:String(w.reading||""),english:String(w.english||"")})).slice(0,2);return c;}).filter(Boolean);}
 function linesHTML(l,lines,hw,youB){return lines.map(x=>`<div class="line"><div class="sent"><div class="sbody"><p class="spk">${x.speaker==="B"?(youB?"Person B (you)":"Person B"):"Person A"}</p>${glossHTML(l,x.tokens,hw||[])}${S.settings.showEnglish&&x.english?`<p class="eng">${esc(x.english)}</p>`:""}</div><button class="play" data-a="${A(()=>sayLines([x],l))}" aria-label="Play audio" title="Play audio">${PLAY}</button></div></div>`).join("");}
-function genCard(){if(view.gen==="loading")return `<div class="card"><p><strong>✨ ${esc(view.genText||("Creating 10 words for “"+view.genTitle+"” with AI. This usually takes 10 to 60 seconds."))}</strong></p></div>`;if(view.gen)return `<div class="card"><p><strong>${esc(view.gen)}</strong></p></div>`;return "";}
+function genCard(){if(view.gen==="loading")return `<div class="card"><p><strong>${esc(view.genText||("Creating 10 words for “"+view.genTitle+"” with AI. This usually takes 10 to 60 seconds."))}</strong></p></div>`;if(view.gen)return `<div class="card"><p><strong>${esc(view.gen)}</strong></p></div>`;return "";}
 
 /* ---------- Home ---------- */
 function secsHTML(tab){return `<div class="secs" role="tablist">${SECS.filter(([k])=>k!=="kanji"||S.lang==="ja").map(([k,e,t])=>`<button class="sec" role="tab" aria-selected="${tab===k}" data-a="${A(()=>{S.tab=k;save();view={s:"home"};render();window.scrollTo(0,0);if(k==="stories")pregen(S.lang);})}"><span class="e" aria-hidden="true">${e}</span>${t}</button>`).join("")}</div>`;}
@@ -32,7 +32,7 @@ function homePath(l,r){
   const ths=themes(l),lv=viewLevel(l);let h="";
   const idx=ths.map((t,i)=>i).filter(i=>lvOfTheme(l,i)===lv),words=idx.flatMap(i=>ths[i].words||[]),nL=words.filter(w=>isL(l,w)).length;
   h+=`<div class="card"><label class="small muted" for="lvl">Level</label><select id="lvl">${LEVELS[l].map((x,i)=>`<option value="${i+1}" ${lv===i+1?"selected":""}>${x[0]}: ${x[1]}${x[2]?"":" (not built yet)"}</option>`).join("")}</select>${idx.length?`<p style="margin:8px 0 0">Words learned in this level: ${nL} of ${words.length}</p><div class="bar"><i style="width:${words.length?Math.round(nL/words.length*100):0}%"></i></div>`:""}</div>`;
-  if(!idx.length){const x=LEVELS[l][lv-1];h+=`<div class="card"><h2>⭕ ${x[0]}: ${x[1]}</h2><p>This level is not built yet.</p><p>${esc(x[3])}</p><p class="small muted" style="margin:0">It will include the same parts as Level 1: themes with lessons, grammar points, story chapters and podcast episodes.</p></div>`;r.main=h;return;}
+  if(!idx.length){const x=LEVELS[l][lv-1];h+=`<div class="card"><h2>${STATUS.todo} ${x[0]}: ${x[1]}</h2><p>This level is not built yet.</p><p>${esc(x[3])}</p><p class="small muted" style="margin:0">It will include the same parts as Level 1: themes with lessons, grammar points, story chapters and podcast episodes.</p></div>`;r.main=h;return;}
   h+=`<div class="card"><h2>Themes</h2><p class="small muted">Tap a theme to see its words, everyday phrases, usage notes, grammar and a short conversation.</p><ul class="units">${idx.map(i=>{const t=ths[i];
     const tot=t.words.length,c=t.words.filter(w=>isL(l,w)).length;
     const e=stEmoji(c,tot),status=c>=tot?"Learned":c?`${c} of ${tot} learned`:"Not started";
@@ -41,29 +41,29 @@ function homePath(l,r){
 }
 function homeGrammar(l,r){
   const gi=S[l].gi,gd=S[l].grDone||[],nw=nextWords(l,1).words[0],ng=nw?grFor(l,themeIdxOf(l,nw)):-1;
-  r.main=`<details class="card tint acc" data-k="in-gram" ${isOpen("in-gram",false)?"open":""}><summary>🧩 Grammar guide (about)</summary><p style="margin:0">Each lesson teaches the next grammar point. You can open any point at any time.</p></details><div class="card"><ul class="units">${GR[l].map((g,i)=>{
-    const dn=gd.includes(i)||(i<10&&i<gi),e=dn?"✅":i===ng?"🟡":"⭕",st=dn?"Learned in a lesson":i===ng?"Next in your lessons":"Not started";const lvh=GR_START[l].indexOf(i);
+  r.main=`<details class="card tint acc" data-k="in-gram" ${isOpen("in-gram",false)?"open":""}><summary>Grammar guide (about)</summary><p style="margin:0">Each lesson teaches the next grammar point. You can open any point at any time.</p></details><div class="card"><ul class="units">${GR[l].map((g,i)=>{
+    const dn=gd.includes(i)||(i<10&&i<gi),e=dn?STATUS.ok:i===ng?STATUS.half:STATUS.todo,st=dn?"Learned in a lesson":i===ng?"Next in your lessons":"Not started";const lvh=GR_START[l].indexOf(i);
     return `${lvh>=0?`<li class="lvh"><span><strong>Level ${lvh+1}</strong></span></li>`:""}<li><button class="rowbtn" data-a="${A(()=>openGram(i))}"><span><span aria-hidden="true">${e}</span> ${i+1}. ${esc(g[0])}<br><span class="status">${st}</span></span><span class="chev" aria-hidden="true">›</span></button></li>`;}).join("")}</ul></div>`;
   const nx=ng>=0?ng:0;r.next={label:"Open grammar point "+(nx+1),fn:()=>openGram(nx)};
 }
 function homeStories(l,r){
   const read=S[l].chRead||[],ths=themes(l);let rows="",nextFn=null,nextLabel="";
   STORY[l].forEach((c,n)=>{if(LV_START[l].includes(n))rows+=`<li class="lvh"><span><strong>Level ${LV_START[l].indexOf(n)+1}</strong></span></li>`;const t=ths[n],un=!!(t&&t.words&&t.words.every(w=>isL(l,w))),isR=read.includes(n);
-    if(un){rows+=`<li><button class="rowbtn" data-a="${A(()=>openChapter(n))}"><span><span aria-hidden="true">${isR?"✅":"📖"}</span> Chapter ${n+1}: ${esc(c.t)}<br><span class="status">${isR?"Read":"Ready to read"}</span></span><span class="chev" aria-hidden="true">›</span></button></li>`;if(!isR&&!nextFn){nextFn=()=>openChapter(n);nextLabel="Read chapter "+(n+1);}}
-    else rows+=`<li><span><span aria-hidden="true">⭕</span> Chapter ${n+1}: ${esc(c.t)}<br><span class="status">Unlocks when Theme ${n+1}: ${esc(t?t.title:"")} is learned</span></span></li>`;});
-  r.main=`<details class="card tint acc" data-k="in-story" ${isOpen("in-story",false)?"open":""}><summary>📖 Your story (about)</summary><p style="margin:0">${esc(CHAR_EN[l])} There are ${STORY[l].length} chapters. Each chapter matches one theme and unlocks when you learn all words in that theme. Chapters are built into the app, so they open instantly.</p></details><div class="card"><ul class="units">${rows}</ul></div>`;
+    if(un){rows+=`<li><button class="rowbtn" data-a="${A(()=>openChapter(n))}"><span><span aria-hidden="true">${isR?STATUS.ok:ico("book",18)}</span> Chapter ${n+1}: ${esc(c.t)}<br><span class="status">${isR?"Read":"Ready to read"}</span></span><span class="chev" aria-hidden="true">›</span></button></li>`;if(!isR&&!nextFn){nextFn=()=>openChapter(n);nextLabel="Read chapter "+(n+1);}}
+    else rows+=`<li><span><span aria-hidden="true"></span> Chapter ${n+1}: ${esc(c.t)}<br><span class="status">Unlocks when Theme ${n+1}: ${esc(t?t.title:"")} is learned</span></span></li>`;});
+  r.main=`<details class="card tint acc" data-k="in-story" ${isOpen("in-story",false)?"open":""}><summary>Your story (about)</summary><p style="margin:0">${esc(CHAR_EN[l])} There are ${STORY[l].length} chapters. Each chapter matches one theme and unlocks when you learn all words in that theme. Chapters are built into the app, so they open instantly.</p></details><div class="card"><ul class="units">${rows}</ul></div>`;
   r.next=nextFn?{label:nextLabel,fn:nextFn}:{label:"Learn a theme to unlock a chapter",dis:true};
 }
 function homeTalk(l,r){
   const done=S[l].talkDone||{};let first=-1;
-  r.main=`<details class="card tint acc" data-k="in-talk" ${isOpen("in-talk",false)?"open":""}><summary>💬 Everyday conversations (about)</summary><p style="margin:0">Each situation has a conversation with audio, key phrases, and “Your turn”: you choose what Person B says.</p></details><div class="card"><ul class="units">${SITS.map(([e,t],i)=>{
+  r.main=`<details class="card tint acc" data-k="in-talk" ${isOpen("in-talk",false)?"open":""}><summary>Everyday conversations (about)</summary><p style="margin:0">Each situation has a conversation with audio, key phrases, and “Your turn”: you choose what Person B says.</p></details><div class="card"><ul class="units">${SITS.map(([e,t],i)=>{
     const has=!!C[`${l}.tk.${i}`],d=!!done[i];if(!d&&first<0)first=i;
-    return `<li><button class="rowbtn" data-a="${A(()=>openTalk(i))}"><span><span aria-hidden="true">${d?"✅":has?"🟡":"⭕"}</span> ${e} ${esc(t)}<br><span class="status">${d?"Your turn completed":has?"Opened":"Not opened"}</span></span><span class="chev" aria-hidden="true">›</span></button></li>`;}).join("")}</ul></div>`;
+    return `<li><button class="rowbtn" data-a="${A(()=>openTalk(i))}"><span><span aria-hidden="true">${d?STATUS.ok:has?STATUS.half:STATUS.todo}</span> ${e} ${esc(t)}<br><span class="status">${d?"Your turn completed":has?"Opened":"Not opened"}</span></span><span class="chev" aria-hidden="true">›</span></button></li>`;}).join("")}</ul></div>`;
   r.next=first>=0?{label:"Open: "+SITS[first][1],fn:()=>openTalk(first)}:{label:"All situations completed",dis:true};
 }
 function homeReview(l,r){
   const due=dueList(l).length,nd=nextDue(l),n=learnedWords(l).length;
-  r.main=`<div class="card tint"><h2>🔁 Review</h2><p>Words due now: ${due}</p><p class="small muted">${due?"A review has up to 10 questions. Each answer is saved when you check it.":nd?"The next review is due on "+fmtDate(nd)+".":"Words are added to review after each lesson."}</p><p class="small muted" style="margin:0">Words learned in ${L[l].name}: ${n}</p></div>`;
+  r.main=`<div class="card tint"><h2>Review</h2><p>Words due now: ${due}</p><p class="small muted">${due?"A review has up to 10 questions. Each answer is saved when you check it.":nd?"The next review is due on "+fmtDate(nd)+".":"Words are added to review after each lesson."}</p><p class="small muted" style="margin:0">Words learned in ${L[l].name}: ${n}</p></div>`;
   r.main+=myWordsCard(l);
   r.next={label:"Start review",fn:startReview,dis:!due};
 }
@@ -95,23 +95,23 @@ Reply with only JSON in this shape:
 function screenTheme(){
   const v=view,l=S.lang,t=themes(l)[v.ti],g=C[`${l}.tg.${v.ti}`];
   const tot=t.words?t.words.length:10,c=t.words?t.words.filter(w=>isL(l,w)).length:0;
-  const r={row:"title",title:`Theme ${v.ti+1}: ${t.title}`,prog:`<div class="ptext">${t.words?stEmoji(c,tot):"✨"} ${t.words?c+" of "+tot+" words learned":"Words not created yet"}</div>`,back:{label:"Back",fn:goHome},main:""};
+  const r={row:"title",title:`Theme ${v.ti+1}: ${t.title}`,prog:`<div class="ptext">${t.words?stEmoji(c,tot):""} ${t.words?c+" of "+plural(tot,"word")+" learned":"Words not created yet"}</div>`,back:{label:"Back",fn:goHome},main:""};
   let h="";
   if(!t.words){
-    h=`<div class="card"><p>✨ This theme’s 10 words are created by AI the first time. Chinese words come from HSK 1. Japanese words come from JLPT N5.</p>${v.state&&v.state!=="gen"?`<p><strong>${esc(v.state)}</strong></p>`:v.state==="gen"?"<p><strong>Creating the words. This usually takes 10 to 60 seconds.</strong></p>":""}</div>`;
+    h=`<div class="card"><p>This theme’s 10 words are created by AI the first time. Chinese words come from HSK 1. Japanese words come from JLPT N5.</p>${v.state&&v.state!=="gen"?`<p><strong>${esc(v.state)}</strong></p>`:v.state==="gen"?"<p><strong>Creating the words. This usually takes 10 to 60 seconds.</strong></p>":""}</div>`;
     r.next={label:"Create words",dis:v.state==="gen",fn:async()=>{v.state="gen";render();const err=await genTheme(l,t.gi);v.state=err||"";if(view===v){render();if(!err)loadGuide(v);}}};
     r.main=h;return r;
   }
-  h+=`<div class="card"><h2>🔤 Words</h2><p class="small muted">Tap a word to open its reference card.</p><ul class="units">${t.words.map(w=>`<li><button class="rowbtn wordrow" data-a="${A(e=>openWord(l,[w.w,w.r,w.m],null,e))}"><span><span aria-hidden="true">${isL(l,w)?"✅":"⭕"}</span> <span class="cjk2" lang="${L[l].hl}">${esc(w.w)}</span>${l==="ja"&&w.k&&w.k!==w.w?` <span lang="ja">${esc(w.k)}</span>`:""} <span class="muted">${esc(w.r)}</span><br><span class="status">${esc(w.m)}</span></span></button><button class="play" aria-label="Play ${esc(w.r)}" data-a="${A(()=>say(w.w,l))}">${PLAY}</button></li>`).join("")}</ul></div>`;
+  h+=`<div class="card"><h2>Words</h2><p class="small muted">Tap a word to open its reference card.</p><ul class="units">${t.words.map(w=>`<li><button class="rowbtn wordrow" data-a="${A(e=>openWord(l,[w.w,w.r,w.m],null,e))}"><span><span aria-hidden="true">${isL(l,w)?STATUS.ok:STATUS.todo}</span> <span class="cjk2" lang="${L[l].hl}">${esc(w.w)}</span>${l==="ja"&&w.k&&w.k!==w.w?` <span lang="ja">${esc(w.k)}</span>`:""} <span class="muted">${esc(w.r)}</span><br><span class="status">${esc(w.m)}</span></span></button><button class="play" aria-label="Play ${esc(w.r)}" data-a="${A(()=>say(w.w,l))}">${PLAY}</button></li>`).join("")}</ul></div>`;
   const ps=(CUR[l][v.ti]||{}).sents||[];
   if(ps.length)h+=`<div class="card"><h2>Sentences</h2><p class="small muted">${ps.length} practice sentences that use this theme’s words.</p><p><button class="play" data-a="${A(()=>sayLines(ps,l))}">${PLAY}Play all sentences</button></p>${ps.map(x=>`<div class="line">${sentHTML(l,x,t.words)}</div>`).join("")}${t.words.every(w=>isL(l,w))?uiBtn("Practise these sentences",()=>startSentences(v.ti),"sec"):""}</div>`;
   if(g){
-    if(g.notes.length)h+=`<details class="card acc" data-k="notes" ${isOpen("notes",false)?"open":""}><summary>📝 How people use these words</summary>${g.notes.map(n=>`<p>${esc(n)}</p>`).join("")}</details>`;
-    if(g.phrases.length)h+=`<details class="card acc" data-k="phr" ${isOpen("phr",false)?"open":""}><summary>💬 Everyday phrases</summary>${g.phrases.map(s=>`<div class="line">${sentHTML(l,s,t.words)}</div>`).join("")}</details>`;
-  }else if(!AI_OFF)h+=`<div class="card"><p class="small"><strong>${v.state==="loading"?"✨ Writing usage notes, everyday phrases and a conversation. This usually takes 20 to 60 seconds.":esc(v.state)}</strong></p>${v.state&&v.state!=="loading"&&v.state.indexOf("not available")<0?`<button class="btn sec full" data-a="${A(()=>loadGuide(v))}">Try again</button>`:""}</div>`;
+    if(g.notes.length)h+=`<details class="card acc" data-k="notes" ${isOpen("notes",false)?"open":""}><summary>How people use these words</summary>${g.notes.map(n=>`<p>${esc(n)}</p>`).join("")}</details>`;
+    if(g.phrases.length)h+=`<details class="card acc" data-k="phr" ${isOpen("phr",false)?"open":""}><summary>Everyday phrases</summary>${g.phrases.map(s=>`<div class="line">${sentHTML(l,s,t.words)}</div>`).join("")}</details>`;
+  }else if(!AI_OFF)h+=`<div class="card"><p class="small"><strong>${v.state==="loading"?"Writing usage notes, everyday phrases and a conversation. This usually takes 20 to 60 seconds.":esc(v.state)}</strong></p>${v.state&&v.state!=="loading"&&v.state.indexOf("not available")<0?`<button class="btn sec full" data-a="${A(()=>loadGuide(v))}">Try again</button>`:""}</div>`;
   const gp=GR[l][grFor(l,v.ti)];
-  h+=`<details class="card acc" data-k="gr" ${isOpen("gr",false)?"open":""}><summary>🧩 Grammar for this theme</summary><p class="pattern" lang="${L[l].hl}">${esc(gp[1])}</p><p>${esc(gp[0])}</p><button class="btn sec full" data-a="${A(()=>openGram(grFor(l,v.ti)))}">Open this grammar point</button></details>`;
-  if(g&&g.dialogue.lines.length)h+=`<details class="card acc" data-k="conv" ${isOpen("conv",false)?"open":""}><summary>🗣️ Short conversation</summary>${g.dialogue.situation?`<p class="small">${esc(g.dialogue.situation)}</p>`:""}<p><button class="play" data-a="${A(()=>sayLines(g.dialogue.lines,l))}">${PLAY}Play whole conversation</button></p>${linesHTML(l,g.dialogue.lines,t.words)}</details>`;
+  h+=`<details class="card acc" data-k="gr" ${isOpen("gr",false)?"open":""}><summary>Grammar for this theme</summary><p class="pattern" lang="${L[l].hl}">${esc(gp[1])}</p><p>${esc(gp[0])}</p><button class="btn sec full" data-a="${A(()=>openGram(grFor(l,v.ti)))}">Open this grammar point</button></details>`;
+  if(g&&g.dialogue.lines.length)h+=`<details class="card acc" data-k="conv" ${isOpen("conv",false)?"open":""}><summary>Short conversation</summary>${g.dialogue.situation?`<p class="small">${esc(g.dialogue.situation)}</p>`:""}<p><button class="play" data-a="${A(()=>sayLines(g.dialogue.lines,l))}">${PLAY}Play whole conversation</button></p>${linesHTML(l,g.dialogue.lines,t.words)}</details>`;
   r.main=h;
   r.next=c>=tot?{label:"Repeat lesson",fn:()=>startLesson(t.words,t.title,true)}:{label:"Test out of this theme",fn:()=>startTest(v.ti)};
   return r;
@@ -143,11 +143,11 @@ Reply with only JSON in this shape:
 }
 function screenGram(){
   const v=view,l=S.lang,g=GR[l][v.gi],x=C[`${l}.gx.${v.gi}`];
-  const r={row:"title",title:`🧩 Grammar ${v.gi+1}: ${g[0]}`,prog:"",back:{label:"Back",fn:goHome},main:""};
+  const r={row:"title",title:`Grammar ${v.gi+1}: ${g[0]}`,prog:"",back:{label:"Back",fn:goHome},main:""};
   if(v.mode==="practice"){
     if(v.k>=v.qs.length){const c=v.qs.filter(q=>q.correct).length;
       r.prog=`<div class="ptext">Practice finished</div>`;
-      r.main=`<div class="card tint"><h2>${c===v.qs.length?"✅":"🟡"} Practice finished</h2><p>Correct: ${c} of ${v.qs.length}</p></div>`;
+      r.main=`<div class="card tint"><h2>${c===v.qs.length?STATUS.ok:STATUS.half} Practice finished</h2><p>Correct: ${c} of ${v.qs.length}</p></div>`;
       r.back={label:"Back",dis:true};r.next={label:"Back to grammar point",fn:()=>{v.mode="read";render();window.scrollTo(0,0);}};return r;}
     const q=v.qs[v.k];view.q=q;
     r.prog=`<div class="ptext">Practice: question ${v.k+1} of ${v.qs.length}</div>`;
@@ -157,9 +157,9 @@ function screenGram(){
   }
   let h=`<div class="card"><p class="pattern" lang="${L[l].hl}">${esc(g[1])}</p><p>${esc(g[2])}</p>${x&&x.mistake?`<p><strong>Common mistake:</strong> ${esc(x.mistake)}</p>`:""}<p class="q">Example</p>${sentHTML(l,{tokens:g[3],english:g[4]},[])}</div>`;
   if(x)h+=`<div class="card"><h2>More examples</h2>${x.examples.map(s=>`<div class="line">${sentHTML(l,s,[])}</div>`).join("")}</div>`;
-  else if(!AI_OFF)h+=`<div class="card"><p class="small"><strong>${v.state==="loading"?"✨ Writing 4 more examples and 3 practice questions. This usually takes 10 to 40 seconds.":esc(v.state)}</strong></p>${v.state&&v.state!=="loading"&&v.state.indexOf("not available")<0?`<button class="btn sec full" data-a="${A(()=>loadGx(v))}">Try again</button>`:""}</div>`;
+  else if(!AI_OFF)h+=`<div class="card"><p class="small"><strong>${v.state==="loading"?"Writing 4 more examples and 3 practice questions. This usually takes 10 to 40 seconds.":esc(v.state)}</strong></p>${v.state&&v.state!=="loading"&&v.state.indexOf("not available")<0?`<button class="btn sec full" data-a="${A(()=>loadGx(v))}">Try again</button>`:""}</div>`;
   r.main=h;
-  r.next=AI_OFF&&!(x&&x.quiz.length)?{label:"Go to home",fn:goHome}:{label:x&&x.quiz.length?`Practice: ${x.quiz.length} questions`:"Practice",dis:!(x&&x.quiz.length),fn:()=>{v.mode="practice";v.k=0;v.qs=x.quiz.map(q=>mkGramQ(q,l,false));render();window.scrollTo(0,0);}};
+  r.next=AI_OFF&&!(x&&x.quiz.length)?{label:"Go to home",fn:goHome}:{label:x&&x.quiz.length?`Practice: ${plural(x.quiz.length,"question")}`:"Practice",dis:!(x&&x.quiz.length),fn:()=>{v.mode="practice";v.k=0;v.qs=x.quiz.map(q=>mkGramQ(q,l,false));render();window.scrollTo(0,0);}};
   return r;
 }
 
@@ -238,14 +238,14 @@ function storyBubble(l,lines,x,i,map){
 }
 function screenStory(){
   const v=view,l=S.lang,ch=chapter(l,v.n);
-  const r={row:"title",title:`📖 Chapter ${v.n+1}: ${ch.title}`,back:{label:"Back",fn:()=>{stopAudio();goHome();}},main:""};
+  const r={row:"title",title:`Chapter ${v.n+1}: ${ch.title}`,back:{label:"Back",fn:()=>{stopAudio();goHome();}},main:""};
   if(v.phase==="read"){
     const n=ch.lines.length,map=spkMap(ch.lines),last=v.shown>=n;
     r.prog=`<div class="ptext">Line ${v.shown} of ${n}</div><div class="bar"><i style="width:${Math.round(v.shown/n*100)}%"></i></div>`;
     r.main=`<details class="card acc compact" data-k="storyopt" ${isOpen("storyopt",false)?"open":""}><summary>Options</summary><div style="margin-top:6px">${speedHTML()}</div><div style="margin-top:8px">${subChips()}</div>${last?"":`<button class="btn sec full" style="margin-top:10px" data-a="${A(()=>{v.shown=n;v.scrollEnd=true;stopAudio();render();})}">Show all lines</button>`}</details><div class="blist">${ch.lines.slice(0,v.shown).map((x,i)=>storyBubble(l,ch.lines,x,i,map)).join("")}</div>`;
     r.back={label:"Back",fn:()=>{stopAudio();if(v.shown>1){v.shown--;render();}else goHome();}};
     r.next=!last?{label:"Continue",fn:()=>{v.shown++;v.scrollEnd=true;render();readStoryLine();}}
-      :v.qs.length?{label:`Answer ${v.qs.length} questions`,fn:()=>{stopAudio();v.phase="q";v.k=0;render();window.scrollTo(0,0);}}:{label:"Finish chapter",fn:()=>{stopAudio();v.phase="done";render();window.scrollTo(0,0);}};
+      :v.qs.length?{label:`Answer ${plural(v.qs.length,"question")}`,fn:()=>{stopAudio();v.phase="q";v.k=0;render();window.scrollTo(0,0);}}:{label:"Finish chapter",fn:()=>{stopAudio();v.phase="done";render();window.scrollTo(0,0);}};
     return r;
   }
   if(v.phase==="q"&&v.k<v.qs.length){
@@ -258,8 +258,8 @@ function screenStory(){
   }
   const c=v.qs.filter(q=>q.correct).length;
   r.prog=`<div class="ptext">Chapter finished</div>`;r.back={label:"Back",dis:true};
-  r.main=`<div class="card tint"><h2>✅ Chapter ${v.n+1} finished</h2><p>${esc(ch.title)}</p>${v.qs.length?`<p>Comprehension questions: ${c} of ${v.qs.length} correct</p>`:""}<p class="small muted">The next chapter unlocks when you learn all words in the next theme.</p></div>`;
-  {const rd=S[l].chRead||(S[l].chRead=[]);if(!rd.includes(v.n)){rd.push(v.n);histPush(l,"📖 Chapter "+(v.n+1));save();}}
+  r.main=`<div class="card tint"><h2>${STATUS.ok} Chapter ${v.n+1} finished</h2><p>${esc(ch.title)}</p>${v.qs.length?`<p>Comprehension questions: ${c} of ${v.qs.length} correct</p>`:""}<p class="small muted">The next chapter unlocks when you learn all words in the next theme.</p></div>`;
+  {const rd=S[l].chRead||(S[l].chRead=[]);if(!rd.includes(v.n)){rd.push(v.n);histPush(l,"Chapter "+(v.n+1));save();}}
   r.main+=recsHTML(l,{k:"story",ti:v.n});
   r.next={label:"Go to home",fn:goHome};
   return r;
@@ -289,14 +289,14 @@ Reply with only JSON in this shape:
 }
 function screenTalk(){
   const v=view,l=S.lang,x=C[`${l}.tk.${v.ci}`],[em,title]=SITS[v.ci];
-  const r={row:"title",title:`💬 ${title}`,prog:"",back:{label:"Back",fn:goHome},main:""};
-  if(!x){r.main=`<div class="card"><p class="small"><strong>${v.state==="loading"?"✨ Writing the conversation. This usually takes 20 to 60 seconds.":esc(v.state)}</strong></p>${v.state&&v.state!=="loading"&&v.state.indexOf("not available")<0?`<button class="btn sec full" data-a="${A(()=>loadTalk(v))}">Try again</button>`:""}</div>`;r.next={label:"Start your turn",dis:true};return r;}
+  const r={row:"title",title:`${title}`,prog:"",back:{label:"Back",fn:goHome},main:""};
+  if(!x){r.main=`<div class="card"><p class="small"><strong>${v.state==="loading"?"Writing the conversation. This usually takes 20 to 60 seconds.":esc(v.state)}</strong></p>${v.state&&v.state!=="loading"&&v.state.indexOf("not available")<0?`<button class="btn sec full" data-a="${A(()=>loadTalk(v))}">Try again</button>`:""}</div>`;r.next={label:"Start your turn",dis:true};return r;}
   const turns=x.lines.map((ln,i)=>({ln,i})).filter(o=>o.ln.speaker==="B"&&o.ln.wrong.length);
   if(v.mode==="turn"){
     r.back={label:"Back",dis:true};r.exit=true;
     if(v.k>=v.qs.length){const c=v.qs.filter(q=>q.correct).length;r.exit=false;
       r.prog=`<div class="ptext">Your turn finished</div>`;
-      r.main=`<div class="card tint"><h2>✅ Conversation completed</h2><p>Correct replies: ${c} of ${v.qs.length}</p></div>`;
+      r.main=`<div class="card tint"><h2>${STATUS.ok} Conversation completed</h2><p>Correct replies: ${c} of ${v.qs.length}</p></div>`;
       r.next={label:"Save and go back",fn:()=>{const d=S[l].talkDone||(S[l].talkDone={});d[v.ci]=true;save();v.mode="read";render();window.scrollTo(0,0);}};return r;}
     const q=v.qs[v.k],upto=turns[v.k].i;view.q=q;r.back={label:"Back",fn:()=>{if(v.k>0)v.k--;else v.mode="read";render();window.scrollTo(0,0);}};
     r.prog=`<div class="ptext">Your turn: reply ${v.k+1} of ${v.qs.length}</div><div class="bar"><i style="width:${Math.round(v.k/v.qs.length*100)}%"></i></div>`;
@@ -304,9 +304,9 @@ function screenTalk(){
     r.next=!q.answered?{label:"Check answer",fn:()=>{checkQ(q);render();},dis:!canCheck(q)}:{label:"Continue",fn:()=>{v.k++;v.scrollEnd=true;render();}};
     return r;
   }
-  r.prog=`<div class="ptext">${S[l].talkDone&&S[l].talkDone[v.ci]?"✅ Your turn completed":"🟡 Read the conversation, then start your turn"}</div>`;
+  r.prog=`<div class="ptext">${S[l].talkDone&&S[l].talkDone[v.ci]?STATUS.ok+" Your turn completed":STATUS.half+" Read the conversation, then start your turn"}</div>`;
   r.main=`<div class="card"><p class="small">${esc(x.situation)}</p><p><button class="play" data-a="${A(()=>sayLines(x.lines,l))}">${PLAY}Play whole conversation</button></p>${linesHTML(l,x.lines,[],true)}</div>`
-    +(x.phrases.length?`<div class="card"><h2>🔑 Key phrases</h2>${x.phrases.map(s=>`<div class="line">${sentHTML(l,s,[])}</div>`).join("")}</div>`:"");
+    +(x.phrases.length?`<div class="card"><h2>Key phrases</h2>${x.phrases.map(s=>`<div class="line">${sentHTML(l,s,[])}</div>`).join("")}</div>`:"");
   r.next={label:`Start your turn: ${turns.length} replies`,dis:!turns.length,fn:()=>{
     v.mode="turn";v.k=0;
     v.qs=turns.map(o=>{const ln=o.ln;return mkGramQ({question:"Choose what Person B (you) says next.",options:[{text:sentText(ln),reading:ln.tokens.map(t=>t[1]).filter(Boolean).join(" "),english:ln.english},...ln.wrong],answer:0,why:""},l,false);});
@@ -358,8 +358,8 @@ function homeReal(l,r){
 }
 function homeTrip(l,r){
   const st=S[l],done=st.tripDone||{},op=st.tripOpen||{};let first=-1;
-  r.main=`<details class="card tint acc" data-k="in-trip" ${isOpen("in-trip",false)?"open":""}><summary>✈️ Travel in ${COUNTRY[l]} (about)</summary><p>Situations in trip order: what locals say, what you say, how to sound local, and etiquette. Built into the app.</p><p class="small muted" style="margin:0">Practical facts were checked on 2 November 2026. Rules and apps can change, so check official sources before you travel.</p></details><div class="card"><ul class="units">${TRIP[l].map((s,i)=>{const d=!!done[i],o=!!op[i];if(!d&&first<0)first=i;
-    return `<li><button class="rowbtn" data-a="${A(()=>openTrip(i))}"><span><span aria-hidden="true">${d?"✅":o?"🟡":"⭕"}</span> ${s.e} ${i+1}. ${esc(s.t)}<br><span class="status">${esc(s.intro)}</span></span><span class="chev" aria-hidden="true">›</span></button></li>`;}).join("")}</ul></div>`;
+  r.main=`<details class="card tint acc" data-k="in-trip" ${isOpen("in-trip",false)?"open":""}><summary>Travel in ${COUNTRY[l]} (about)</summary><p>Situations in trip order: what locals say, what you say, how to sound local, and etiquette. Built into the app.</p><p class="small muted" style="margin:0">Practical facts were checked on 2 November 2026. Rules and apps can change, so check official sources before you travel.</p></details><div class="card"><ul class="units">${TRIP[l].map((s,i)=>{const d=!!done[i],o=!!op[i];if(!d&&first<0)first=i;
+    return `<li><button class="rowbtn" data-a="${A(()=>openTrip(i))}"><span><span aria-hidden="true">${d?STATUS.ok:o?STATUS.half:STATUS.todo}</span> ${s.e} ${i+1}. ${esc(s.t)}<br><span class="status">${esc(s.intro)}</span></span><span class="chev" aria-hidden="true">›</span></button></li>`;}).join("")}</ul></div>`;
   r.next=first>=0?{label:`Open: ${TRIP[l][first].t}`,fn:()=>openTrip(first)}:{label:"All situations practised",dis:true};
 }
 function openTrip(i){const l=S.lang,o=S[l].tripOpen||(S[l].tripOpen={});if(!o[i]){o[i]=true;save();}view={s:"trip",i,mode:"read"};render();window.scrollTo(0,0);}
@@ -377,20 +377,20 @@ function screenTrip(){
   const r={row:"title",title:`${d.e} ${d.t}`,prog:"",back:{label:"Back",fn:goHome},main:""};
   if(v.mode==="practice"){
     if(v.k>=v.items.length){const c=v.items.filter(q=>q.correct).length;r.prog=`<div class="ptext">Practice finished</div>`;r.back={label:"Back",dis:true};
-      r.main=`<div class="card tint"><h2>✅ Practice finished</h2><p>Correct replies: ${c} of ${v.items.length}</p></div>`;
-      {const dn=S[l].tripDone||(S[l].tripDone={});if(!dn[v.i]){dn[v.i]=true;S[l].lst=0;histPush(l,"✈️ Travel: "+d.t);save();}}
+      r.main=`<div class="card tint"><h2>${STATUS.ok} Practice finished</h2><p>Correct replies: ${c} of ${v.items.length}</p></div>`;
+      {const dn=S[l].tripDone||(S[l].tripDone={});if(!dn[v.i]){dn[v.i]=true;S[l].lst=0;histPush(l,"Travel: "+d.t);save();}}
       r.main+=recsHTML(l,{k:"trip",i:v.i});
       r.next={label:"Go to home",fn:goHome};return r;}
     const q=v.items[v.k];view.q=q;const inRole=v.k>=v.nDrill,nR=v.items.length-v.nDrill;
     r.exit=true;
     r.prog=`<div class="ptext">${inRole?`Role-play: reply ${v.k-v.nDrill+1} of ${nR}`:`Quick replies: ${v.k+1} of ${v.nDrill}`}</div><div class="psub">${inRole?"Have the full conversation. Choose what you say.":"Listen to the local, then choose your reply."}</div><div class="bar"><i style="width:${Math.round(v.k/v.items.length*100)}%"></i></div>`;
-    r.main=(q.ctx.length?`<div class="card">${q.ctx.map(c=>tripLine(l,c.s,c.who==="A"?"🧑 Local":"🙋 You")).join("")}</div>`:"")+`<div class="card">${qHTML(q,{noAI:true})}</div>`;
+    r.main=(q.ctx.length?`<div class="card">${q.ctx.map(c=>tripLine(l,c.s,c.who==="A"?"Local":"You")).join("")}</div>`:"")+`<div class="card">${qHTML(q,{noAI:true})}</div>`;
     r.back={label:"Back",fn:()=>{if(v.k>0)v.k--;else v.mode="read";render();window.scrollTo(0,0);}};
     r.next=!q.answered?{label:"Check answer",fn:()=>{checkQ(q);render();},dis:!canCheck(q)}:{label:"Continue",fn:()=>{v.k++;render();window.scrollTo(0,0);}};
     return r;
   }
   const done=S[l].tripDone&&S[l].tripDone[v.i],tt=v.tt||"hear";r.title=d.t;
-  r.prog=`<div class="psub">${esc(COUNTRY[l])} · situation ${v.i+1} of ${TRIP[l].length}${done?" · ✅ Practised":""}</div>`;
+  r.prog=`<div class="psub">${esc(COUNTRY[l])} · situation ${v.i+1} of ${TRIP[l].length}${done?" · "+STATUS.ok+" Practised":""}</div>`;
   r.main=uiSeg([["hear","You will hear"],["say","You say"],["tips","Tips"]],tt,k=>{v.tt=k;render();})+`${tt==="tips"?`<div class="card"><h2>Good to know</h2>${d.facts.map(f=>`<p>${esc(f)}</p>`).join("")}</div>`:""}
   ${tt==="hear"?`<div class="card list">${d._p.hear.map(s=>tripLine(l,s,"Staff or local")).join("")}</div><button class="btn sec full" data-a="${A(()=>openPlayer("trip",v.i))}">Play the conversation, one line at a time</button>`:""}
   ${tt==="say"?`<div class="card list">${d._p.say.map(x=>tripLine(l,x.p,x.c?"Polite":"")+realBlock(l,x.p)+(x.c?tripLine(l,x.c,"Casual")+realBlock(l,x.c):"")).join("")}</div>`:""}
