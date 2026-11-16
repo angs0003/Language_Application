@@ -6,62 +6,22 @@
    When you add a screen, add it here. A feature that appears on many screens should also be tested on each of them (see the callout and podcast tests in phone.spec.js).
    open: JavaScript. langs: ["ja"] when the screen exists only for Japanese. setup: JavaScript run first.
    maxPrimary: a KNOWN breach of design rule 2 (one primary button per screen): the number of primary buttons the screen has today. The test fails if it gets worse. Fix the screen, then remove the field. */
-const LEARNED = "themes(S.lang)[0].words.forEach(w=>{S[S.lang].srs[w.w]={b:3,d:Date.now()+1e9,u:Date.now()};});";
-const LESSON = (step, i) => `{const t=themes(S.lang)[0];startLesson(t.words.slice(0,5),t.title);view.step=${step};view.i=${i||0};render();}`;
+/* The screens are listed by area in tests/phone/screens/<area>.js (each file exports an array of cases; shared helpers in screens/shared.js).
+   Add a new screen at the end of the file of its area; add a new area by adding its name to AREAS.
+   Run only some screens: PHONE_AREA=lessons,tabs (area names) and/or PHONE_SCREEN=text (part of the screen name, any case); npm run test:phone:area -- lessons. Without these the full list runs (CI). */
+const AREAS = ["tabs", "lists", "kana-kanji", "lessons", "reading", "practice"];
+const screens = AREAS.flatMap(area => require("./screens/" + area + ".js").map(sc => Object.assign({ area }, sc)));
+const list = v => (v || "").split(",").map(x => x.trim().toLowerCase()).filter(Boolean);
+const areas = list(process.env.PHONE_AREA), text = (process.env.PHONE_SCREEN || "").trim().toLowerCase();
+const unknown = areas.filter(a => !AREAS.includes(a));
+if (unknown.length) throw new Error("Unknown PHONE_AREA: " + unknown.join(", ") + ". Areas: " + AREAS.join(", "));
+const filtered = !!(areas.length || text);
+const selected = screens.filter(sc => (!areas.length || areas.includes(sc.area)) && (!text || sc.name.toLowerCase().includes(text)));
 module.exports = {
-  screens: [
-    { name: "Learn tab", covers: ["homeLearn", "screenHome"], open: "setTab('learn')" },
-    { name: "Practise tab", covers: ["homePractise"], open: "setTab('practise')" },
-    { name: "Listen tab", covers: ["homeListen"], open: "setTab('listen')" },
-    { name: "Travel tab", covers: ["homeTravel"], open: "setTab('travel')" },
-    { name: "Settings", covers: ["screenSettings"], open: "view={s:'settings'};render()" },
-    { name: "All themes", covers: ["screenLib", "homePath"], open: "openSub('themes')" },
-    { name: "Grammar guide", covers: ["homeGrammar"], open: "openSub('grammar')" },
-    { name: "Your videos", covers: ["homeWatch"], open: "openSub('watchadd')" },
-    { name: "Phrases to review", covers: ["homeReal"], open: "openSub('real')" },
-    { name: "Casual speech list", covers: ["homeCasual"], open: "openSub('casual')" },
-    { name: "Casual speech lesson", covers: ["screenCasual"], open: "if(CASUAL[S.lang]&&CASUAL[S.lang].length)openCasual(0)" },
-    { name: "Kanji list", covers: ["homeKanji"], langs: ["ja"], maxPrimary: 2, open: "openSub('kanji')" },
-    { name: "Kana list", covers: [], langs: ["ja"], open: "openSub('kana')" },
-    { name: "Kana lesson", covers: ["screenKana"], langs: ["ja"], open: "startKana('hira',0)" },
-    { name: "Kanji card", covers: ["screenKanjiCard"], langs: ["ja"], open: "openKanji('私')" },
-    { name: "Kanji lesson", covers: ["screenKanjiLearn"], langs: ["ja"], open: "startKanjiLesson()" },
-    { name: "Theme page", covers: ["screenTheme"], open: "openTheme(0)" },
-    { name: "Grammar point", covers: ["screenGram"], open: "openGram(0)" },
-    { name: "Lesson: new word", covers: ["screenLesson"], open: LESSON(0, 0) },
-    { name: "Lesson: new word, reading of the whole word", covers: [], langs: ["ja"], open: "{const t=themes('ja').find(x=>x.title==='Months and dates');startLesson(t.words,t.title);const k=view.words.findIndex(w=>w.w==='一日');view.i=view.items0.findIndex(it=>it.k==='word'&&it.wi===k);render();}" },
-    { name: "Lesson: grammar", covers: [], open: LESSON(1, 0) },
-    { name: "Lesson: sentences", covers: [], open: LESSON(2, 0) },
-    { name: "Lesson: story", covers: [], open: LESSON(3, 0) },
-    { name: "Lesson: quiz", covers: [], open: LESSON(4, 0) },
-    { name: "Lesson: summary", covers: [], maxPrimary: 2, open: LESSON(5, 0) },
-    { name: "Story reader", covers: ["screenStory"], open: "openChapter(0)" },
-    { name: "Story reader: all lines", covers: [], open: "{openChapter(1);view.shown=chapter(S.lang,1).lines.length;render();}" },
-    { name: "Story reader: questions", covers: [], open: "{openChapter(0);view.phase='q';view.k=0;render();}" },
-    { name: "Story player", covers: ["screenPlayer"], open: "openPlayer('story',0)" },
-    { name: "Podcast player", covers: [], open: "openPlayer('pod',0)" },
-    { name: "Travel player", covers: [], open: "openPlayer('trip',0)" },
-    { name: "Podcast episode", covers: ["screenPod"], open: "openPod(0)" },
-    { name: "Travel situation", covers: ["screenTrip"], open: "openTrip(0)" },
-    { name: "My words", covers: ["screenVocab"], open: "openVocab()" },
-    { name: "My words: flashcards", covers: ["screenCards"], setup: "{const w=themes(S.lang)[0].words[0];S[S.lang].saved=[{w:w.w,r:w.r,m:w.m,s:'',src:'',b:0,d:0,t:Date.now(),u:Date.now(),tk:null}];}", open: "startCards()" },
-    { name: "My words: practice finished", covers: [], setup: "{const w=themes(S.lang)[0].words[0];S[S.lang].saved=[{w:w.w,r:w.r,m:w.m,s:'',src:'',b:0,d:0,t:Date.now(),u:Date.now(),tk:null}];}", open: "startCards();view.k=view.list.length;render()" },
-    { name: "Review session", covers: ["screenReview"], setup: LEARNED, open: "startMixed(true)" },
-    { name: "Sounds: tone or pitch question", covers: [], setup: "themes(S.lang).slice(0,4).forEach(t=>t.words.forEach(w=>{S[S.lang].srs[w.w]={b:3,d:Date.now()+1e9,u:Date.now()};}));", open: "startSounds()" },
-    { name: "Test out", covers: ["screenTest"], open: "startTest(0)" },
-    { name: "Placement quiz", covers: ["screenPlace"], open: "startPlacement()" },
-    { name: "Placement quiz: fill the blank", covers: [], open: "placeOpenAt('blank')" },
-    { name: "Placement quiz: read and build the English", covers: [], open: "placeOpenAt('toEn')" },
-    { name: "Placement quiz: listen and build", covers: [], open: "placeOpenAt('listen')" },
-    { name: "Placement quiz: build the sentence", covers: [], open: "placeOpenAt('build')" },
-    { name: "Placement quiz: result", covers: [], open: "placeOpenAt('result')" },
-    { name: "Lesson: recall question", covers: [], open: "{const t=themes(S.lang)[0];startLesson(t.words.slice(0,5),t.title);view.step=4;view.quiz[0]=mkRecall(t.words[0],S.lang);view.i=0;render();}" },
-    { name: "Lesson: quiz earlier word", covers: [], /* a recall question: the listen question has 2 primary buttons (Play audio and Check answer), a known breach that is not part of this screen */ setup: "{const w=themes(S.lang)[1].words[0];S[S.lang].srs[w.w]={b:1,d:0,u:Date.now()};}", open: "{const t=themes(S.lang)[0];startLesson(t.words.slice(0,5),t.title);view.step=4;const k=Math.max(0,view.quiz.findIndex(q=>q.earlier));view.quiz[k]=Object.assign(mkRecall(view.quiz[k].word,S.lang),{earlier:true});view.i=k;render();}" },
-    { name: "Lesson: check question", covers: [], open: "{const t=themes(S.lang)[0];startLesson(t.words.slice(0,5),t.title,false,true);const k=view.items0.findIndex(it=>it.k==='check');view.items0[k].q=mkRecall(view.items0[k].q.word,S.lang);view.i=k;render();}" },
-    { name: "Lesson: check question with earlier word", covers: [], open: "{const t=themes(S.lang)[0];startLesson(t.words.slice(0,5),t.title,false,true);const k=view.items0.findIndex(it=>it.k==='check'&&it.q.earlier);view.items0[k].q=Object.assign(mkRecall(view.items0[k].q.word,S.lang),{earlier:true});view.i=k;render();}" },
-    { name: "Lesson: repeat question", covers: [], open: "{const t=themes(S.lang)[0];startLesson(t.words.slice(0,5),t.title);view.step=4;const k=view.quiz.findIndex(q=>q.type!=='match');view.quiz.forEach((q,j)=>{q.answered=true;q.correct=j!==k;if(j===k){q.dk=true;q.sel=-1;}});view.i=view.quiz.length-1;lessonMove(1);}" },
-    { name: "Lesson: listen question", covers: [], open: "{const t=themes(S.lang)[0];startLesson(t.words.slice(0,5),t.title);view.step=4;view.i=0;view.quiz[0]=mkQ('listen',t.words[0],S.lang);render();}" }
-  ],
+  AREAS,
+  screens, // all screens (used by tests/screens.test.js)
+  selected, // the screens to run (all, unless PHONE_AREA or PHONE_SCREEN is set)
+  filtered,
   /* Functions that are not screens of their own, or that need something the test cannot give. Give the reason. */
   skip: {
     screenVideo: "needs the YouTube player, which the tests block (no network); covered by tests/features.test.js with a fake player",

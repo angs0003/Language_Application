@@ -11,7 +11,7 @@ const found = {};
 const UPDATE = process.env.UPDATE_A11Y_BASELINE === "1";
 
 for (const lang of ["zh", "ja"]) {
-  for (const sc of require("./screens.js").screens) {
+  for (const sc of require("./screens.js").selected) {
     if (sc.langs && !sc.langs.includes(lang)) continue;
     test(`a11y ${lang} ${sc.name}`, async ({ page }, testInfo) => {
       test.skip(testInfo.project.name !== "iPhone 15 Pro", "runs once, on the iPhone project");

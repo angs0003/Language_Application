@@ -5,17 +5,19 @@
    Both phones run in Chromium (always available, also in GitHub). To run the iPhone in its real engine, WebKit: npx playwright install webkit, then PW_WEBKIT=1 npm run test:phone
    (the Pixel project is skipped in that run). GitHub runs both: the Chromium projects, then the WebKit iPhone (see .github/workflows/test.yml). */
 const { defineConfig, devices } = require("@playwright/test");
+const { URL, PORT } = require("./tests/phone/port.js"); // one port per working copy (PHONE_PORT overrides)
 const launchOptions = process.env.PW_CHROME ? { executablePath: process.env.PW_CHROME } : {};
 const webkit = process.env.PW_WEBKIT === "1";
 const phone = (name, keepEngine) => { const { defaultBrowserType, ...d } = devices[name]; return Object.assign({}, d, keepEngine ? { browserName: defaultBrowserType } : { browserName: "chromium", launchOptions }); };
 module.exports = defineConfig({
   testDir: "tests/phone",
+  globalSetup: require.resolve("./tests/phone/global-setup.js"),
   timeout: 30000,
   retries: 0,
   reporter: [["list"]],
-  use: { baseURL: "http://localhost:4173" },
+  use: { baseURL: URL },
   projects: webkit
     ? [{ name: "iPhone 15 Pro (WebKit)", use: phone("iPhone 15 Pro", true) }]
     : [{ name: "iPhone 15 Pro", use: phone("iPhone 15 Pro") }, { name: "Pixel 9 Pro", use: phone("Pixel 9 Pro") }],
-  webServer: { command: "node tests/phone/serve.js 4173", url: "http://localhost:4173", reuseExistingServer: true }
+  webServer: { command: `node tests/phone/serve.js ${PORT}`, url: URL, reuseExistingServer: true }
 });
