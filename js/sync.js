@@ -88,7 +88,7 @@ async function dbInit(){
   await dbPull();
 }
 function accountCard(){
-  if(!DB)return `<div class="card"><h2>👤 Account</h2><p class="small" style="margin:0">The database is not set up, so progress is saved on this device only. See README step 2.</p></div>`;
-  return `<div class="card"><h2>👤 Account</h2><p class="small">Signed in as ${esc(dbUser&&dbUser.email||"")}. All progress is saved to your account automatically.</p>${dbMsg?`<p class="small"><strong>${esc(dbMsg)}</strong></p>`:""}<p class="small muted">Content version: ${esc(window.LS_CONTENT_VERSION||"bundled")}.</p><div class="inline"><button class="btn sec" data-a="${A(()=>{dbPull().then(render);})}">Sync now</button><button class="btn sec" data-a="${A(async()=>{try{await DB.auth.signOut();}catch(e){}try{localStorage.removeItem(KEY);localStorage.removeItem("ls-content-cache");}catch(e){}location.reload();})}">Sign out</button></div></div>`;
+  if(!DB)return `<div class="card"><h2>Account</h2><p class="small" style="margin:0">The database is not set up, so progress is saved on this device only. See README step 2.</p></div>`;
+  return `<div class="card"><h2>Account</h2><p class="small">Signed in as ${esc(dbUser&&dbUser.email||"")}. All progress is saved to your account automatically.</p>${dbMsg?`<p class="small"><strong>${esc(dbMsg)}</strong></p>`:""}<p class="small muted">Content version: ${esc(window.LS_CONTENT_VERSION||"bundled")}.</p><div class="inline"><button class="btn sec" data-a="${A(()=>{dbPull().then(render);})}">Sync now</button><button class="btn sec" data-a="${A(async()=>{try{await DB.auth.signOut();}catch(e){}try{localStorage.removeItem(KEY);localStorage.removeItem("ls-content-cache");}catch(e){}location.reload();})}">Sign out</button></div></div>`;
 }
 

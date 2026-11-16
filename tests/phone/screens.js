@@ -17,7 +17,7 @@ module.exports = {
     { name: "Settings", covers: ["screenSettings"], open: "view={s:'settings'};render()" },
     { name: "All themes", covers: ["screenLib", "homePath"], open: "openSub('themes')" },
     { name: "Grammar guide", covers: ["homeGrammar"], open: "openSub('grammar')" },
-    { name: "Your videos", covers: ["homeWatch"], maxPrimary: 8, open: "openSub('watchadd')" },
+    { name: "Your videos", covers: ["homeWatch"], open: "openSub('watchadd')" },
     { name: "Phrases to review", covers: ["homeReal"], open: "openSub('real')" },
     { name: "Casual speech list", covers: ["homeCasual"], open: "openSub('casual')" },
     { name: "Casual speech lesson", covers: ["screenCasual"], open: "if(CASUAL[S.lang]&&CASUAL[S.lang].length)openCasual(0)" },

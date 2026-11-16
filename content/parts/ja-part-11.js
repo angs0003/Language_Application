@@ -184,7 +184,7 @@ const JA_P11B=[
   ["合意","ごうい","goui","agreement","会社と合意します。","Kaisha to goui shimasu.","I reach an agreement with the company.","会社|kaisha|company / と|to|(with) / 合意|goui|agreement / します|shimasu|to do (polite) / 。 = I reach an agreement with the company."],
   ["利益","りえき","rieki","profit","今年は利益が多いです。","Kotoshi wa rieki ga ooi desu.","This year the profit is large.","今年|kotoshi|this year / は|wa|(topic) / 利益|rieki|profit / が|ga|(subject) / 多い|ooi|many / です|desu|is / 。 = This year the profit is large."],
   ["売上","うりあげ","uriage","sales, revenue","売上が向上しました。","Uriage ga koujou shimashita.","The sales have improved.","売上|uriage|sales / が|ga|(subject) / 向上|koujou|improvement / しました|shimashita|did / 。 = The sales have improved."],
-  ["手持ち","てもち","temochi","stock, inventory","手持ちは少ないです。","Temochi wa sukunai desu.","The stock is small.","手持ち|temochi|stock / は|wa|(topic) / 少ない|sukunai|few / です|desu|is / 。 = The stock is small."],
+  ["手持ち","てもち","temochi","on hand, what you have with you","手持ちは少ないです。","Temochi wa sukunai desu.","What I have on hand is small.","手持ち|temochi|what you have on hand / は|wa|(topic) / 少ない|sukunai|few / です|desu|is / 。 = What I have on hand is small."],
   ["損","そん","son","loss, disadvantage","それは損です。","Sore wa son desu.","That is a loss.","それ|sore|that / は|wa|(topic) / 損|son|loss / です|desu|is / 。 = That is a loss."]],
   [
    "父|chichi|my father / は|wa|(topic) / 商売|shoubai|business / を|o|(object) / して|shite|doing / います|imasu|is / 。 = My father runs a business.",

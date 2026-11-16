@@ -11,7 +11,7 @@
   function apply(G) { for (const k of ["ZH", "JA", "GR", "STORY_ZH", "STORY_JA", "STORY", "TRIP_ZH", "TRIP_JA", "PARTS", "LEVELS", "VIDS", "KANJI_JA", "KANA", "TVREC", "CASUAL", "ACCENT_JA"]) window[k] = G[k]; window.LS_CONTENT_VERSION = G.version; }
   function screen(html) { const m = main(); if (m) m.innerHTML = html; const b = document.getElementById("bbar"); if (b) b.innerHTML = ""; }
   function signIn(db, msg) {
-    screen(`<div class="card tint"><h2>🈶 Language Steps</h2><p>Sign in to start. Your progress is saved to your account, so it is the same on every device.</p>
+    screen(`<div class="card tint"><h2>Language Steps</h2><p>Sign in to start. Your progress is saved to your account, so it is the same on every device.</p>
       <label class="small muted" for="lsem">Email</label><input id="lsem" type="text" inputmode="email" autocomplete="email" placeholder="Your email address">
       ${msg ? `<p class="small"><strong>${esc(msg)}</strong></p>` : ""}<button id="lsgo" class="btn pri full" style="margin-top:8px">Send sign-in link</button>
       <p class="small muted" style="margin:10px 0 0">You receive an email with a link. Open it on this device and tap the link. You stay signed in on this device.</p></div>`);
