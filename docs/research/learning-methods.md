@@ -110,7 +110,7 @@ Each finding has: source, evidence kind, confidence.
 2. Practising early (Practise anyway, `startMixed(true)`) may raise the box of words that are not due. Early successes give less spacing benefit than successes at the due time. (Unconfirmed in the code; needs a test. Confidence about 60%.) Built: feature/hard-words-sooner, merged as #57 (a correct answer before the due date changes nothing).
 3. No tone training for Chinese and no pitch accent training for Japanese, although tone errors can change meaning, and the trip goal is real conversations.
 4. No shadowing mode (repeat after the audio with the text, then without). Evidence for it is unconfirmed here.
-5. Retrieval is mostly recognition (choose from options) in some exercises; recall (typing or saying) is stronger. The app has typing, but the mixed session may favour choice types.
+5. Retrieval is mostly recognition (choose from options) in some exercises; recall (typing or saying) is stronger. The app has typing, but the mixed session may favour choice types. Built: feature/review-recall, merged as #79 (`reviewQ` in js/exercises.js, used by `startMixed` and `startReview`: box 3 or higher always a recall question; box 0 to 2 rotates recall, meaning, listen; facts in docs/features/review-recall.md).
 6. No easy-input path with a known-word ratio (for example a "mostly known words" label on stories and podcasts).
 7. No review in the opposite direction by default (meaning to word, production) for words saved from content.
 
@@ -169,7 +169,7 @@ Status: built (feature/hard-words-sooner, merged as #57).
 
 ### Lower ranked ideas
 
-6. Prefer typed or spoken recall over choice in the mixed session for words in box 3 or higher (small, evidence 2.2 item 2, confidence about 70%, effort small).
+6. Prefer typed or spoken recall over choice in the mixed session for words in box 3 or higher (small, evidence 2.2 item 2, confidence about 70%, effort small). Status: built (feature/review-recall, merged as #79).
 7. Reverse-direction questions (meaning to word) for saved words (small to medium, evidence 2.2, confidence about 60%).
 8. Component or radical meaning hint on kanji cards instead of stories (medium, evidence 2.7, confidence about 55%, needs data from KANJIDIC2 or similar).
 9. An end-of-session literal summary with the count of answers right this week and the next due date instead of any streak (small; no evidence it improves learning; the owner decides).
