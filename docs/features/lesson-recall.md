@@ -17,4 +17,4 @@ The learner can also say the word (button “Say the word”, existing `startLis
 
 **Summary** uses first answers only (questions without `again`): a word wrong first and right on the repeat is still wrong for review (`srsSet`, d=0). “Quiz result: X of Y correct” counts the lesson’s own questions. Due earlier words answered in the lesson are updated once at Summary (`v.saved`): correct goes to a longer interval, wrong is due again now. The line “Earlier words: X of Y correct. …” appears only when earlier words were asked.
 
-Tests: tests/lesson-recall.test.js. Screens in tests/phone/screens.js: “Lesson: recall question”, “Lesson: quiz earlier word”, “Lesson: repeat question”.
+Tests: tests/lesson-recall.test.js. Screens in tests/phone/screens/lessons.js: “Lesson: recall question”, “Lesson: quiz earlier word”, “Lesson: repeat question”.
