@@ -532,8 +532,8 @@ function screenLesson(){
 /* Review */
 function startReview(given,recap){
   const l=S.lang;const ws=given&&given.length?given:shuffle(dueList(l)).slice(0,10);
-  const types=S.settings.speaking?["meaning","listen","type","speak"]:["meaning","listen","type"];
-  const pool=poolFor(l,ws),qs=ws.map((w,i)=>{if(i%4===1){const s2=pool.find(x=>x.tokens.some(z=>z[0]===w.w));const b=s2&&mkBlank(l,s2,w,pool);if(b)return b;}return mkQ(types[i%types.length],w,l);});
+  const types=S.settings.speaking?["meaning","listen","type","speak"]:["meaning","listen","type"],nt=types.length;
+  const pool=poolFor(l,ws),qs=ws.map((w,i)=>{if(i%4===1){const s2=pool.find(x=>x.tokens.some(z=>z[0]===w.w));const b=s2&&mkBlank(l,s2,w,pool);if(b)return b;}return recap?mkQ(types[i%nt],w,l):i%nt===3?mkQ("speak",w,l):reviewQ(w,l,i);});
   const c=pool.filter(x=>{const n=contentToks(x).length;return n>=2&&n<=7;});if(c.length&&!recap)qs.push(mkBuild(l,shuffle(c)[0],"build",pool));
   view={s:"review",qs,i:0,finished:false};render();window.scrollTo(0,0);readQuestion();
 }
