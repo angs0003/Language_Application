@@ -30,7 +30,7 @@ function mkBlank(l,s,w,pool){
 function mkMatch(l,ws){const p=ws.slice(0,5);return{type:"match",lang:l,pairs:p,left:shuffle(p.map((w,i)=>i)),right:shuffle(p.map((w,i)=>i)),pick:null,done:[],wrong:null,mistakes:0,answered:false,correct:false,word:null,sel:null,input:""};}
 function matchTap(q,side,i){
   if(q.answered||q.done.includes(i))return;q.wrong=null;
-  if(side==="L")say(q.pairs[i].w,q.lang);
+  if(side==="L")sayText(q.pairs[i].w,q.lang);
   if(!q.pick||q.pick.side===side){q.pick={side,i};render();return;}
   if(q.pick.i===i){q.done.push(i);}else{q.mistakes++;q.wrong={L:side==="L"?i:q.pick.i,R:side==="R"?i:q.pick.i};buzz([40,60,40]);}
   q.pick=null;

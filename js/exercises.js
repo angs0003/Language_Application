@@ -2,12 +2,15 @@
 /* Language Steps: exercises.js. Question building, checking and rendering (meaning, listen, type, speak, grammar choice).
    Files load in the order listed in js/loader.js (APP_FILES); they share one global scope. */
 /* ---------- Questions ---------- */
+/* Meanings are lists such as "to fix, to repair" or "to help (someone)": two meanings are the same when any comma-separated part (bracketed text ignored, case ignored) is equal. */
+function meaningParts(m){return String(m).replace(/\([^)]*\)|\[[^\]]*\]/g,"").split(/[,;]/).map(p=>p.trim().toLowerCase().replace(/^(to|a|an|the) /,"")).filter(Boolean);}
+function sameMeaning(a,b){const pb=meaningParts(b);return meaningParts(a).some(p=>pb.includes(p));}
 function mkQ(type,w,l){
   if(type==="speak"&&(!S.settings.speaking||view.noSpeak))type="listen";
   const q={type,word:w,lang:l,answered:false,correct:false,sel:null,input:"",explain:null};
   if(type==="meaning"||type==="listen"){
     const used=new Set([w.m]);const dis=[];
-    for(const x of shuffle(allWords(l))){if(x.w!==w.w&&!used.has(x.m)){used.add(x.m);dis.push(x);}if(dis.length===3)break;}
+    for(const x of shuffle(allWords(l))){if(x.w!==w.w&&!used.has(x.m)&&!sameMeaning(x.m,w.m)&&!(type==="listen"&&l==="ja"&&x.k&&x.k===w.k)){used.add(x.m);dis.push(x);}if(dis.length===3)break;}
     q.opts=shuffle([w,...dis]);q.ans=q.opts.indexOf(w);
   }
   return q;
@@ -63,18 +66,18 @@ function qHTML(q,opts){
   if(q.type==="match"||q.type==="blank"||q.type==="build")return exHTML(q,opts);
   const l=q.lang,w=q.word;let h="";
   if(q.type==="gram"){
-    h=`<p class="q">${esc(q.question)}</p>${q.big?glyph(l,{w:q.big}):""}${q.audio?`<p class="center" style="margin:8px 0;display:flex;justify-content:center"><button class="btn sec" data-a="${A(()=>say(q.audio,l))}">${ico("speaker",18)} Play audio</button></p>`:""}<div class="stack">`;
+    h=`<p class="q">${esc(q.question)}</p>${q.big?glyph(l,{w:q.big}):""}${q.audio?`<p class="center" style="margin:8px 0;display:flex;justify-content:center"><button class="btn sec" data-a="${A(()=>sayText(q.audio,l))}">${ico("speaker",18)} Play audio</button></p>`:""}<div class="stack">`;
     q.opts.forEach((o,i)=>{let cls="opt",tag="";
       if(q.answered){if(i===q.ans){cls+=" right";tag="Correct answer";}else if(i===q.sel){cls+=" wrong";tag="Your answer";}}else if(q.sel===i)cls+=" sel";
       h+=`<button class="${cls}" ${q.answered?"disabled":""} data-a="${A(()=>{q.sel=i;render();})}" aria-pressed="${q.sel===i}">${tag?`<span class="tag">${tag}</span>`:""}${o.svg||""}${q.plain?`<span>${esc(o.text)}</span>`:`<span class="cjk2" lang="${L[l].hl}">${esc(o.text)}</span>`}${S.settings.showReading&&o.reading?`<span class="tr2">${esc(o.reading)}</span>`:""}${o.english&&S.settings.showEnglish?`<span class="tr2">${esc(o.english)}</span>`:""}</button>`;});
     if(!q.answered)h+=`<button class="opt dk" data-a="${A(()=>{dontKnow(q);render();})}">I do not know</button>`;
     return h+`</div>`+fbHTML(q,opts||{});
   }
-  const playBtn=`<button class="play" data-a="${A(()=>say(w.w,l))}" aria-label="Play audio" title="Play audio">${PLAY}</button>`;
+  const playBtn=`<button class="play" data-a="${A(()=>sayWord(w,l))}" aria-label="Play audio" title="Play audio">${PLAY}</button>`;
   if(q.type==="meaning"){
     h+=`<p class="q">What does this word mean?</p>${glyph(l,w)}${readingHTML(l,w)}<p class="center">${playBtn}</p>`;
   }else if(q.type==="listen"){
-    h+=`<p class="q">Listen. Which word did you hear?</p><p class="center" style="margin:10px 0;display:flex;justify-content:center"><button class="btn sec" data-a="${A(()=>say(w.w,l))}">${ico("speaker",18)} Play audio</button></p>`;
+    h+=`<p class="q">Listen. Which word did you hear?</p><p class="center" style="margin:10px 0;display:flex;justify-content:center"><button class="btn sec" data-a="${A(()=>sayWord(w,l))}">${ico("speaker",18)} Play audio</button></p>`;
   }else if(q.type==="type"&&q.recall){
     const sp=recallSpeakOn(q);
     h+=`<p class="q">Remember the word</p><p class="meaning">${esc(w.m)}</p>
@@ -122,7 +125,7 @@ function speakHTML(q){
     if(!q.answered){
       if(q.recording)h+=`<button class="btn pri full" data-a="${A(()=>q.mr.stop())}">Stop recording</button>`;
       else h+=`<button class="btn ${q.recUrl?"sec":"pri"} full" data-a="${A(()=>startRec(q))}">${q.recUrl?"Record again":"Start recording"}</button>`;
-      if(q.recUrl){h+=`<div class="inline" style="margin-top:10px"><button class="play" data-a="${A(()=>new Audio(q.recUrl).play())}">${PLAY}Play my recording</button><button class="play" data-a="${A(()=>say(q.word.w,q.lang))}" aria-label="Play audio" title="Play audio">${PLAY}</button></div>`+selfMark(q,"Compare the two recordings. Then choose one option.");}
+      if(q.recUrl){h+=`<div class="inline" style="margin-top:10px"><button class="play" data-a="${A(()=>new Audio(q.recUrl).play())}">${PLAY}Play my recording</button><button class="play" data-a="${A(()=>sayWord(q.word,q.lang))}" aria-label="Play audio" title="Play audio">${PLAY}</button></div>`+selfMark(q,"Compare the two recordings. Then choose one option.");}
     }
   }else{
     if(!q.answered)h+=selfMark(q,"Play the audio. Say the word aloud. Then choose one option.");

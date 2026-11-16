@@ -286,7 +286,7 @@ function openWord(l,t,toks,e){
   const c=document.createElement("div");c.id="callout";c.className="callout";c.setAttribute("role","status");c.setAttribute("aria-label","Word meaning");
   c.innerHTML=`<span class="cohd"><span class="tx" lang="${L[l].hl}">${esc(sh.text)}</span>${sh.r?`<span class="cor">${esc(sh.r)}</span>`:""}</span><span class="com">${esc(sh.m||"")}</span><i class="coar"></i>`;
   placeCallout(c,b);calloutBtn=b;b.classList.add("on");b.setAttribute("aria-expanded","true");
-  if("speechSynthesis" in window)say(sh.text,l);/* the word is read aloud when you tap it; without speech the callout still opens (say() would show a note, and a note redraws the screen and closes the callout) */
+  if("speechSynthesis" in window)sayText(sh.text,l);/* the word is read aloud when you tap it; without speech the callout still opens (say() would show a note, and a note redraws the screen and closes the callout) */
 }
 document.addEventListener("click",e=>{if(document.getElementById("callout")&&!e.target.closest("#callout")&&!e.target.closest(".tk,.wordrow"))closeCallout();});
 window.addEventListener("resize",closeCallout);
@@ -320,7 +320,7 @@ function sheetHTML(){
   const sh=view.sheet;if(!sh)return "";const l=sh.l,d=sh.data;
   return `<div class="scrim" data-a="${A(closeSheet)}"></div><div class="sheet" role="dialog" aria-label="Word reference"><div class="shead"><span class="tx big" lang="${L[l].hl}">${esc(sh.text)}</span><button class="hbtn" data-a="${A(closeSheet)}">Close</button></div>
   <p class="reading" style="text-align:left">${esc(sh.r)}</p><p><strong>${esc((d&&d.meaning)||sh.m)}</strong>${d&&d.type?` <span class="muted">(${esc(d.type)})</span>`:""}</p>
-  <div class="inline" style="margin-bottom:8px"><button class="play" aria-label="Play audio" title="Play audio" data-a="${A(()=>say(sh.text,l))}">${PLAY}</button><button class="play" data-a="${A(()=>toggleSave(sh))}">${isSaved(l,sh.text)?STATUS.ok+" Saved (tap to remove)":ico("star",18)+" Save word"}</button></div>
+  <div class="inline" style="margin-bottom:8px"><button class="play" aria-label="Play audio" title="Play audio" data-a="${A(()=>sayText(sh.text,l))}">${PLAY}</button><button class="play" data-a="${A(()=>toggleSave(sh))}">${isSaved(l,sh.text)?STATUS.ok+" Saved (tap to remove)":ico("star",18)+" Save word"}</button></div>
   ${d?`${d.note?`<p>${esc(d.note)}</p>`:""}${d.examples.length?`<p class="q" style="margin-top:8px">Everyday examples</p>`:""}${d.examples.map(s=>`<div class="line">${sentHTML(l,s,[{w:sh.text}])}</div>`).join("")}`:`<p class="small"><strong>${sh.state==="loading"?"Loading the usage note and 3 examples. This usually takes 5 to 30 seconds.":esc(sh.state)}</strong></p>`}</div>`;
 }
 /* AI lesson content */
@@ -387,7 +387,7 @@ Reply with only JSON in this shape:
 function readWordCard(){
   const v=view;if(!v||v.s!=="lesson"||v.step!==0||S.settings.autoRead===false||!("speechSynthesis" in window))return;
   const l=v.lang,it=v.items0[v.i],w=it&&it.k==="word"?v.words[it.wi]:null;if(!w)return;
-  say(w.w,l);
+  sayWord(w,l);
   const u=new SpeechSynthesisUtterance(w.ex[0]);u.lang=L[l].code;const vc=voiceFor(l);if(vc)u.voice=vc;u.rate=0.9*S.settings.speed;
   if(w.tk&&S.settings.hlWord!==false){const tok=++playTok;hlClear();hlTrack(u,w.tk.tokens,()=>document.querySelector("#main .sent .gl"),()=>tok===playTok);u.onend=()=>{if(tok===playTok)hlClear();};}
   speechSynthesis.speak(u);
@@ -402,8 +402,8 @@ function readQuestion(){
   if(!q||q.answered)return;
   const l=S.lang;
   if(q.type==="build"&&(q.mode==="toEn"||q.mode==="listen"))sayAt(sentText(q.sent),l,1);
-  else if((q.type==="meaning"||q.type==="listen")&&q.word)say(q.word.w,l);
-  else if(q.sound&&q.audio)say(q.audio,l);
+  else if((q.type==="meaning"||q.type==="listen")&&q.word)sayWord(q.word,l);
+  else if(q.sound&&q.audio)sayText(q.audio,l);
 }
 function lessonResumeFor(l,words){const r=S[l]&&S[l].resume;if(!r||!Array.isArray(r.words)||!words||!words.length)return null;return r.ti===themeIdxOf(l,words[0])&&r.words[0]===words[0].w&&r.words.length===words.length?r:null;}
 function lessonResumeText(l,r){const n=r.words.length;return r.step===0?"New words, word "+(r.i+1)+" of "+n:STEPS[r.step];}
@@ -484,7 +484,7 @@ function screenLesson(){
     }else{
     const w=ws[it0.wi],ex=v.ex[w.w];
     const sv=isSaved(l,w.w);
-    h=`<div class="card hasstar"><button class="ibtn starbtn${sv?" on":""}" aria-label="${sv?"Remove from My words":"Save to My words"}" aria-pressed="${sv}" data-a="${A(ev=>starWord(l,w,ev))}">${ico("star",22)}</button><p class="q">New word</p>${glyph(l,w)}${readingHTML(l,w)}${wholeReadingNote(l,w)}<p class="meaning">${esc(w.m)}</p><p class="center"><button class="play" data-a="${A(()=>say(w.w,l))}" aria-label="Play audio" title="Play audio">${PLAY}</button></p></div>
+    h=`<div class="card hasstar"><button class="ibtn starbtn${sv?" on":""}" aria-label="${sv?"Remove from My words":"Save to My words"}" aria-pressed="${sv}" data-a="${A(ev=>starWord(l,w,ev))}">${ico("star",22)}</button><p class="q">New word</p>${glyph(l,w)}${readingHTML(l,w)}${wholeReadingNote(l,w)}<p class="meaning">${esc(w.m)}</p><p class="center"><button class="play" data-a="${A(()=>sayWord(w,l))}" aria-label="Play audio" title="Play audio">${PLAY}</button></p></div>
     <div class="card"><p class="q">Example</p>${ex?sentHTML(l,ex,[w]):w.tk?sentHTML(l,w.tk,[w]):builtinEx(l,w)}${!ex&&v.aState==="loading"?`<p class="small muted" style="margin-top:6px">The word-by-word version is loading.</p>`:""}</div>`;
     }
   }else if(v.step===1){

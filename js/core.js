@@ -81,7 +81,7 @@ function readingHTML(l,w,force){
 }
 /* Japanese words whose reading belongs to the whole word and cannot be split per kanji (jukujikun and irregular readings).
    A fixed list, checked by tests/smoke.js; the content files are not changed. */
-const WHOLE_READING=new Set("今日 明日 昨日 今朝 大人 果物 友達 部屋 一人 二人 眼鏡 下手 一日 二十日 二十歳 お腹 田舎 お土産 浴衣 梅雨 真面目 可愛い 葉書 七夕 山車 神輿 八百屋 三味線 為替".split(" "));
+const WHOLE_READING=new Set("今日 今年 時計 明日 昨日 今朝 大人 果物 友達 部屋 一人 二人 眼鏡 下手 一日 二十日 二十歳 お腹 田舎 お土産 浴衣 梅雨 真面目 可愛い 葉書 七夕 山車 神輿 八百屋 三味線 為替".split(" "));
 const wholeReading=(l,w)=>l==="ja"&&WHOLE_READING.has(w.w);
 function wholeReadingNote(l,w){return wholeReading(l,w)&&S.settings.showReading?`<p class="small muted center" style="margin:4px 0 0">This reading belongs to the whole word, not to each kanji.</p>`:"";}
 function hl(text,words){let h=esc(text);words.slice().sort((a,b)=>b.w.length-a.w.length).forEach(w=>{h=h.split(esc(w.w)).join("\u0000"+esc(w.w)+"\u0001");});return h.replace(/\u0000/g,"<mark>").replace(/\u0001/g,"</mark>");}
@@ -89,7 +89,7 @@ function hl(text,words){let h=esc(text);words.slice().sort((a,b)=>b.w.length-a.w
 const plural=(n,one,many)=>n+" "+(n===1?one:(many||one+"s"));
 const fmtDate=t=>new Date(t).toLocaleDateString(undefined,{weekday:"long",day:"numeric",month:"long"});
 function normPinyin(s){return String(s).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/v/g,"u").replace(/[^a-z]/g,"");}
-function normRomaji(s){return String(s).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z]/g,"").replace(/ou/g,"o").replace(/oo/g,"o").replace(/uu/g,"u");}
+function normRomaji(s){return String(s).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z]/g,"").replace(/ou/g,"o").replace(/oo/g,"o").replace(/uu/g,"u").replace(/dz/g,"z").replace(/dj/g,"j");}
 function readingMatch(l,input,w){
   const t=String(input||"").trim(); if(!t)return false;
   if(l==="ja"){ if(/[\u3040-\u30ff]/.test(t))return t.replace(/\s/g,"")===(w.k||w.w); return normRomaji(t)===normRomaji(w.r); }
@@ -108,6 +108,9 @@ function say(text,l){
   const u=new SpeechSynthesisUtterance(text);u.lang=L[l].code;const v=voiceFor(l);if(v)u.voice=v;u.rate=0.9*S.settings.speed;
   speechSynthesis.speak(u);
 }
+/* Japanese: a device voice reads kanji with its own reading (体 as "tai", 一日 as "ichinichi"), so a single word is spoken from its kana. */
+function sayWord(w,l){say(l==="ja"&&w.k?w.k:w.w,l);}
+function sayText(t,l){if(l==="ja"){const x=allWords(l).find(y=>y.w===t);if(x&&x.k)t=x.k;}say(t,l);}
 let noteText="";function note(t){noteText=t;render();}
 function buzz(p){if(!S.settings.vib)return;try{if(navigator.vibrate)navigator.vibrate(p);}catch(e){}}
 
