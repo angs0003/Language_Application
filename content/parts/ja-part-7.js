@@ -161,7 +161,7 @@ const JA_P7B=[
   ["初心者","しょしんしゃ","shoshinsha","beginner","まだ初心者です。","Mada shoshinsha desu.","I am still a beginner.","まだ|mada|still / 初心者|shoshinsha|beginner / です|desu|am / 。 = I am still a beginner."],
   ["上達","じょうたつ","joutatsu","improvement (of a skill)","けんは上達が速いです。","Ken wa joutatsu ga hayai desu.","Ken’s skill improves fast.","けん|Ken|Ken (name) / は|wa|(topic) / 上達|joutatsu|improvement / が|ga|(subject) / 速い|hayai|fast / です|desu|is / 。 = Ken’s skill improves fast."],
   ["沈む","しずむ","shizumu","to sink","石は水に沈みます。","Ishi wa mizu ni shizumimasu.","A stone sinks in the water.","石|ishi|stone / は|wa|(topic) / 水|mizu|water / に|ni|(in) / 沈みます|shizumimasu|sinks / 。 = A stone sinks in the water."],
-  ["ゴーグル","ゴーグル","goguru","goggles","ゴーグルを使います。","Goguru o tsukaimasu.","I use goggles.","ゴーグル|goguru|goggles / を|o|(object) / 使います|tsukaimasu|use / 。 = I use goggles."],
+  ["ゴーグル","ゴーグル","googuru","goggles","ゴーグルを使います。","Googuru o tsukaimasu.","I use goggles.","ゴーグル|googuru|goggles / を|o|(object) / 使います|tsukaimasu|use / 。 = I use goggles."],
   ["更衣室","こういしつ","kouishitsu","changing room","更衣室は右にあります。","Kouishitsu wa migi ni arimasu.","The changing room is on the right.","更衣室|kouishitsu|changing room / は|wa|(topic) / 右|migi|right / に|ni|(on) / あります|arimasu|is / 。 = The changing room is on the right."],
   ["深い","ふかい","fukai","deep","このプールは深いです。","Kono puuru wa fukai desu.","This pool is deep.","この|kono|this / プール|puuru|swimming pool / は|wa|(topic) / 深い|fukai|deep / です|desu|is / 。 = This pool is deep."]],
   [
@@ -261,7 +261,7 @@ const STORY_P7B=[
   "けん|Ken|Ken (name) / は|wa|(topic) / 水泳|suiei|swimming / の|no|’s / 初心者|shoshinsha|beginner / です|desu|is / 。 = Ken is a beginner at swimming.",
   "今日|kyou|today / 、 / ゆい|Yui|Yui (name) / は|wa|(topic) / けん|Ken|Ken (name) / に|ni|to / 水泳|suiei|swimming / を|o|(object) / 教えます|oshiemasu|teach / 。 = Today Yui teaches Ken swimming.",
   "更衣室|kouishitsu|changing room / で|de|at / けん|Ken|Ken (name) / は|wa|(topic) / 水着|mizugi|swimsuit / を|o|(object) / 着ます|kimasu|put on / 。 = Ken puts on his swimsuit in the changing room.",
-  "ゆい|Yui|Yui (name) / ： / ゴーグル|goguru|goggles / を|o|(object) / 使って|tsukatte|use (て-form) / ね|ne|(softener) / 。 = Yui: Use goggles.",
+  "ゆい|Yui|Yui (name) / ： / ゴーグル|googuru|goggles / を|o|(object) / 使って|tsukatte|use (て-form) / ね|ne|(softener) / 。 = Yui: Use goggles.",
   "けん|Ken|Ken (name) / は|wa|(topic) / 水|mizu|water / に|ni|to / 浮く|uku|to float / ように|youni|(change marker) / なりました|narimashita|became / 。 = Ken has become able to float on the water.",
   "けん|Ken|Ken (name) / ： / 深い|fukai|deep / プール|puuru|swimming pool / は|wa|(topic) / まだ|mada|still / 怖い|kowai|scary / 。 = Ken: A deep pool is still scary.",
   "ゆい|Yui|Yui (name) / ： / 息|iki|breath / を|o|(object) / 止めよう|tomeyou|let’s hold / 。 = Yui: Let us hold our breath.",

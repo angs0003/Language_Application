@@ -22,6 +22,7 @@ const ICONS={
  review:'<path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/>', chevd:'<path d="M6 9l6 6 6-6"/>',
 };
 function ico(n,size=22,extra=""){return `<svg class="ico" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" ${extra}>${ICONS[n]||""}</svg>`;}
+const PLAY=ico("speaker",20);
 const STATUS={ok:'<span class="st st-ok" role="img" aria-label="Done">'+'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg></span>',
  half:'<span class="st st-half" role="img" aria-label="In progress"></span>',todo:'<span class="st st-todo" role="img" aria-label="Not started"></span>',
  no:'<span class="st st-no" role="img" aria-label="Incorrect"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" aria-hidden="true"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg></span>'};
@@ -81,7 +82,7 @@ function stepPreview(l,x){
   const sentRow=s=>`<li><span class="pm"><span lang="${L[l].hl}">${esc(sentText(s))}</span>${s.english?`<br><span class="small muted">${esc(s.english)}</span>`:""}</span><button class="play" aria-label="Play audio" title="Play audio" data-a="${A(()=>say(spokenText(s),l))}">${PLAY}</button></li>`;
   if(x.kind==="story"){const c=chapter(l,x.i),ls=c&&c.lines?c.lines.slice(0,2):[];return ls.length?`<ul class="prevlist" aria-label="Story preview">${ls.map(sentRow).join("")}</ul>`:"";}
   const ws=(t.words||[]).slice(0,5),ss=(t.sents||[]).slice(0,2);
-  const row=w=>`<li><span class="pw" lang="${L[l].hl}">${esc(w.w)}</span><span class="pm"><span class="small">${esc(l==="ja"&&w.k&&w.k!==w.w?w.k+" · "+w.r:w.r||"")}</span><br>${esc(w.m)}</span><button class="play" aria-label="Play audio" title="Play audio" data-a="${A(()=>say(w.w,l))}">${PLAY}</button></li>`;
+  const row=w=>`<li><span class="pw" lang="${L[l].hl}">${esc(w.w)}</span><span class="pm"><span class="small">${esc(l==="ja"&&w.k&&w.k!==w.w?w.k+" · "+w.r:w.r||"")}</span><br>${esc(w.m)}</span><button class="play" aria-label="Play audio" title="Play audio" data-a="${A(()=>sayWord(w,l))}">${PLAY}</button></li>`;
   return `<ul class="prevlist" aria-label="Lesson preview">${ws.map(row).join("")}${ss.map(sentRow).join("")}</ul>${(t.words||[]).length>ws.length?`<p class="small muted" style="margin:0">and ${(t.words||[]).length-ws.length} more words in this lesson</p>`:""}`;
 }
 function homeLearn(l,r){
@@ -92,7 +93,7 @@ function homeLearn(l,r){
   }
   const ths=themes(l),lv=viewLevel(l),idx=ths.map((t,i)=>i).filter(i=>lvOfTheme(l,i)===lv);
   const words=idx.flatMap(i=>ths[i].words||[]),nL=words.filter(w=>isL(l,w)).length,lvx=LEVELS[l][lv-1]||["Level "+lv,""];
-  h+=`<div class="lvline"><div class="lvtop">${lvPick(l,lv)}<span class="muted">${nL} of ${words.length} words</span></div>${uiBar(words.length?nL/words.length*100:0)}</div>`;
+  h+=`<div class="lvline"><div class="lvtop">${lvPick(l,lv)}<span class="muted">${nL} of ${plural(words.length,"word")}</span></div>${uiBar(words.length?nL/words.length*100:0)}</div>`;
   if(!idx.length){h+=uiCard(`<h2>${esc(lvx[0])} is not built yet</h2><p style="margin:0">${esc(lvx[3]||"")}</p>`);r.main=h;return;}
   /* Three next items in the viewed level: the next theme to learn (the only primary button), the next story chapter not read, the next podcast episode not heard. */
   const due=planSteps(l,1)[0],read=st.chRead||[],pd=st.podDone||{};
@@ -150,20 +151,20 @@ function startMistakes(){
 }
 function homePractise(l,r){
   const dw=dueList(l).length,dk=l==="ja"?kanjiDue().length:0,ds=savedDue(l).length,tot=dw+dk+ds;
-  const parts=[dw?`${dw} words`:"",dk?`${dk} kanji`:"",ds?`${ds} saved words`:""].filter(Boolean).join(", ");
+  const parts=[dw?plural(dw,"word"):"",dk?dk+" kanji":"",ds?plural(ds,"saved word"):""].filter(Boolean).join(", ");
   let h=`<p class="hsub">${esc(L[l].name)}</p>`;
-  h+=tot?uiCard(`${uiLabel("TODAY")}<div class="big"><span class="bign">${Math.min(tot,16)}</span><span class="bigt">items are due</span></div><p class="muted" style="margin:0">${esc(parts)}. One session, about ${Math.max(2,Math.round(Math.min(tot,16)*0.4))} minutes.</p>${uiBtn("Start practice",()=>startMixed(false))}`,"hero")
+  h+=tot?uiCard(`${uiLabel("TODAY")}<div class="big"><span class="bign">${Math.min(tot,16)}</span><span class="bigt">${Math.min(tot,16)===1?"item is due":"items are due"}</span></div><p class="muted" style="margin:0">${esc(parts)}. One session, about ${plural(Math.max(2,Math.round(Math.min(tot,16)*0.4)),"minute")}.</p>${uiBtn("Start practice",()=>startMixed(false))}`,"hero")
     :uiCard(`${uiLabel("TODAY")}<h2>Nothing is due now</h2><p class="muted" style="margin:0">${nextDue(l)?"The next review is due on "+fmtDate(nextDue(l))+".":"Words are added after each lesson."}</p>${uiBtn("Practise anyway",()=>startMixed(true),"sec")}`,"hero");
   const sv=savedList(l).length,kn=KJ(),kl=kn.filter(k=>kLearned(k.c)).length;
   const kanaN=l==="ja"?["hira","kata"].reduce((a,s)=>a+KANA[s].flatMap(x=>x[1]).filter(([c])=>kanaLearned(c)).length,0):0;
   const gd=(S[l].grDone||[]).length;
   const sn=sentenceTargets(l).length;
-  let rows=uiRow(uiTileIcon("book"),"Sentences",sn?`${sn} sentences from your themes`:"Finish a theme to unlock",()=>startSentences())+uiRow(uiTileIcon("star"),"My words",`${sv} saved · ${ds} due`,openVocab);
+  let rows=uiRow(uiTileIcon("book"),"Sentences",sn?`${plural(sn,"sentence")} from your themes`:"Finish a theme to unlock",()=>startSentences())+uiRow(uiTileIcon("star"),"My words",`${sv} saved · ${ds} due`,openVocab);
   const mn=misList(l).length;rows+=uiRow(uiTileIcon("review"),"Mistakes",mn?`${mn} to repeat`:"None to repeat",startMistakes);
   if(l==="ja")rows+=uiRow(uiTileChar("私"),"Kanji",`${kl} of ${kn.length} learned`,()=>openSub("kanji"))+uiRow(uiTileChar("あ"),"Kana",`${kanaN} of 142 learned`,()=>openSub("kana"));
-  rows+=uiRow(uiTileIcon("grammar"),"Grammar",`${gd} of ${GR[l].length} points`,()=>openSub("grammar"));
+  rows+=uiRow(uiTileIcon("grammar"),"Grammar",`${gd} of ${plural(GR[l].length,"point")}`,()=>openSub("grammar"));
   const sw=soundsWords(l).length;rows+=uiRow(uiTileIcon("speaker"),"Sounds",sw>=4?(l==="ja"?"Pitch: hear a word, choose its pitch pattern":"Tones: hear a word, choose its tones"):"Finish a lesson to unlock",startSounds);
-  if(casualList(l).length)rows+=uiRow(uiTileIcon("speaker"),"Casual speech",`${casualCount(l)} of ${casualList(l).length} lessons done`,()=>openSub("casual"));
+  if(casualList(l).length)rows+=uiRow(uiTileIcon("speaker"),"Casual speech",`${casualCount(l)} of ${plural(casualList(l).length,"lesson")} done`,()=>openSub("casual"));
   h+=uiCard(rows,"list");
   r.main=h;
 }
@@ -179,7 +180,7 @@ function homeListen(l,r){
     if(fn)h+=uiCard(`<div class="nxt">${uiTileChar(ch,true)}<span class="lrt">${uiLabel("CONTINUE")}<span class="nxh">${esc(title)}</span></span><button class="playbig" aria-label="Play" data-a="${A(fn)}">${ico("play",24)}</button></div>`,"hero");}
   const tiles=[];
   const lvIdx=ths.map((t,i)=>i).filter(i=>lvOfTheme(l,i)===lv);
-  if(f==="all"||f==="stories")lvIdx.forEach(i=>{const t=ths[i],un=t.words.every(w=>isL(l,w));if(un&&chapter(l,i))tiles.push({k:"Story",ch:[...t.words[0].w][0],t:chapter(l,i).title,m:(st.chRead||[]).includes(i)?"Listened":`${chapter(l,i).lines.length} lines`,done:(st.chRead||[]).includes(i),fn:()=>openChapter(i)});});
+  if(f==="all"||f==="stories")lvIdx.forEach(i=>{const t=ths[i],un=t.words.every(w=>isL(l,w));if(un&&chapter(l,i))tiles.push({k:"Story",ch:[...t.words[0].w][0],t:chapter(l,i).title,m:(st.chRead||[]).includes(i)?"Listened":plural(chapter(l,i).lines.length,"line"),done:(st.chRead||[]).includes(i),fn:()=>openChapter(i)});});
   if(f==="all"||f==="podcast")lvIdx.slice(0,f==="all"?4:99).forEach(i=>{const t=ths[i];tiles.push({k:"Podcast",ch:[...t.words[0].w][0],t:"Episode "+(i+1)+": "+t.title,m:(st.podDone||{})[i]?"Listened":"Words and story",done:!!(st.podDone||{})[i],fn:()=>openPod(i)});});
   if(f==="all"||f==="video"){(VIDS[l]||[]).filter(x=>x.id&&(!x.lvn||x.lvn<=lv)).forEach(x=>tiles.push({k:"Video",ico:"video",t:x.title,m:[x.len,x.ch].filter(Boolean).join(" · "),fn:()=>openVideo(x.id)}));
     (st.videos||[]).forEach(x=>tiles.push({k:"Video",ico:"video",t:x.title,m:x.watched?"Watched":"Your video",fn:()=>openVideo(x.id)}));}

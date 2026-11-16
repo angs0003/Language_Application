@@ -27,12 +27,21 @@ const kanjiByChar=c=>KJ().find(k=>k.c===c);
 function kanjiWords(c){const out=[];themes("ja").forEach(t=>(t.words||[]).forEach(w=>{if(w.w.includes(c))out.push(w);}));return out;}
 function kanaExample(ch){for(const t of themes("ja"))for(const w of (t.words||[]))if((w.k||w.w).includes(ch))return w;return null;}
 const fmtKun=s=>String(s).replace(/\.(.+)$/,"($1)");
+/* づ and ぢ: the romaji cannot tell づ from ず or ぢ from じ (the content spells them dz and dj, or zu and ji).
+   FURI_DZ lists every written word that contains づ or ぢ: [kanji in the token, romaji stem with z or j, same stem with dz or dj].
+   Needs an entry for each new word whose kana has づ or ぢ; tests/kanji.test.js checks all words. */
+const FURI_DZ=[["続","tsuzuk","tsudzuk"],["小包","kozutsumi","kodzutsumi"],["日付","hizuke","hidzuke"],["片付","katazuke","katadzuke"],["手作","tezukuri","tedzukuri"],["荷造","nizukuri","nidzukuri"],["気","kizuk","kidzuk"],["縮","chijim","chidjim"]];
+function furiKana(text,r){
+  let x=String(r).toLowerCase();
+  for(const [k,a,b] of FURI_DZ)if(String(text).includes(k)&&x.includes(a))x=x.split(a).join(b);
+  return toHira(x);
+}
 /* furigana in sentences */
 function furiFor(l,t){
   if(l!=="ja"||!hasKanji(t[0])||!t[1])return null;
   const m=S.settings.furi||"fade";if(m==="never")return null;
   if(m==="fade"&&[...t[0]].filter(hasKanji).every(kLearned))return null;
-  return toHira(t[1]);
+  return furiKana(t[0],t[1]);
 }
 /* home section */
 function homeKanji(l,r,part){
@@ -41,10 +50,10 @@ function homeKanji(l,r,part){
   const next=kn.filter(k=>!kSeen(k.c)).slice(0,5);
   const kanaCard=(script,label)=>{const rows=KANA[script],all=rows.flatMap(x=>x[1]),n=all.filter(([c])=>kanaLearned(c)).length;
     return `<div class="card"><h2>${label}: ${n} of ${all.length} learned</h2><div class="krow">${rows.map((row,ri)=>{const c=row[1].filter(([ch])=>kanaLearned(ch)).length,tot=row[1].length;return `<button class="opt kbtn" data-a="${A(()=>startKana(script,ri))}"><span class="tag">${stEmoji(c,tot)} ${esc(row[0])}</span><span lang="ja" class="cjk2">${row[1].map(x=>x[0]).join(" ")}</span></button>`;}).join("")}</div></div>`;};
-  let h=`<details class="card tint acc" data-k="in-kanji" ${isOpen("in-kanji",false)?"open":""}><summary>🈴 Kana and kanji (about)</summary><p>Japanese uses 3 scripts: hiragana and katakana (one sound per character), and kanji (characters with meanings). Learn hiragana first, then katakana, then kanji. Kanji are taught in the order they appear in your lessons.</p><p class="small muted" style="margin:0">Above each kanji you have not learned yet, sentences show its reading in small hiragana (furigana). The furigana disappears when you learn the kanji. Change this in ⚙️ Settings.</p></details>`;
+  let h=`<details class="card tint acc" data-k="in-kanji" ${isOpen("in-kanji",false)?"open":""}><summary>Kana and kanji (about)</summary><p>Japanese uses 3 scripts: hiragana and katakana (one sound per character), and kanji (characters with meanings). Learn hiragana first, then katakana, then kanji. Kanji are taught in the order they appear in your lessons.</p><p class="small muted" style="margin:0">Above each kanji you have not learned yet, sentences show its reading in small hiragana (furigana). The furigana disappears when you learn the kanji. Change this in Settings.</p></details>`;
   if(part!=="kanji")h+=kanaCard("hira","あ Hiragana")+kanaCard("kata","ア Katakana");
-  if(part!=="kana")h+=`<div class="card"><h2>🈴 Kanji: ${learned} of ${kn.length} learned</h2>${next.length?`<p class="small">Next 5: <span lang="ja" class="cjk2">${next.map(k=>k.c).join(" ")}</span></p><button class="btn pri full" style="margin-bottom:8px" data-a="${A(startKanjiLesson)}">Learn the next ${next.length} kanji</button>`:`<p class="small">✅ All kanji in your lessons are started.</p>`}<button class="btn sec full" ${due?"":"disabled"} data-a="${A(startKanjiReview)}">🔁 Review kanji (${due} due)</button>
-  <p class="small muted" style="margin:10px 0 6px">✅ learned · 🟡 started · ⭕ not started. Tap a kanji to open its card.</p><div class="kgrid">${kn.map(k=>`<button class="ktile ${kLearned(k.c)?"kl":kSeen(k.c)?"ks":""}" lang="ja" aria-label="${esc(k.c)}: ${esc(k.m[0]||"")}" data-a="${A(()=>openKanji(k.c))}">${esc(k.c)}</button>`).join("")}</div></div>`;
+  if(part!=="kana")h+=`<div class="card"><h2>Kanji: ${learned} of ${kn.length} learned</h2>${next.length?`<p class="small">Next 5: <span lang="ja" class="cjk2">${next.map(k=>k.c).join(" ")}</span></p><button class="btn pri full" style="margin-bottom:8px" data-a="${A(startKanjiLesson)}">Learn the next ${next.length} kanji</button>`:`<p class="small">${STATUS.ok} All kanji in your lessons are started.</p>`}<button class="btn sec full" ${due?"":"disabled"} data-a="${A(startKanjiReview)}">${ico("loop",18)} Review kanji (${due} due)</button>
+  <p class="small muted" style="margin:10px 0 6px">${STATUS.ok} learned · ${STATUS.half} started · ${STATUS.todo} not started. Tap a kanji to open its card.</p><div class="kgrid">${kn.map(k=>`<button class="ktile ${kLearned(k.c)?"kl":kSeen(k.c)?"ks":""}" lang="ja" aria-label="${esc(k.c)}: ${esc(k.m[0]||"")}" data-a="${A(()=>openKanji(k.c))}">${esc(k.c)}</button>`).join("")}</div></div>`;
   r.main=h;
 }
 /* kana lesson */
@@ -63,7 +72,7 @@ function screenKana(){
   const v=view,ch=v.row[1][v.i],[c,rm]=ch,ex=kanaExample(c);
   const r={row:"title",title:`${v.script==="hira"?"あ Hiragana":"ア Katakana"}: row ${v.row[0]}`,back:{label:"Back",fn:()=>{if(v.i>0){v.i--;render();}else goHome();}},main:""};
   r.prog=`<div class="ptext">Character ${v.i+1} of ${v.row[1].length}</div><div class="bar"><i style="width:${Math.round((v.i+1)/v.row[1].length*100)}%"></i></div>`;
-  r.main=`<div class="card">${glyph("ja",{w:c})}<p class="meaning">${esc(rm)}</p><p class="center"><button class="play" aria-label="Play audio" title="Play audio" data-a="${A(()=>say(c,"ja"))}">${PLAY}</button></p></div>${ex?`<div class="card"><p class="q">Example word</p><p style="margin:0"><span class="cjk2" lang="ja">${esc(ex.w)}</span> <span lang="ja">${ex.k&&ex.k!==ex.w?esc(ex.k):""}</span> <span class="muted">${esc(ex.r)}</span>: ${esc(ex.m)} <button class="play" aria-label="Play audio" title="Play audio" data-a="${A(()=>say(ex.w,"ja"))}">${PLAY}</button></p></div>`:""}`;
+  r.main=`<div class="card">${glyph("ja",{w:c})}<p class="meaning">${esc(rm)}</p><p class="center"><button class="play" aria-label="Play audio" title="Play audio" data-a="${A(()=>say(c,"ja"))}">${PLAY}</button></p></div>${ex?`<div class="card"><p class="q">Example word</p><p style="margin:0"><span class="cjk2" lang="ja">${esc(ex.w)}</span> <span lang="ja">${ex.k&&ex.k!==ex.w?esc(ex.k):""}</span> <span class="muted">${esc(ex.r)}</span>: ${esc(ex.m)} <button class="play" aria-label="Play audio" title="Play audio" data-a="${A(()=>sayWord(ex,"ja"))}">${PLAY}</button></p></div>`:""}`;
   r.next=v.i<v.row[1].length-1?{label:"Next character",fn:()=>{v.i++;render();window.scrollTo(0,0);}}:{label:`Practise these ${v.row[1].length}`,fn:()=>{view={s:"review",qs:kanaQuiz(v.script,v.row[1]),i:0,finished:false,kq:true};render();window.scrollTo(0,0);}};
   return r;
 }
@@ -138,7 +147,7 @@ function traceSubmit(pts){
 function traceHTML(k,n){
   const v=view,done=!!v.tdone,solid=done?n:n-1;
   const svg=`<div class="kbox tbig"><svg id="trace" class="ksvg" viewBox="0 0 109 109" role="img" aria-label="Drawing box. Draw stroke ${n} of ${k.n} here.">${k.p.map(d=>`<path d="${d}" class="khide"/>`).join("")}${k.p.slice(0,solid).map(d=>`<path d="${d}"/>`).join("")}${v.tshow&&!done?`<path d="${k.p[n-1]}" class="kcur"/>`:""}<path id="tdraw" class="tdraw" d=""/></svg></div>`;
-  const msg=done?`All ${k.n} strokes traced. This kanji is marked as learned.`:(v.tmsg||`Draw stroke ${n} of ${k.n} in the box, then lift your finger.`);
+  const msg=done?`${k.n===1?"The stroke":"All "+k.n+" strokes"} traced. This kanji is marked as learned.`:(v.tmsg||`Draw stroke ${n} of ${k.n} in the box, then lift your finger.`);
   const btn=done?`<button class="btn sec full" data-a="${A(()=>kStep(1))}">Trace again</button>`:`<button class="btn sec full" data-a="${A(()=>{view.tshow=true;render();})}">Show this stroke in the box</button>`;
   return `<div class="tarea">${svg}<p class="small tmsg" role="status" style="margin:0;text-align:center">${esc(msg)}</p>${btn}</div>`;
 }
@@ -148,8 +157,8 @@ function kanjiCardHTML(k,ks){
   const svg=`<svg class="ksvg" viewBox="0 0 109 109" role="img" aria-label="Stroke order of ${esc(k.c)}">${k.p.map((d,i)=>`<path d="${d}" class="${i<n?(ks!=null&&i===n-1?"kcur":""):"khide"}"/>`).join("")}</svg>`;
   const ws=kanjiWords(k.c).slice(0,5);
   return `<div class="card"><div class="kcard"><div class="kbox">${svg}</div><div><p class="meaning" style="text-align:left;margin:0 0 6px">${esc(k.m.join(", "))}</p><p class="small" style="margin:0">Strokes: ${k.n}</p>${k.on.length?`<p class="small" style="margin:4px 0 0">On reading: <span lang="ja">${esc(k.on.join("、"))}</span> (${esc(k.on.map(toRomaji).join(", "))})</p>`:""}${k.kun.length?`<p class="small" style="margin:4px 0 0">Kun reading: <span lang="ja">${esc(k.kun.map(fmtKun).join("、"))}</span> (${esc(k.kun.map(x=>toRomaji(x.replace(".",""))).join(", "))})</p>`:""}</div></div>
-  ${ks!=null?`<div class="inline" style="margin-top:10px;justify-content:space-between"><button class="btn sec" ${ks<=1?"disabled":""} data-a="${A(()=>kStep(Math.max(1,ks-1)))}">⏮️ Stroke</button><span class="small">Stroke ${ks} of ${k.n}</span><button class="btn sec" ${ks>=k.n?"disabled":""} data-a="${A(()=>kStep(Math.min(k.n,ks+1)))}">Stroke ⏭️</button></div>${traceHTML(k,ks)}`:`<button class="btn sec full" style="margin-top:10px" data-a="${A(()=>kStep(1))}">Show the stroke order and trace it, one stroke at a time</button>`}</div>
-  ${ws.length?`<div class="card"><p class="q">Words in your lessons with ${esc(k.c)}</p><ul class="units">${ws.map(w=>`<li><span><span class="cjk2" lang="ja">${esc(w.w)}</span> <span lang="ja">${esc(w.k||"")}</span> <span class="muted">${esc(w.r)}</span><br><span class="status">${esc(w.m)}</span></span><button class="play" aria-label="Play audio" title="Play audio" data-a="${A(()=>say(w.w,"ja"))}">${PLAY}</button></li>`).join("")}</ul></div>`:""}`;
+  ${ks!=null?`<div class="inline pair" style="margin-top:10px;justify-content:space-between;flex-wrap:nowrap"><button class="btn sec" ${ks<=1?"disabled":""} data-a="${A(()=>kStep(Math.max(1,ks-1)))}">${ico("prev",18)} Stroke</button><span class="small">Stroke ${ks} of ${k.n}</span><button class="btn sec" ${ks>=k.n?"disabled":""} data-a="${A(()=>kStep(Math.min(k.n,ks+1)))}">Stroke ${ico("next",18)}</button></div>${traceHTML(k,ks)}`:`<button class="btn sec full" style="margin-top:10px" data-a="${A(()=>kStep(1))}">Show the stroke order and trace it, one stroke at a time</button>`}</div>
+  ${ws.length?`<div class="card"><p class="q">Words in your lessons with ${esc(k.c)}</p><ul class="units">${ws.map(w=>`<li><span><span class="cjk2" lang="ja">${esc(w.w)}</span> <span lang="ja">${esc(w.k||"")}</span> <span class="muted">${esc(w.r)}</span><br><span class="status">${esc(w.m)}</span></span><button class="play" aria-label="Play audio" title="Play audio" data-a="${A(()=>sayWord(w,"ja"))}">${PLAY}</button></li>`).join("")}</ul></div>`:""}`;
 }
 const H2R=(()=>{const m={};for(const [r,h] of Object.entries(R2H_MAP))if(!m[h]||r.length<m[h].length)m[h]=r;Object.assign(m,{"し":"shi","ち":"chi","つ":"tsu","ふ":"fu","じ":"ji","しゃ":"sha","しゅ":"shu","しょ":"sho","ちゃ":"cha","ちゅ":"chu","ちょ":"cho","づ":"zu","ぢ":"ji","じゃ":"ja","じゅ":"ju","じょ":"jo","を":"o"});return m;})();
 function toRomaji(h){
@@ -161,8 +170,8 @@ function toRomaji(h){
 function openKanji(c){view={s:"kanji",c,ks:null};render();window.scrollTo(0,0);}
 function screenKanjiCard(){
   const v=view,k=kanjiByChar(v.c);
-  const r={row:"title",title:`🈴 ${k.c}: ${k.m[0]||""}`,back:{label:"Back",fn:goHome},main:kanjiCardHTML(k,v.ks)};
-  const e=(S.ja.kanji||{})[k.c];r.prog=`<div class="ptext">${kLearned(k.c)?"✅ Learned":e?"🟡 Started":"⭕ Not started"}</div>`;
+  const r={row:"title",title:`${k.c}: ${k.m[0]||""}`,back:{label:"Back",fn:goHome},main:kanjiCardHTML(k,v.ks)};
+  const e=(S.ja.kanji||{})[k.c];r.prog=`<div class="ptext">${kLearned(k.c)?STATUS.ok+" Learned":e?STATUS.half+" Started":STATUS.todo+" Not started"}</div>`;
   const all=KJ(),ni=all.findIndex(x=>x.c===k.c)+1;
   r.next=ni<all.length?{label:"Next kanji",fn:()=>openKanji(all[ni].c)}:{label:"Back to kanji list",fn:goHome};
   return r;
@@ -171,7 +180,7 @@ function screenKanjiCard(){
 function startKanjiLesson(){const list=KJ().filter(k=>!kSeen(k.c)).slice(0,5);if(!list.length)return;view={s:"klearn",list,i:0,ks:null};render();window.scrollTo(0,0);}
 function screenKanjiLearn(){
   const v=view,k=v.list[v.i];
-  const r={row:"title",title:"🈴 New kanji",back:{label:"Back",fn:()=>{if(v.i>0){v.i--;v.ks=null;render();}else goHome();}},main:kanjiCardHTML(k,v.ks)};
+  const r={row:"title",title:"New kanji",back:{label:"Back",fn:()=>{if(v.i>0){v.i--;v.ks=null;render();}else goHome();}},main:kanjiCardHTML(k,v.ks)};
   r.prog=`<div class="ptext">Kanji ${v.i+1} of ${v.list.length}: ${esc(k.c)}</div><div class="bar"><i style="width:${Math.round((v.i+1)/v.list.length*100)}%"></i></div>`;
   r.next=v.i<v.list.length-1?{label:"Next kanji",fn:()=>{v.i++;v.ks=null;render();window.scrollTo(0,0);}}:{label:"Finish lesson",fn:()=>{v.list.forEach(k=>{if(!kSeen(k.c))kSet("kanji",k.c,true);});save();goHome();}};
   return r;
@@ -180,7 +189,7 @@ function kanjiQuestions(list){
   const all=KJ(),qs=[];
   if(list.length>=3)qs.push(mkMatch("ja",list.map(k=>({w:k.c,r:"",m:k.m[0]||""}))));
   list.forEach(k=>{
-    const others=shuffle(all.filter(x=>x.c!==k.c&&(x.m[0]||"")!==(k.m[0]||""))).slice(0,3);
+    const others=shuffle(all.filter(x=>x.c!==k.c&&!k.m.some(m=>x.m.some(n=>n.toLowerCase()===m.toLowerCase())))).slice(0,3);
     const q1=mkGramQ({question:"What does this kanji mean?",options:[k.m.join(", "),...others.map(x=>x.m.join(", "))],answer:0},"ja",true);q1.big=k.c;q1.kk={store:"kanji",key:k.c};qs.push(q1);
     const q2=mkGramQ({question:`Which kanji means “${k.m[0]||""}”?`,options:[k.c,...others.map(x=>x.c)],answer:0},"ja",false);q2.kk={store:"kanji",key:k.c};qs.push(q2);
     const w=kanjiWords(k.c)[0];
@@ -194,6 +203,6 @@ function startKanjiReview(){const now=Date.now(),due=KJ().filter(k=>{const e=(S.
 function tvCard(l,lv){
   const list=(TVR()[l]||[]).filter(x=>lv==="all"||!x.lvn||x.lvn<=lv||true);
   if(!list.length)return "";
-  return `<div class="card"><h2>📺 TV and documentaries</h2><p class="small muted">Watch on the service named. Ratings were checked on 2 November 2026. Turn on subtitles in your language first, then in the target language.</p><ul class="units">${list.map(x=>`<li><span><strong>${esc(x.t)}</strong><br><span class="small">${esc(x.why)}</span><br><span class="small">⭐ ${esc(x.rating)} · Suggested from Level ${x.lvn} · ${esc(x.len)} · ${esc(x.where)}</span></span></li>`).join("")}</ul></div>`;
+  return `<div class="card"><h2>TV and documentaries</h2><p class="small muted">Watch on the service named. Ratings were checked on 2 November 2026. Turn on subtitles in your language first, then in the target language.</p><ul class="units">${list.map(x=>`<li><span><strong>${esc(x.t)}</strong><br><span class="small">${esc(x.why)}</span><br><span class="small">${ico("star",14)} ${esc(x.rating)} · Suggested from Level ${x.lvn} · ${esc(x.len)} · ${esc(x.where)}</span></span></li>`).join("")}</ul></div>`;
 }
 

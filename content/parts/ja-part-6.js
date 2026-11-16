@@ -5,7 +5,7 @@ const JA_P6A=[
   [["贈り物","おくりもの","okurimono","gift","母に贈り物をあげます。","Haha ni okurimono o agemasu.","I give my mother a gift.","母|haha|my mother / に|ni|(to) / 贈り物|okurimono|gift / を|o|(object) / あげます|agemasu|give / 。 = I give my mother a gift."],
   ["プレゼント","プレゼント","purezento","present","誕生日にプレゼントをもらいました。","Tanjoubi ni purezento o moraimashita.","I received a present on my birthday.","誕生日|tanjoubi|birthday / に|ni|(on) / プレゼント|purezento|present / を|o|(object) / もらいました|moraimashita|received / 。 = I received a present on my birthday."],
   ["くれる","くれる","kureru","to give (to me)","友達が本をくれました。","Tomodachi ga hon o kuremashita.","My friend gave me a book.","友達|tomodachi|friend / が|ga|(subject) / 本|hon|book / を|o|(object) / くれました|kuremashita|gave me / 。 = My friend gave me a book."],
-  ["お祝い","おいわい","oiwai","congratulatory gift","友達のお祝いを買いました。","Tomodachi no oiwai o kaimashita.","I bought a congratulatory gift for my friend.","友達|tomodachi|friend / の|no|(of) / お祝い|oiwai|congratulatory gift / を|o|(object) / 買いました|kaimashita|bought / 。 = I bought a congratulatory gift for my friend."],
+  ["お祝い","おいわい","oiwai","celebration, congratulatory gift","友達のお祝いを買いました。","Tomodachi no oiwai o kaimashita.","I bought a congratulatory gift for my friend.","友達|tomodachi|friend / の|no|(of) / お祝い|oiwai|congratulatory gift / を|o|(object) / 買いました|kaimashita|bought / 。 = I bought a congratulatory gift for my friend."],
   ["花束","はなたば","hanataba","bouquet","母に花束をあげました。","Haha ni hanataba o agemashita.","I gave my mother a bouquet.","母|haha|my mother / に|ni|(to) / 花束|hanataba|bouquet / を|o|(object) / あげました|agemashita|gave / 。 = I gave my mother a bouquet."],
   ["包む","つつむ","tsutsumu","to wrap","プレゼントを紙で包みます。","Purezento o kami de tsutsumimasu.","I wrap the present in paper.","プレゼント|purezento|present / を|o|(object) / 紙|kami|paper / で|de|(with) / 包みます|tsutsumimasu|wrap / 。 = I wrap the present in paper."],
   ["喜ぶ","よろこぶ","yorokobu","to be pleased","子供はプレゼントを喜びます。","Kodomo wa purezento o yorokobimasu.","The child is pleased with the present.","子供|kodomo|child / は|wa|(topic) / プレゼント|purezento|present / を|o|(object) / 喜びます|yorokobimasu|is pleased with / 。 = The child is pleased with the present."],
@@ -87,7 +87,7 @@ const JA_P6A=[
   ["乾杯","かんぱい","kanpai","toast (to drink together)","皆さんで乾杯します。","Minasan de kanpai shimasu.","Everyone drinks a toast.","皆さん|minasan|everyone / で|de|(together) / 乾杯|kanpai|toast / します|shimasu|do / 。 = Everyone drinks a toast."],
   ["会場","かいじょう","kaijou","venue","会場は駅の近くです。","Kaijou wa eki no chikaku desu.","The venue is near the station.","会場|kaijou|venue / は|wa|(topic) / 駅|eki|station / の|no|(of) / 近く|chikaku|near / です|desu|is / 。 = The venue is near the station."],
   ["会費","かいひ","kaihi","fee for a party","会費は千円です。","Kaihi wa sen en desu.","The fee is 1,000 yen.","会費|kaihi|fee / は|wa|(topic) / 千|sen|thousand / 円|en|yen / です|desu|is / 。 = The fee is 1,000 yen."],
-  ["揃える","そろえる","soroeru","to get ready, to gather a full set","お皿を十枚揃えます。","Osara o juu mai soroemasu.","I get ten plates ready.","お皿|osara|plates / を|o|(object) / 十|juu|ten / 枚|mai|(counter for flat things) / 揃えます|soroemasu|get ready / 。 = I get ten plates ready."]],
+  ["揃える","そろえる","soroeru","to gather a full set, to line up evenly","お皿を十枚揃えます。","Osara o juu mai soroemasu.","I gather ten plates as a full set.","お皿|osara|plates / を|o|(object) / 十|juu|ten / 枚|mai|(counter for flat things) / 揃えます|soroemasu|gather as a full set / 。 = I gather ten plates as a full set."]],
   [
    "パーティー|paatii|party / の|no|’s / 支度|shitaku|getting ready / を|o|(object) / します|shimasu|do / 。 = I get ready for the party.",
    "飲み物|nomimono|drinks / を|o|(object) / 用意|youi|getting ready / して|shite|do (て-form) / おきます|okimasu|do in advance / 。 = I will get the drinks ready in advance.",
@@ -230,7 +230,7 @@ const JA_P6B=[
    "私|watashi|my / の|no|’s / 希望|kibou|hope / を|o|(object) / 理解|rikai|understanding / して|shite|do (て-form) / ほしい|hoshii|want / です|desu|is / 。 = I want you to understand my hope.",
    "少し|sukoshi|a little / 辛抱|shinbou|patience / して|shite|do (て-form) / ほしい|hoshii|want / です|desu|is / 。 = I want you to be patient for a little while.",
    "家族|kazoku|family / で|de|together / 話し合います|hanashiaimasu|talk over / 。 = My family talks it over.",
-   "子供|kodomo|child / に|ni|(person asked) / 車|kuruma|cars / に|ni|of / 気をつけて|ki wo tsukete|be careful (て-form) / ほしい|hoshii|want / です|desu|is / 。 = I want my child to be careful of cars.",
+   "子供|kodomo|child / に|ni|(person asked) / 車|kuruma|cars / に|ni|of / 気をつけて|ki o tsukete|be careful (て-form) / ほしい|hoshii|want / です|desu|is / 。 = I want my child to be careful of cars.",
    "ゆい|Yui|Yui (name) / の|no|’s / 意見|iken|opinion / を|o|(object) / 聞きたい|kikitai|want to hear / です|desu|is / 。 = I want to hear Yui’s opinion."
   ]],
  ["Offering help",
@@ -294,7 +294,7 @@ const STORY_P6B=[
  {"t":"What I want you to do","l":[
   "ゆい|Yui|Yui (name) / は|wa|(topic) / 田中|Tanaka|Tanaka (family name) / 先生|sensei|teacher / に|ni|to / 希望|kibou|hope / を|o|(object) / 言います|iimasu|tells / 。 = Yui tells Tanaka sensei her hope.",
   "ゆい|Yui|Yui (name) / ： / もっと|motto|more / ゆっくり|yukkuri|slowly / 話して|hanashite|speak (て-form) / ほしい|hoshii|want / です|desu|is / 。 = Yui: I want you to speak more slowly.",
-  "田中|Tanaka|Tanaka (family name) / 先生|sensei|teacher / ： / 理解|rikai|understanding / しました|shimashita|did / 。 / 気をつけます|ki wo tsukemasu|will be careful / 。 = Tanaka sensei: I understand. I will be careful.",
+  "田中|Tanaka|Tanaka (family name) / 先生|sensei|teacher / ： / 理解|rikai|understanding / しました|shimashita|did / 。 / 気をつけます|ki o tsukemasu|will be careful / 。 = Tanaka sensei: I understand. I will be careful.",
   "けん|Ken|Ken (name) / は|wa|(topic) / ゆい|Yui|Yui (name) / に|ni|(person asked) / 頼って|tayotte|rely (て-form) / ほしい|hoshii|want / です|desu|is / 。 = Ken wants Yui to rely on him.",
   "けん|Ken|Ken (name) / ： / ゆい|Yui|Yui (name) / の|no|’s / 意見|iken|opinion / を|o|(object) / 聞きたい|kikitai|want to hear / 。 = Ken: I want to hear your opinion.",
   "ゆい|Yui|Yui (name) / と|to|and / けん|Ken|Ken (name) / は|wa|(topic) / 話し合います|hanashiaimasu|talk it over / 。 = Yui and Ken talk it over.",
