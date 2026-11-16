@@ -27,12 +27,21 @@ const kanjiByChar=c=>KJ().find(k=>k.c===c);
 function kanjiWords(c){const out=[];themes("ja").forEach(t=>(t.words||[]).forEach(w=>{if(w.w.includes(c))out.push(w);}));return out;}
 function kanaExample(ch){for(const t of themes("ja"))for(const w of (t.words||[]))if((w.k||w.w).includes(ch))return w;return null;}
 const fmtKun=s=>String(s).replace(/\.(.+)$/,"($1)");
+/* づ and ぢ: the romaji cannot tell づ from ず or ぢ from じ (the content spells them dz and dj, or zu and ji).
+   FURI_DZ lists every written word that contains づ or ぢ: [kanji in the token, romaji stem with z or j, same stem with dz or dj].
+   Needs an entry for each new word whose kana has づ or ぢ; tests/kanji.test.js checks all words. */
+const FURI_DZ=[["続","tsuzuk","tsudzuk"],["小包","kozutsumi","kodzutsumi"],["日付","hizuke","hidzuke"],["片付","katazuke","katadzuke"],["手作","tezukuri","tedzukuri"],["荷造","nizukuri","nidzukuri"],["気","kizuk","kidzuk"],["縮","chijim","chidjim"]];
+function furiKana(text,r){
+  let x=String(r).toLowerCase();
+  for(const [k,a,b] of FURI_DZ)if(String(text).includes(k)&&x.includes(a))x=x.split(a).join(b);
+  return toHira(x);
+}
 /* furigana in sentences */
 function furiFor(l,t){
   if(l!=="ja"||!hasKanji(t[0])||!t[1])return null;
   const m=S.settings.furi||"fade";if(m==="never")return null;
   if(m==="fade"&&[...t[0]].filter(hasKanji).every(kLearned))return null;
-  return toHira(t[1]);
+  return furiKana(t[0],t[1]);
 }
 /* home section */
 function homeKanji(l,r,part){
