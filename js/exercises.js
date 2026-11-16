@@ -63,7 +63,7 @@ function qHTML(q,opts){
   if(q.type==="match"||q.type==="blank"||q.type==="build")return exHTML(q,opts);
   const l=q.lang,w=q.word;let h="";
   if(q.type==="gram"){
-    h=`<p class="q">${esc(q.question)}</p>${q.big?glyph(l,{w:q.big}):""}${q.audio?`<p class="center" style="margin:8px 0"><button class="btn sec" data-a="${A(()=>say(q.audio,l))}">${ico("speaker",18)} Play audio</button></p>`:""}<div class="stack">`;
+    h=`<p class="q">${esc(q.question)}</p>${q.big?glyph(l,{w:q.big}):""}${q.audio?`<p class="center" style="margin:8px 0;display:flex;justify-content:center"><button class="btn sec" data-a="${A(()=>say(q.audio,l))}">${ico("speaker",18)} Play audio</button></p>`:""}<div class="stack">`;
     q.opts.forEach((o,i)=>{let cls="opt",tag="";
       if(q.answered){if(i===q.ans){cls+=" right";tag="Correct answer";}else if(i===q.sel){cls+=" wrong";tag="Your answer";}}else if(q.sel===i)cls+=" sel";
       h+=`<button class="${cls}" ${q.answered?"disabled":""} data-a="${A(()=>{q.sel=i;render();})}" aria-pressed="${q.sel===i}">${tag?`<span class="tag">${tag}</span>`:""}${o.svg||""}${q.plain?`<span>${esc(o.text)}</span>`:`<span class="cjk2" lang="${L[l].hl}">${esc(o.text)}</span>`}${S.settings.showReading&&o.reading?`<span class="tr2">${esc(o.reading)}</span>`:""}${o.english&&S.settings.showEnglish?`<span class="tr2">${esc(o.english)}</span>`:""}</button>`;});
@@ -74,7 +74,7 @@ function qHTML(q,opts){
   if(q.type==="meaning"){
     h+=`<p class="q">What does this word mean?</p>${glyph(l,w)}${readingHTML(l,w)}<p class="center">${playBtn}</p>`;
   }else if(q.type==="listen"){
-    h+=`<p class="q">Listen. Which word did you hear?</p><p class="center" style="margin:10px 0"><button class="btn sec" data-a="${A(()=>say(w.w,l))}">${PLAY.replace('aria-hidden','style="width:16px;height:16px;fill:currentColor;vertical-align:-2px;margin-right:8px" aria-hidden')}Play audio</button></p>`;
+    h+=`<p class="q">Listen. Which word did you hear?</p><p class="center" style="margin:10px 0;display:flex;justify-content:center"><button class="btn sec" data-a="${A(()=>say(w.w,l))}">${ico("speaker",18)} Play audio</button></p>`;
   }else if(q.type==="type"&&q.recall){
     const sp=recallSpeakOn(q);
     h+=`<p class="q">Remember the word</p><p class="meaning">${esc(w.m)}</p>

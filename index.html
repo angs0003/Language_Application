@@ -408,6 +408,9 @@ input[type=text],select,textarea{border-radius:14px;min-height:50px}
 .ico{flex:none}
 .btn .ico,.play .ico,.chip .ico,.opt .ico{display:inline-block;vertical-align:-4px;margin:0 4px}
 .btn.sec{flex-direction:row;gap:4px}
+.inline.pair>.btn.sec{flex:1 1 0;min-width:0;justify-content:center;padding:0 6px;gap:2px;font-size:16px;white-space:nowrap}
+.inline.pair>.btn.sec .ico{margin:0 2px}
+.inline.pair>.small{flex:none}
 .hd-hidden{display:none}
 /* Question area: prompt and answer row at the top, tiles or options at the bottom (thumb reach). Taller content grows the page. */
 .qarea{display:flex;flex-direction:column;gap:10px;min-height:calc(100svh - 230px)}
