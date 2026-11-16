@@ -66,7 +66,7 @@ function qHTML(q,opts){
   if(q.type==="match"||q.type==="blank"||q.type==="build")return exHTML(q,opts);
   const l=q.lang,w=q.word;let h="";
   if(q.type==="gram"){
-    h=`<p class="q">${esc(q.question)}</p>${q.big?glyph(l,{w:q.big}):""}${q.audio?`<p class="center" style="margin:8px 0"><button class="btn sec" data-a="${A(()=>sayText(q.audio,l))}">🔊 Play audio</button></p>`:""}<div class="stack">`;
+    h=`<p class="q">${esc(q.question)}</p>${q.big?glyph(l,{w:q.big}):""}${q.audio?`<p class="center" style="margin:8px 0;display:flex;justify-content:center"><button class="btn sec" data-a="${A(()=>sayText(q.audio,l))}">${ico("speaker",18)} Play audio</button></p>`:""}<div class="stack">`;
     q.opts.forEach((o,i)=>{let cls="opt",tag="";
       if(q.answered){if(i===q.ans){cls+=" right";tag="Correct answer";}else if(i===q.sel){cls+=" wrong";tag="Your answer";}}else if(q.sel===i)cls+=" sel";
       h+=`<button class="${cls}" ${q.answered?"disabled":""} data-a="${A(()=>{q.sel=i;render();})}" aria-pressed="${q.sel===i}">${tag?`<span class="tag">${tag}</span>`:""}${o.svg||""}${q.plain?`<span>${esc(o.text)}</span>`:`<span class="cjk2" lang="${L[l].hl}">${esc(o.text)}</span>`}${S.settings.showReading&&o.reading?`<span class="tr2">${esc(o.reading)}</span>`:""}${o.english&&S.settings.showEnglish?`<span class="tr2">${esc(o.english)}</span>`:""}</button>`;});
@@ -77,7 +77,7 @@ function qHTML(q,opts){
   if(q.type==="meaning"){
     h+=`<p class="q">What does this word mean?</p>${glyph(l,w)}${readingHTML(l,w)}<p class="center">${playBtn}</p>`;
   }else if(q.type==="listen"){
-    h+=`<p class="q">Listen. Which word did you hear?</p><p class="center" style="margin:10px 0"><button class="btn sec" data-a="${A(()=>sayWord(w,l))}">${PLAY.replace('aria-hidden','style="width:16px;height:16px;fill:currentColor;vertical-align:-2px;margin-right:8px" aria-hidden')}Play audio</button></p>`;
+    h+=`<p class="q">Listen. Which word did you hear?</p><p class="center" style="margin:10px 0;display:flex;justify-content:center"><button class="btn sec" data-a="${A(()=>sayWord(w,l))}">${ico("speaker",18)} Play audio</button></p>`;
   }else if(q.type==="type"&&q.recall){
     const sp=recallSpeakOn(q);
     h+=`<p class="q">Remember the word</p><p class="meaning">${esc(w.m)}</p>
@@ -118,7 +118,7 @@ function speakHTML(q){
   if(q.srMsg)h+=`<p class="small"><strong>${esc(q.srMsg)}</strong></p>`;
   if(m==="recognize"){
     if(q.listening)h+=`<button class="btn sec full" disabled>Listening. Say the word now.</button>`;
-    else if(!q.answered)h+=`<button class="btn pri full" data-a="${A(()=>startListen(q))}">🎤 Start speaking</button>`;
+    else if(!q.answered)h+=`<button class="btn pri full" data-a="${A(()=>startListen(q))}">Start speaking</button>`;
     else h+=`<button class="btn sec full" data-a="${A(()=>startListen(q))}">Try again for practice</button>`;
     if(q.practice)h+=`<p class="small">Practice attempt: ${q.practice.ok?"matched":"not matched"}. The app heard “${esc(q.practice.heard)}”.</p>`;
   }else if(m==="record"){
@@ -135,7 +135,7 @@ function speakHTML(q){
 function selfMark(q,txt){return `<p class="small" style="margin:6px 0">${txt}</p><div class="stack"><button class="opt" data-a="${A(()=>{q.answered=true;q.correct=true;q.self=true;onAnswer(q);render();})}">My pronunciation matched</button><button class="opt" data-a="${A(()=>{q.answered=true;q.correct=false;q.self=true;onAnswer(q);render();})}">My pronunciation did not match</button></div>`;}
 function fbHTML(q,o){
   if(!q.answered)return "";
-  if(q.type==="gram"){const ps=[];if(q.dk)ps.push("You chose “I do not know”.");else if(!q.correct)ps.push(`You chose: ${q.plain?esc(q.opts[q.sel].text):cjk(q.lang,q.opts[q.sel].text)}`);if(!q.correct)ps.push(`The correct answer is: ${q.plain?esc(q.opts[q.ans].text):cjk(q.lang,q.opts[q.ans].text)}`);if(q.why)ps.push(esc(q.why));return `<div class="fb ${q.correct?"ok":"no"}" role="status"><strong>${q.correct?"✅ Correct.":"❌ Incorrect."}</strong>${ps.map(p=>`<p>${p}</p>`).join("")}</div>`;}
+  if(q.type==="gram"){const ps=[];if(q.dk)ps.push("You chose “I do not know”.");else if(!q.correct)ps.push(`You chose: ${q.plain?esc(q.opts[q.sel].text):cjk(q.lang,q.opts[q.sel].text)}`);if(!q.correct)ps.push(`The correct answer is: ${q.plain?esc(q.opts[q.ans].text):cjk(q.lang,q.opts[q.ans].text)}`);if(q.why)ps.push(esc(q.why));return `<div class="fb ${q.correct?"ok":"no"}" role="status"><strong>${q.correct?STATUS.ok+" Correct.":STATUS.no+" Incorrect."}</strong>${ps.map(p=>`<p>${p}</p>`).join("")}</div>`;}
   const l=q.lang,w=q.word,ps=[];
   const detail=`${cjk(l,w.w)} (${esc(l==="ja"&&w.k&&w.k!==w.w?w.k+", "+w.r:w.r)}) means “${esc(w.m)}”.`;
   if(q.type==="meaning"||q.type==="listen"){
@@ -151,7 +151,7 @@ function fbHTML(q,o){
     else{ps.push(`The app heard “${esc(q.heard)}”.`);if(!q.correct)ps.push(`The expected word is ${cjk(l,w.w)}. Speech recognition can mishear words. Play the audio to compare. The first attempt is the one that counts. You can try again for practice.`);}
   }
   ps.push(detail);
-  let h=`<div class="fb ${q.correct?"ok":"no"}" role="status"><strong>${q.correct?"✅ Correct.":(q.type==="speak"&&!q.self?"❌ Not matched.":"❌ Incorrect.")}</strong>${ps.map(p=>`<p>${p}</p>`).join("")}`;
+  let h=`<div class="fb ${q.correct?"ok":"no"}" role="status"><strong>${q.correct?STATUS.ok+" Correct.":(q.type==="speak"&&!q.self?STATUS.no+" Not matched.":STATUS.no+" Incorrect.")}</strong>${ps.map(p=>`<p>${p}</p>`).join("")}`;
   if(!q.correct&&!o.noAI&&!q.self&&!AI_OFF){
     if(q.explain===null)h+=`<p style="margin-top:10px"><button class="play" data-a="${A(()=>explain(q))}">Explain with AI</button></p>`;
     else if(q.explain==="loading")h+=`<p class="small" style="margin-top:10px">Writing the explanation. This takes up to 20 seconds.</p>`;
