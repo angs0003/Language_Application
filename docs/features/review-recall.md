@@ -13,4 +13,4 @@ The old “type the reading” question is no longer in the word rotation. It st
 
 **“I can’t speak right now”:** `setNoSpeak(on)` also converts unanswered speak questions in `view.qs` when `view.s==="review"` (to recall or listen questions).
 
-Tests: tests/review-recall.test.js. Screen in tests/phone/screens.js: “Review: recall question”.
+Tests: tests/review-recall.test.js. Screen in tests/phone/screens/practice.js: “Review: recall question”.

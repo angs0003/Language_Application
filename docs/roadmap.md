@@ -23,7 +23,7 @@ Agreed feature batches (in this order):
 5. Done: Real-situation log (Travel tab): the learner records the result of using a travel phrase in real life and reviews the phrases that did not work.
 6. Done (November 2026): spoken-register pass over all Japanese and Chinese content, 5 real-speech videos in `VIDS` (no transcripts), about 75 survival phrases added to the travel situations.
 
-7. Done: plan B pull request 1 (lesson Quiz step with recall questions) and pull request 2 (check-ins inside New words). Not built: the change of the Practise review rotation.
+7. Done: plan B pull request 1 (lesson Quiz step with recall questions), pull request 2 (check-ins inside New words) and pull request 3 (recall in the Practise review).
 8. Done: harder words come back sooner (lapses, shorter gap), placement quiz in two parts (words and sentences).
 
 Open content task: fill the `VIDS` catalogue with exact YouTube videos per level. Criteria (all required):
