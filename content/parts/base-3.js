@@ -440,9 +440,9 @@ SENT_JA.forEach((s,i)=>{JA[i][2]=s;});SENT_ZH.forEach((s,i)=>{ZH[i][2]=s;});
 const JA4=[
  ["Months and dates",
   [["一月","いちがつ","ichigatsu","January","一月は寒いです。","Ichigatsu wa samui desu.","January is cold.","一月|ichigatsu|January / は|wa|(topic) / 寒い|samui|cold / です|desu|is / 。 = January is cold."],
-  ["四月","しがつ","shigatsu","April","四月に日本へ行きます。","Shigatsu ni nihon e ikimasu.","I go to Japan in April.","四月|shigatsu|April / に|ni|(in) / 日本|nihon|Japan / へ|e|(to) / 行きます|ikimasu|to go (polite) / 。 = I go to Japan in April."],
+  ["四月","しがつ","shigatsu","April","四月に日本へ行きます。","Shigatsu ni nihon e ikimasu.","I will go to Japan in April.","四月|shigatsu|April / に|ni|(in) / 日本|nihon|Japan / へ|e|(to) / 行きます|ikimasu|to go (polite) / 。 = I will go to Japan in April."],
   ["十二月","じゅうにがつ","juunigatsu","December","十二月は忙しいです。","Juunigatsu wa isogashii desu.","December is busy.","十二月|juunigatsu|December / は|wa|(topic) / 忙しい|isogashii|busy / です|desu|is / 。 = December is busy."],
-  ["何月","なんがつ","nangatsu","which month","何月に来ますか。","Nangatsu ni kimasu ka.","Which month do you come?","何月|nangatsu|which month / に|ni|(in) / 来ます|kimasu|to come (polite) / か|ka|(question) / 。 = Which month do you come?"],
+  ["何月","なんがつ","nangatsu","which month","何月に来ますか。","Nangatsu ni kimasu ka.","Which month will you come?","何月|nangatsu|which month / に|ni|(in) / 来ます|kimasu|to come (polite) / か|ka|(question) / 。 = Which month will you come?"],
   ["今月","こんげつ","kongetsu","this month","今月は雨が多いです。","Kongetsu wa ame ga ooi desu.","There is a lot of rain this month.","今月|kongetsu|this month / は|wa|(topic) / 雨|ame|rain / が|ga|(subject) / 多い|ooi|many, a lot / です|desu|is / 。 = There is a lot of rain this month."],
   ["先月","せんげつ","sengetsu","last month","先月、日本に来ました。","Sengetsu, nihon ni kimashita.","I came to Japan last month.","先月|sengetsu|last month / 、 / 日本|nihon|Japan / に|ni|(to) / 来ました|kimashita|came (polite) / 。 = I came to Japan last month."],
   ["来月","らいげつ","raigetsu","next month","来月、国へ帰ります。","Raigetsu, kuni e kaerimasu.","I go back to my country next month.","来月|raigetsu|next month / 、 / 国|kuni|country / へ|e|(to) / 帰ります|kaerimasu|to go back (polite) / 。 = I go back to my country next month."],
