@@ -11,9 +11,14 @@ Moved from CLAUDE.md section 3. The approved design is on the owner's design can
 3. **Lesson template:** close button and progress bar at the top, one content area, Back and Continue at the bottom.
    Quiz feedback appears in the bottom panel (`#fbp`), green for correct and red for incorrect.
 4. **No emoji in the interface.** Use the line icons in `ICONS` (js/ui.js) through `ico(name)`, and the status marks
-   `STATUS.ok / half / todo / no`. `deEmoji()` removes any emoji that slips into rendered text; do not rely on it for new code.
+   `STATUS.ok / half / todo / no`. No emoji appears in `js/*.js` or index.html outside comments (tests/no-emoji.test.js fails otherwise).
+   `deEmoji()` stays only as a safety net; do not rely on it for new code. `PLAY` is `ico("speaker",20)` (js/ui.js). Tuple slots that once held an emoji
+   are `""` (js/path.js step info, `LIB`, `SECS`, `SITS`, `STEPS`).
+   Count text uses `plural(n,one,many)` (js/core.js): `plural(1,"word")` is “1 word”, `plural(0,"word")` is “0 words”; pass the plural form for irregular nouns.
 5. **Components** (js/ui.js): `uiCard`, `uiLabel`, `uiBtn` (styles `pri`, `sec`, `link` only), `uiSeg`, `uiRow`,
    `uiTileIcon`, `uiTileChar`, `uiBar`, plus `.ibtn` icon buttons and `.tile` content tiles. Every icon-only button needs an `aria-label`.
+   Icons inside text buttons use `.btn .ico`; `.btn.sec` is a row (`flex-direction:row`; an older `.sec` rule was a flex column). A row with two `.btn.sec` buttons uses the classes `inline pair` (equal width).
+   The “Watch” buttons on video cards are `btn sec` (the screen “Your videos” has no primary action).
 6. **Colour and type:** tokens are CSS variables in index.html (`--c-learn`, `--t-learn`, ...). The **language** sets the colours of the whole app
    through `body[data-lang]`: Japanese is indigo blue (`--ja`, `--jaT`), Chinese is red (`--zh`, `--zhT`), with a slightly tinted background for Chinese.
    Tabs and sections do not have their own colours. Fonts: Atkinson Hyperlegible; Noto Sans JP/SC for characters.
