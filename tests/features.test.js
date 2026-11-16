@@ -176,7 +176,7 @@ const check = (ok, msg) => { if (!ok) failures.push(msg); else console.log("ok:"
     W.eval("__rq.length=0"); mk("mkBuild('ja',s,'listen',pool)"); W.eval("readQuestion()"); check(W.eval("__rq.length") === 1, "a listen-and-build question reads its sentence aloud when it opens");
     W.eval("__rq.length=0"); mk("mkBuild('ja',s,'build',pool)"); W.eval("readQuestion()"); check(W.eval("__rq.length") === 0, "a build question (English given) is not read");
     W.eval("__rq.length=0"); mk("mkBlank('ja',s,__t0.words.find(w=>s.tokens.some(z=>z[0]===w.w))||__t0.words[0],pool)"); W.eval("readQuestion()"); check(W.eval("__rq.length") === 0, "a missing-word question is not read: the missing word is the answer");
-    W.eval("__rq.length=0;view={s:'review',qs:[mkQ('meaning',__t0.words[0],'ja')],i:0,finished:false};readQuestion()"); check(W.eval("__rq[0]") === W.eval("__t0.words[0].w"), "a 'What does this word mean?' question reads the word");
+    W.eval("__rq.length=0;view={s:'review',qs:[mkQ('meaning',__t0.words[0],'ja')],i:0,finished:false};readQuestion()"); check(W.eval("__rq[0]") === W.eval("__t0.words[0].k||__t0.words[0].w"), "a 'What does this word mean?' question reads the word");
     W.eval("__rq.length=0;view={s:'review',qs:[mkQ('type',__t0.words[0],'ja')],i:0,finished:false};readQuestion()"); check(W.eval("__rq.length") === 0, "a question where you type the answer is not read");
     W.eval("__rq.length=0;S.settings.autoRead=false;view={s:'review',qs:[mkBuild('ja',CUR.ja[0].sents[0],'toEn',poolFor('ja',__t0.words))],i:0,finished:false};readQuestion()"); check(W.eval("__rq.length") === 0, "with the setting off no question is read");
     W.eval("S.settings.autoRead=true");
