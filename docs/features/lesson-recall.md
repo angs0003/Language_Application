@@ -1,6 +1,6 @@
 # Lesson recall (Quiz step)
 
-Update this file when the feature changes. Pull request 1 of plan B; the check-ins inside New words and a change of the Practise review rotation are not built yet.
+Update this file when the feature changes. Pull request 1 of plan B; the check-ins inside New words are in docs/features/lesson-checkins.md, recall in the Practise review is in docs/features/review-recall.md.
 
 **Quiz step of a lesson** (`buildQuiz(l,words,k,opts)` in js/exercise-types.js):
 1. Match the pairs (3 or more words).

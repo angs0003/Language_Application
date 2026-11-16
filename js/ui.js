@@ -116,11 +116,11 @@ function homeLearn(l,r){
 function kanjiDue(){const now=Date.now();return KJ().filter(k=>{const e=(S.ja.kanji||{})[k.c];return e&&e.d<=now;});}
 function startMixed(any){
   const l=S.lang,ws=shuffle(dueList(l)).slice(0,8),ks=l==="ja"?shuffle(kanjiDue()).slice(0,4):[],sv=shuffle(savedDue(l)).slice(0,4);
-  let qs=[];const types=["meaning","listen","type"];
-  ws.forEach((w,i)=>qs.push(mkQ(types[i%3],w,l)));
+  let qs=[];
+  ws.forEach((w,i)=>qs.push(reviewQ(w,l,i)));
   if(ks.length)qs=qs.concat(kanjiQuestions(ks).filter(q=>q.type!=="match"));
   sv.forEach(x=>{const q=mkQ("meaning",{w:x.w,r:x.r||x.w,m:x.m||""},l);q.vitem=x;qs.push(q);});
-  if(!qs.length&&any){const lw=shuffle(allWords(l).filter(w=>isL(l,w))).slice(0,8);lw.forEach((w,i)=>qs.push(mkQ(types[i%3],w,l)));}
+  if(!qs.length&&any){const lw=shuffle(allWords(l).filter(w=>isL(l,w))).slice(0,8);lw.forEach((w,i)=>qs.push(reviewQ(w,l,i)));}
   if(!qs.length){note("You have no learned words yet. Start with a lesson in Learn.");return;}
   view={s:"review",qs,i:0,finished:false};render();window.scrollTo(0,0);readQuestion();
 }

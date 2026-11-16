@@ -17,6 +17,8 @@ function mkQ(type,w,l){
 }
 /* Recall question (lesson Quiz): a "type" question that shows only the English meaning; the learner types the reading or says the word. */
 function mkRecall(w,l){const q=mkQ("type",w,l);q.recall=true;return q;}
+/* Word question of the Practise review (startMixed and startReview): box 3 or higher is always a recall question; box 0 to 2 rotates by i: recall, meaning, listen (about 1 in 3 recall). */
+function reviewQ(w,l,i){const e=S[l].srs[w.w],b=e?e.b||0:0;if(b>=3)return mkRecall(w,l);const k=i%3;return k===0?mkRecall(w,l):mkQ(k===1?"meaning":"listen",w,l);}
 function recallMatch(q){const l=q.lang;return allWords(l).some(x=>x.m===q.word.m&&readingMatch(l,q.input,x));}
 /* The speak option of a recall question needs speech recognition (the other speak modes play the word, which would give the answer away). */
 function recallCanSpeak(){return speakMode()==="recognize";}
@@ -25,6 +27,7 @@ function recallSpeakOn(q){return !!q.recall&&!q.answered&&!!S.settings.speaking&
 function setNoSpeak(on){
   view.noSpeak=!!on;
   if(on&&view.quiz)view.quiz.forEach((q,i)=>{if(q.type==="speak"&&!q.answered){const n=mkQ(i%2?"type":"listen",q.word,q.lang);if(q.again)n.again=true;if(q.earlier)n.earlier=true;view.quiz[i]=n;}});
+  if(on&&view.s==="review"&&view.qs)view.qs.forEach((q,i)=>{if(q.type==="speak"&&!q.answered){view.qs[i]=i%2?mkRecall(q.word,q.lang):mkQ("listen",q.word,q.lang);}});
   render();
 }
 /* A fresh copy of a question for the repeat at the end of the Quiz step (same rule as Mistakes: again=true). */

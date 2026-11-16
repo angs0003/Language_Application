@@ -23,6 +23,7 @@ One file per feature (moved from CLAUDE.md section 5). Read only the file of the
 - [Fading furigana](fading-furigana.md): Japanese tokens containing kanji get a `<ruby>` reading, converted from the token's romaji with `toHira()`,...
 - [TV list](tv-list.md): title, service, length, why it fits, rating with its source, suggested...
 - [Lesson recall](lesson-recall.md): Quiz step of a lesson: recall questions (type or say the reading from the English meaning), up to 2 Earlier word questions, a repeat of wrong answers at the end, Summary from first answers.
+- [Review recall](review-recall.md): Practise review: recall questions for words in box 3 or higher and one in three for lower boxes (`reviewQ`).
 - [Lesson check-ins](lesson-checkins.md): New words step of a lesson: groups of at most 3 words, each followed by a check of one question per word (recall, listen, meaning), with one earlier-word question from the second check on. Practice only.
 - [Review timing](review-timing.md): boxes, lapses, shorter gaps for hard words, early practice rule.
 - [Answer options](answer-options.md): wrong options never share a meaning with the right one; Japanese words are spoken from kana (`sayWord`, `sayText`); typing accepts z/j for dz/dj.
