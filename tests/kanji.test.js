@@ -13,6 +13,23 @@ async function solveAll(W, click) { for (let k = 0; k < 60 && !W.eval("view.fini
   // conversions
   const conv = { watashi: "わたし", gakkou: "がっこう", konnichiwa: "こんにちわ", isshuukan: "いっしゅうかん", juppun: "じゅっぷん", "kin'youbi": "きんようび", kodzutsumi: "こづつみ", tsudzukeru: "つづける", hanadji: "はなぢ", "benkyou shimasu": "べんきょうします" };
   for (const [r, h] of Object.entries(conv)) check(W.eval(`toHira(${JSON.stringify(r)})`) === h, `romaji ${r} converts to ${h}`);
+  // furigana for づ and ぢ: exact with the dz/dj spelling (now) and the zu/ji spelling (other branch)
+  {
+    const words = W.eval('allWords("ja").map(w=>[w.w,w.k||"",w.r])');
+    const toks = W.eval('(function(){const o=[],add=x=>x&&x.tokens&&x.tokens.forEach(t=>o.push(t));themes("ja").forEach(t=>{(t.sents||[]).forEach(add);(t.words||[]).forEach(w=>add(w.tk));});return o;})()');
+    const toZ = r => r.replace(/dz/g, "z").replace(/dj/g, "j");
+    const fk = (w, r) => W.eval(`furiKana(${JSON.stringify(w)},${JSON.stringify(r)})`);
+    const kanjiRe = /[一-鿿]/;
+    const dz = words.filter(([, k]) => /[づぢ]/.test(k)), badDz = [], badZ = [];
+    for (const [w, k, r] of dz) { if (fk(w, r) !== k) badDz.push(w + " " + r); if (fk(w, toZ(r)) !== k) badZ.push(w + " " + toZ(r)); }
+    check(dz.length >= 10 && !badDz.length, `all ${dz.length} words with づ or ぢ give their kana with the dz/dj spelling` + (badDz.length ? ": " + badDz : ""));
+    check(!badZ.length, "all words with づ or ぢ give their kana with the zu/ji spelling" + (badZ.length ? ": " + badZ : ""));
+    const ord = words.filter(([w, k, r]) => /[ずじ]/.test(k) && !/[づぢ]/.test(k) && kanjiRe.test(w) && W.eval(`toHira(${JSON.stringify(r)})`) === k), badOrd = ord.filter(([w, , r]) => fk(w, r) !== W.eval(`toHira(${JSON.stringify(r)})`)).map(x => x[0]);
+    check(ord.length > 20 && !badOrd.length, `${ord.length} ordinary words with ず or じ still give ず or じ` + (badOrd.length ? ": " + badOrd : ""));
+    const badTok = toks.filter(t => kanjiRe.test(t[0]) && t[1] && fk(t[0], toZ(t[1])) !== fk(t[0], t[1])).map(t => t[0] + " " + t[1]);
+    check(toks.length > 1000 && !badTok.length, `all ${toks.length} sentence tokens give the same furigana with the dz/dj and the zu/ji spelling` + (badTok.length ? ": " + [...new Set(badTok)] : ""));
+    check(fk("続きます", "tsuzukimasu") === "つづきます" && fk("気づきました", "kizukimashita") === "きづきました" && fk("勉強", "benkyou") === "べんきょう", "inflected tokens (続きます, 気づきました) are correct");
+  }
   check(W.eval('toRomaji("しょく")') === "shoku" && W.eval('toRomaji("がっこう")') === "gakkou" && W.eval('toRomaji("わたし")') === "watashi", "kana readings convert to Hepburn romaji");
   check(W.eval('toRomaji("づ")') === "zu" && W.eval('toRomaji("ぢ")') === "ji", "づ and ぢ convert to zu and ji in Hepburn romaji");
   // section visibility
