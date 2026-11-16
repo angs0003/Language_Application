@@ -34,4 +34,7 @@ for (const [name, t] of texts) {
 const featDir = path.join(root, "docs", "features"), idx = fs.readFileSync(path.join(featDir, "README.md"), "utf8");
 const unlisted = fs.readdirSync(featDir).filter(f => f.endsWith(".md") && f !== "README.md" && !idx.includes("(" + f + ")"));
 check(!unlisted.length, "docs/features/README.md lists every feature file " + unlisted.join(", "));
+const shipTxt = fs.readFileSync(path.join(root, ".claude/commands/ship.md"), "utf8"), plannerTxt = fs.readFileSync(path.join(root, ".claude/agents/planner.md"), "utf8");
+check(plannerTxt.includes("**Files leased:**"), "planner.md asks for a Files leased list");
+check(/screen-verifier/.test(shipTxt) && /pr-watcher/.test(shipTxt), "ship.md uses screen-verifier and pr-watcher");
 process.exit(bad ? 1 : 0);
