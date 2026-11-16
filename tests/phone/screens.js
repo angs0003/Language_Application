@@ -29,6 +29,7 @@ module.exports = {
     { name: "Theme page", covers: ["screenTheme"], open: "openTheme(0)" },
     { name: "Grammar point", covers: ["screenGram"], open: "openGram(0)" },
     { name: "Lesson: new word", covers: ["screenLesson"], open: LESSON(0, 0) },
+    { name: "Lesson: new word, reading of the whole word", covers: [], langs: ["ja"], open: "{const t=themes('ja').find(x=>x.title==='Months and dates');startLesson(t.words,t.title);const k=view.words.findIndex(w=>w.w==='一日');view.i=view.items0.findIndex(it=>it.k==='word'&&it.wi===k);render();}" },
     { name: "Lesson: grammar", covers: [], open: LESSON(1, 0) },
     { name: "Lesson: sentences", covers: [], open: LESSON(2, 0) },
     { name: "Lesson: story", covers: [], open: LESSON(3, 0) },

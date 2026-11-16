@@ -191,13 +191,25 @@ function cleanTok(a){if(!Array.isArray(a))return[];return a.filter(t=>Array.isAr
 function cleanSent(x){if(!x)return null;const tokens=cleanTok(x.tokens);if(!tokens.length)return null;return{tokens,english:String(x.english||"")};}
 const sentText=s=>s.tokens.map(t=>t[0]).join("");
 const PUNCT=/^[\s。、，,.!?！？：:；;「」『』“”"'（）()…·\-]+$/;
-function glossHTML(l,tokens,hw,plain){
+/* grp: a word and the punctuation right after it stay together on one line (the full stop never sits alone). Not used for story lines (data-skip hides the first two children). */
+function glossHTML(l,tokens,hw,plain,grp){
   const set=new Set((hw||[]).map(w=>w.w));
-  return `<div class="gl">${tokens.map(t=>{
+  const one=t=>{
     if(PUNCT.test(t[0])||(!t[1]&&!t[2]))return `<span class="tk pu"><span class="tx" lang="${L[l].hl}">${esc(t[0])}</span></span>`;
-    return `<button class="tk${set.has(t[0])?" hw":""}" data-a="${A(e=>openWord(l,t,tokens,e))}"><span class="tx" lang="${L[l].hl}">${(()=>{const f=furiFor(l,t);return f?`<ruby>${esc(t[0])}<rt>${esc(f)}</rt></ruby>`:esc(t[0]);})()}</span>${S.settings.gloss&&!plain?`<span class="tr">${esc(t[1])}</span><span class="tm">${esc(t[2])}</span>`:""}</button>`;}).join("")}</div>`;
+    return `<button class="tk${set.has(t[0])?" hw":""}" data-a="${A(e=>openWord(l,t,tokens,e))}"><span class="tx" lang="${L[l].hl}">${(()=>{const f=furiFor(l,t);return f?`<ruby>${esc(t[0])}<rt>${esc(f)}</rt></ruby>`:esc(t[0]);})()}</span>${S.settings.gloss&&!plain?`<span class="tr">${esc(t[1])}</span><span class="tm">${esc(t[2])}</span>`:""}</button>`;};
+  const isPu=t=>PUNCT.test(t[0])||(!t[1]&&!t[2]);
+  if(!grp)return `<div class="gl">${tokens.map(one).join("")}</div>`;
+  let h="";
+  for(let i=0;i<tokens.length;i++){
+    if(isPu(tokens[i])){h+=one(tokens[i]);continue;}
+    let g=one(tokens[i]),n=0;
+    while(i+1<tokens.length&&isPu(tokens[i+1])&&TRAIL.test(tokens[i+1][0])){g+=one(tokens[++i]);n++;}
+    h+=n?`<span class="tkg">${g}</span>`:g;
+  }
+  return `<div class="gl">${h}</div>`;
 }
-function sentHTML(l,s,hw){return `<div class="sent"><div class="sbody">${glossHTML(l,s.tokens,hw)}${S.settings.showEnglish&&s.english?`<p class="eng">${esc(s.english)}</p>`:""}</div><button class="play" data-a="${A(()=>say(spokenText(s),l))}" aria-label="Play audio" title="Play audio">${PLAY}</button></div>`;}
+const TRAIL=/^[。、，,.!?！？」』”）)…]+$/;
+function sentHTML(l,s,hw){return `<div class="sent"><div class="sbody">${glossHTML(l,s.tokens,hw,false,true)}${S.settings.showEnglish&&s.english?`<p class="eng">${esc(s.english)}</p>`:""}</div><button class="play" data-a="${A(()=>say(spokenText(s),l))}" aria-label="Play audio" title="Play audio">${PLAY}</button></div>`;}
 function builtinEx(l,w,hw){return `<div class="sent"><div class="sbody"><p class="ex" lang="${L[l].hl}">${hl(w.ex[0],hw||[w])}</p>${S.settings.showReading?`<p class="muted" style="margin:0 0 4px">${esc(w.ex[1])}</p>`:""}${S.settings.showEnglish?`<p class="eng">${esc(w.ex[2])}</p>`:""}</div><button class="play" data-a="${A(()=>say(w.ex[0],l))}" aria-label="Play audio" title="Play audio">${PLAY}</button></div>`;}
 function voicesFor(l){const c=L[l].code.toLowerCase();let v=voices.filter(x=>x.lang.replace("_","-").toLowerCase()===c);if(!v.length)v=voices.filter(x=>x.lang.toLowerCase().startsWith(l));return v;}
 /* Speaker lines: a story line starts with a name and a colon ("Ken ： good morning"). The name and colon are not spoken.
@@ -472,7 +484,7 @@ function screenLesson(){
     }else{
     const w=ws[it0.wi],ex=v.ex[w.w];
     const sv=isSaved(l,w.w);
-    h=`<div class="card hasstar"><button class="ibtn starbtn${sv?" on":""}" aria-label="${sv?"Remove from My words":"Save to My words"}" aria-pressed="${sv}" data-a="${A(ev=>starWord(l,w,ev))}">${ico("star",22)}</button><p class="q">New word</p>${glyph(l,w)}${readingHTML(l,w)}<p class="meaning">${esc(w.m)}</p><p class="center"><button class="play" data-a="${A(()=>say(w.w,l))}" aria-label="Play audio" title="Play audio">${PLAY}</button></p></div>
+    h=`<div class="card hasstar"><button class="ibtn starbtn${sv?" on":""}" aria-label="${sv?"Remove from My words":"Save to My words"}" aria-pressed="${sv}" data-a="${A(ev=>starWord(l,w,ev))}">${ico("star",22)}</button><p class="q">New word</p>${glyph(l,w)}${readingHTML(l,w)}${wholeReadingNote(l,w)}<p class="meaning">${esc(w.m)}</p><p class="center"><button class="play" data-a="${A(()=>say(w.w,l))}" aria-label="Play audio" title="Play audio">${PLAY}</button></p></div>
     <div class="card"><p class="q">Example</p>${ex?sentHTML(l,ex,[w]):w.tk?sentHTML(l,w.tk,[w]):builtinEx(l,w)}${!ex&&v.aState==="loading"?`<p class="small muted" style="margin-top:6px">The word-by-word version is loading.</p>`:""}</div>`;
     }
   }else if(v.step===1){

@@ -88,7 +88,7 @@ function exHTML2(q,opts){
     return h;
   }
   /* The sentence with its meaning after an answer (feedback of sentence questions). */
-function sentMeaningHTML(l,s,hw){return `<div class="sent"><div class="sbody">${glossHTML(l,s.tokens,hw||[])}<p class="eng">Meaning: ${esc(s.english)}</p></div><button class="play" data-a="${A(()=>say(spokenText(s),l))}" aria-label="Play audio" title="Play audio">${PLAY}</button></div>`;}
+function sentMeaningHTML(l,s,hw){return `<div class="sent"><div class="sbody">${glossHTML(l,s.tokens,hw||[],false,true)}<p class="eng">Meaning: ${esc(s.english)}</p></div><button class="play" data-a="${A(()=>say(spokenText(s),l))}" aria-label="Play audio" title="Play audio">${PLAY}</button></div>`;}
 /* build, listen-build, to English */
   const s=q.sent,text=sentText(s);
   if(q.mode==="build")h=`<p class="q">🔨 Build this sentence in ${L[l].name}</p><p class="meaning" style="text-align:left">${esc(s.english)}</p>`;
