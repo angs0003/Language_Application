@@ -142,6 +142,19 @@ for (const lang of ["ja", "zh"]) {
       expect(errors, "script errors").toEqual([]);
     });
   }
+  // Listen tab: the kind label (Podcast, Story, Video) must not overlap the character or icon of its tile
+  test(`${lang} Listen tab tile labels`, async ({ page }) => {
+    const errors = await openApp(page, lang);
+    await page.evaluate(l => { S[l].placed = true; setTab("listen"); }, lang);
+    const hits = await page.evaluate(() => [...document.querySelectorAll(".tart")].map(a => {
+      const k = a.querySelector(".tkind").getBoundingClientRect(), g = document.createRange();
+      g.selectNodeContents(a.querySelector("svg") || a.firstChild);
+      const c = g.getBoundingClientRect(), ov = !(k.right <= c.left || c.right <= k.left || k.bottom <= c.top || c.bottom <= k.top);
+      return ov ? a.textContent : null;
+    }).filter(Boolean));
+    expect(hits, "tiles whose label overlaps the character").toEqual([]);
+    expect(errors, "script errors").toEqual([]);
+  });
   // Podcast episode: compact controls, one box per item, Previous and Next
   test(`${lang} podcast episode`, async ({ page }) => {
     const errors = await openApp(page, lang);
