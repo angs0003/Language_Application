@@ -1,0 +1,16 @@
+/* Screens of the area "practice" (fields: see tests/phone/screens.js). Add a new screen of this area at the end of the list. */
+const { LEARNED } = require("./shared.js");
+module.exports = [
+    { name: "My words", covers: ["screenVocab"], open: "openVocab()" },,
+    { name: "My words: flashcards", covers: ["screenCards"], setup: "{const w=themes(S.lang)[0].words[0];S[S.lang].saved=[{w:w.w,r:w.r,m:w.m,s:'',src:'',b:0,d:0,t:Date.now(),u:Date.now(),tk:null}];}", open: "startCards()" },,
+    { name: "My words: practice finished", covers: [], setup: "{const w=themes(S.lang)[0].words[0];S[S.lang].saved=[{w:w.w,r:w.r,m:w.m,s:'',src:'',b:0,d:0,t:Date.now(),u:Date.now(),tk:null}];}", open: "startCards();view.k=view.list.length;render()" },,
+    { name: "Review session", covers: ["screenReview"], setup: LEARNED, open: "startMixed(true)" },,
+    { name: "Sounds: tone or pitch question", covers: [], setup: "themes(S.lang).slice(0,4).forEach(t=>t.words.forEach(w=>{S[S.lang].srs[w.w]={b:3,d:Date.now()+1e9,u:Date.now()};}));", open: "startSounds()" },,
+    { name: "Test out", covers: ["screenTest"], open: "startTest(0)" },,
+    { name: "Placement quiz", covers: ["screenPlace"], open: "startPlacement()" },,
+    { name: "Placement quiz: fill the blank", covers: [], open: "placeOpenAt('blank')" },,
+    { name: "Placement quiz: read and build the English", covers: [], open: "placeOpenAt('toEn')" },,
+    { name: "Placement quiz: listen and build", covers: [], open: "placeOpenAt('listen')" },,
+    { name: "Placement quiz: build the sentence", covers: [], open: "placeOpenAt('build')" },,
+    { name: "Placement quiz: result", covers: [], open: "placeOpenAt('result')" },
+];

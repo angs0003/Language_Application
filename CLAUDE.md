@@ -82,7 +82,7 @@ The steps for a part of 150 words (themes, grammar points, chapters, kanji, word
 4. Changes are committed to a branch (never to `main`) and a pull request to `main` is open. Never push to `main`.
    Do not change `CACHE` in `sw.js` and do not run `npm run upload`: the Deploy workflow does both after the merge.
 5. Tell the owner what changed, in numbered points, with the pull request link. The owner merges after the `test` check is green.
-6. For a UI change: look at screenshots (`/shot`) in both languages and at both phone sizes, and test every screen where the feature appears. A new screen is added to `tests/phone/screens.js`.
+6. For a UI change: run the `screen-verifier` subagent (screenshots in both languages at both phone sizes), and test every screen where the feature appears. A new screen is added to `tests/phone/screens.js`.
 
 ## 9. Team setup in .claude/
 

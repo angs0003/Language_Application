@@ -11,8 +11,8 @@ How several agents change the app at the same time without breaking each other. 
 
 ## Rules
 
-1. **One task = one branch = one worktree.** An editing agent works in its own worktree (`isolation: worktree`) on a branch `<type>/<slug>` (types: content, feature, fix, chore). It commits there and does not push. The orchestrator (or `pr-watcher`) pushes.
-2. **File lease in every plan.** The planner lists every file the task may edit under "Files leased". The orchestrator starts two tasks in parallel only when their lists do not overlap. If a task needs a file that another task has leased, it waits.
+1. **One task = one branch = one worktree.** An editing agent works in its own worktree (`isolation: worktree`) on a branch `<type>/<slug>` (types: content, feature, fix, chore). It commits there and does not push. `pr-watcher` pushes and opens the draft pull request (`/ship` step 3).
+2. **File lease in every plan.** The planner lists, for each planned change, every file it may edit under "Files leased", then the combined list for the task. An editing agent edits only the files leased to its change; a file outside the lease is added by the orchestrator only if no other open task holds it. The orchestrator starts two tasks in parallel only when their lists do not overlap. If a task needs a file that another task has leased, it waits.
 3. **Docs by note.** An implementer edits only the docs file of its own feature (`docs/features/<feature>.md`). Changes to `CLAUDE.md`, `docs/claude-code-team.md`, `docs/architecture.md`, `docs/files.md` and `docs/design-rules.md` go in a note `tmp/doc-notes/<branch>.md` (what changed, which file and section). The `docs-keeper` agent applies the notes in one commit.
 4. **Tests by file.** New tests go into their own file `tests/<feature>.test.js`. `npm test` runs every `tests/*.test.js` file by name (`tests/run-all.js`), so nobody edits `package.json`. Append new screens to the end of `tests/phone/screens.js`.
 5. **Content by slice.** One writer per slice (one part, or 5 themes), output as a patch file; one serial step applies the patches, then `content-checker` and `content-reviewer` run.
@@ -22,5 +22,5 @@ How several agents change the app at the same time without breaking each other. 
 
 ## The orchestrator
 
-Should: read the request, call `planner`, show the plan, assign leases, start agents in parallel in one message, read their short reports, run the merge queue, write the owner summary, remove worktrees and branches it created.
+Should: read the request, call `planner`, show the plan, assign leases, start agents in parallel in one message, read their short reports, run `screen-verifier` for every interface change, open each pull request through `pr-watcher`, run the merge queue, write the owner summary, remove worktrees and branches it created.
 Should not: read the content parts or other large files itself (delegate to Grep or an agent), write a large feature itself after the plan is approved (delegate to an editing agent), or run the full suite in the foreground when `test-runner` can run it in the background.

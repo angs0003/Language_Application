@@ -20,6 +20,7 @@ small fix, approve the plan, then let Claude Code build. Use `/clear` to start a
 | `/check-content` | Validate and review content without changing it |
 | `/design-check` | Check changed screens against the design rules |
 | `/release` | Security check, tests, commit to a branch, open a pull request (you merge; the Deploy workflow publishes) |
+| `/ship` | Draft pull request through pr-watcher (after screen-verifier for a screen change), CI result, merge after you say so, Deploy, docs, cleanup |
 | `/add-video` | Add one video you chose to the catalogue, after the video-curator checks it |
 | `/curate-videos` | Find and check new catalogue videos for a level |
 

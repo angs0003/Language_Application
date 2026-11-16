@@ -175,7 +175,7 @@ for (const lang of ["ja", "zh"]) {
     expect(errors, "script errors").toEqual([]);
   });
   // Every screen of the registry (tests/phone/screens.js) passes the generic checks
-  for (const sc of require("./screens.js").screens) {
+  for (const sc of require("./screens.js").selected) {
     if (sc.langs && !sc.langs.includes(lang)) continue;
     test(`${lang} screen: ${sc.name}`, async ({ page }) => {
       const errors = await openApp(page, lang);
@@ -346,7 +346,8 @@ for (const lang of ["ja", "zh"]) {
 }
 
 test.afterAll(async ({}, info) => {
-  if (process.env.UPDATE_BASELINE && info.project.name === "Pixel 9 Pro") {
+  if (process.env.UPDATE_BASELINE && require("./screens.js").filtered) console.log("touch-baseline.json NOT updated: PHONE_AREA or PHONE_SCREEN is set (the list would lose the other screens)");
+  else if (process.env.UPDATE_BASELINE && info.project.name === "Pixel 9 Pro") {
     const all = new Set([...found]);
     fs.writeFileSync(BASE_FILE, JSON.stringify([...all].sort(), null, 2) + "\n");
     console.log(`Wrote ${all.size} entries to touch-baseline.json`);
