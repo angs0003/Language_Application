@@ -17,4 +17,4 @@ Update this file when the feature changes. Pull request 2 of plan B (stacked on 
 
 **Place** (see lesson-place.md): `resume.i` in step 0 is always a word index. A place on a check question is saved as the last word of its group, and continuing opens that word card. An older saved place (step 0, `i` 3) opens word 4.
 
-Tests: tests/lesson-checkins.test.js. Screens in tests/phone/screens.js: “Lesson: check question”, “Lesson: check question with earlier word”.
+Tests: tests/lesson-checkins.test.js. Screens in tests/phone/screens/lessons.js: “Lesson: check question”, “Lesson: check question with earlier word”.
