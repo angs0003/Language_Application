@@ -81,7 +81,7 @@ function stepPreview(l,x){
   const sentRow=s=>`<li><span class="pm"><span lang="${L[l].hl}">${esc(sentText(s))}</span>${s.english?`<br><span class="small muted">${esc(s.english)}</span>`:""}</span><button class="play" aria-label="Play audio" title="Play audio" data-a="${A(()=>say(spokenText(s),l))}">${PLAY}</button></li>`;
   if(x.kind==="story"){const c=chapter(l,x.i),ls=c&&c.lines?c.lines.slice(0,2):[];return ls.length?`<ul class="prevlist" aria-label="Story preview">${ls.map(sentRow).join("")}</ul>`:"";}
   const ws=(t.words||[]).slice(0,5),ss=(t.sents||[]).slice(0,2);
-  const row=w=>`<li><span class="pw" lang="${L[l].hl}">${esc(w.w)}</span><span class="pm"><span class="small">${esc(l==="ja"&&w.k&&w.k!==w.w?w.k+" · "+w.r:w.r||"")}</span><br>${esc(w.m)}</span><button class="play" aria-label="Play audio" title="Play audio" data-a="${A(()=>say(w.w,l))}">${PLAY}</button></li>`;
+  const row=w=>`<li><span class="pw" lang="${L[l].hl}">${esc(w.w)}</span><span class="pm"><span class="small">${esc(l==="ja"&&w.k&&w.k!==w.w?w.k+" · "+w.r:w.r||"")}</span><br>${esc(w.m)}</span><button class="play" aria-label="Play audio" title="Play audio" data-a="${A(()=>sayWord(w,l))}">${PLAY}</button></li>`;
   return `<ul class="prevlist" aria-label="Lesson preview">${ws.map(row).join("")}${ss.map(sentRow).join("")}</ul>${(t.words||[]).length>ws.length?`<p class="small muted" style="margin:0">and ${(t.words||[]).length-ws.length} more words in this lesson</p>`:""}`;
 }
 function homeLearn(l,r){
